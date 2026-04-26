@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "451354106296",
+    "project_id": "date-navigation",
+    "storage_bucket": "date-navigation.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451354106296:android:bef02b4f801eb79cac174d",
+        "android_client_info": {
+          "package_name": "com.example.date_navigation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451354106296-lp61c7jk8aqgn7ure36jr1b8qv7a7lqm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.date_navigation",
+            "certificate_hash": "1f371aa80f646681d8946b8c1b5e312067317fd3"
+          }
+        },
+        {
+          "client_id": "451354106296-5o5ka8235b98f7mseurlt7mcj7mvvtur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACAcAJI6psAtIC6XjKLxJvdkxbPvF1leo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451354106296-5o5ka8235b98f7mseurlt7mcj7mvvtur.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "451354106296-511u7tngjpvs9aemqb01savc6kmagbed.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dateNavigation"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

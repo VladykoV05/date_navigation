@@ -1,0 +1,20 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Игнорируем это правило (не критично)
+    unnecessary_brace_in_string_interps: ignore
+    # Можно добавить другие исключения:
+    # avoid_print: ignore  # если хочешь оставить print()
+
+  exclude:
+    - "**/*.g.dart"  # Исключаем сгенерированные файлы
+    - "**/*.freezed.dart"
+
+linter:
+  rules:
+    # Дополнительные правила линтера
+    - prefer_single_quotes
+    - sort_child_properties_last
+    - always_declare_return_types
+    - avoid_print

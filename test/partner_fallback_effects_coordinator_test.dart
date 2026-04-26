@@ -1,0 +1,80 @@
+import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
+import 'package:date_navigation/features/date_navigation/domain/entities/meeting_point.dart';
+import 'package:date_navigation/features/date_navigation/domain/entities/place.dart';
+import 'package:date_navigation/features/date_navigation/domain/entities/route_info.dart';
+import 'package:date_navigation/features/date_navigation/presentation/controller/meeting_planner_coordinator.dart';
+import 'package:date_navigation/features/date_navigation/presentation/controller/flows/partner_fallback_coordinator.dart';
+import 'package:date_navigation/features/date_navigation/presentation/controller/flows/partner_fallback_effects_coordinator.dart';
+import 'package:date_navigation/features/date_navigation/presentation/controller/flows/partner_fallback_result_coordinator.dart';
+import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:latlong2/latlong.dart' as latlong;
+
+void main() {
+  const coordinator = PartnerFallbackEffectsCoordinator();
+  final resultCoordinator = PartnerFallbackResultCoordinator(
+    const PartnerFallbackCoordinator(),
+  );
+
+  MeetingPoint _meeting({required String placeName}) {
+    return MeetingPoint(
+      location: const latlong.LatLng(53.9, 27.56),
+      userRoute: const RouteInfo(duration: Duration(minutes: 10), distance: 1200),
+      partnerRoute: const RouteInfo(
+        duration: Duration(minutes: 12),
+        distance: 1300,
+      ),
+      nearbyPlaces: [Place(name: placeName, lat: 53.9, lon: 27.56)],
+      fullRouteGeometry: const [latlong.LatLng(53.9, 27.56)],
+    );
+  }
+
+  test('buildSuccess marks fetched radius when success clears failure', () {
+    final planner = MeetingPlannerCoordinator();
+    const state = DateNavigationState(
+      searchRadius: 640,
+      selectedMeetingFormat: MeetingFormat.food,
+      point1: latlong.LatLng(53.9, 27.56),
+      point2: latlong.LatLng(53.91, 27.57),
+    );
+
+    final result = coordinator.buildSuccess(
+      state: state,
+      meeting: _meeting(placeName: 'Place A'),
+      point1: const latlong.LatLng(53.9, 27.56),
+      point2: const latlong.LatLng(53.91, 27.57),
+      meetingPlanner: planner,
+      resultCoordinator: resultCoordinator,
+    );
+
+    expect(result.shouldMarkFetchedRadius, isTrue);
+    expect(result.fetchedRadius, 640);
+    expect(result.success.nextState.centerPoint, isNotNull);
+    expect(result.success.nextState.foundPlaces, isNotEmpty);
+  });
+
+  test('buildSuccess skips mark when venue is already locked', () {
+    final planner = MeetingPlannerCoordinator();
+    const state = DateNavigationState(
+      searchRadius: 640,
+      selectedMeetingFormat: MeetingFormat.food,
+      finalChoiceName: 'Locked venue',
+      point1: latlong.LatLng(53.9, 27.56),
+      point2: latlong.LatLng(53.91, 27.57),
+    );
+
+    final result = coordinator.buildSuccess(
+      state: state,
+      meeting: _meeting(placeName: 'Place B'),
+      point1: const latlong.LatLng(53.9, 27.56),
+      point2: const latlong.LatLng(53.91, 27.57),
+      meetingPlanner: planner,
+      resultCoordinator: resultCoordinator,
+    );
+
+    expect(result.shouldMarkFetchedRadius, isFalse);
+    expect(result.fetchedRadius, isNull);
+    expect(result.success.shouldClearFailure, isFalse);
+    expect(result.success.shouldSaveSnapshot, isFalse);
+  });
+}

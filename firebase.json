@@ -1,0 +1,26 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "date-navigation",
+          "appId": "1:451354106296:android:bef02b4f801eb79cac174d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "date-navigation",
+          "configurations": {
+            "android": "1:451354106296:android:bef02b4f801eb79cac174d",
+            "web": "1:451354106296:web:fa22415059a02537ac174d"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

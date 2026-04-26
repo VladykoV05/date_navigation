@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function roomParticipants() {
+      return resource.data.participants;
+    }
+
+    function roomParticipantIds() {
+      return request.resource.data.participants;
+    }
+
+    function roomDoc(roomId) {
+      return get(/databases/$(database)/documents/rooms/$(roomId));
+    }
+
+    function roomExists(roomId) {
+      return exists(/databases/$(database)/documents/rooms/$(roomId));
+    }
+
+    function userInRoom(roomId, uid) {
+      return roomExists(roomId) && uid in roomDoc(roomId).data.participants;
+    }
+
+    function isValidSessionStatus(value) {
+      return value == 'active' || value == 'completed' || value == 'expired';
+    }
+
+    function isValidSearchRadius(value) {
+      return value == null || (value is int && value >= 200 && value <= 3000);
+    }
+
+    function isValidMeetingFormat(value) {
+      return value == null
+             || value == 'food'
+             || value == 'culture'
+             || value == 'walk_only'
+             || value == 'active'
+             // Legacy values kept for backward compatibility.
+             || value == 'coffee'
+             || value == 'dinner'
+             || value == 'walk_and_coffee';
+    }
+
+    function isValidMeetingSnapshot(snapshot) {
+      return snapshot == null
+             || (
+               (snapshot.center == null
+                || (
+                  snapshot.center.lat is number
+                  && snapshot.center.lng is number
+                  && snapshot.center.lat >= -90
+                  && snapshot.center.lat <= 90
+                  && snapshot.center.lng >= -180
+                  && snapshot.center.lng <= 180
+                ))
+               && isValidSearchRadius(snapshot.searchRadius)
+             );
+    }
+
+    // Legacy root-level history is not used by the app.
+    // Keep a single source of truth: /users/{uid}/meeting_history.
+    match /meeting_history/{docId} {
+      allow read, write: if false;
+    }
+
+    match /rooms/{roomId} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+                    && request.resource.data.creatorUid == request.auth.uid
+                    && request.resource.data.partnerUid == null
+                    && roomParticipantIds().size() == 1
+                    && request.auth.uid in roomParticipantIds()
+                    && isValidSessionStatus(request.resource.data.sessionStatus)
+                    && isValidSearchRadius(request.resource.data.creatorSearchRadius)
+                    && isValidSearchRadius(request.resource.data.partnerSearchRadius)
+                    && isValidMeetingFormat(request.resource.data.creatorMeetingFormat)
+                    && isValidMeetingFormat(request.resource.data.partnerMeetingFormat)
+                    && isValidMeetingSnapshot(request.resource.data.meetingSnapshot);
+
+      allow update: if isSignedIn()
+                    && (
+                      // Regular updates by existing participants
+                      (
+                        request.auth.uid in roomParticipants()
+                        && request.resource.data.creatorUid == resource.data.creatorUid
+                        && request.resource.data.participants.size() <= 2
+                        && isValidSessionStatus(request.resource.data.sessionStatus)
+                        && isValidSearchRadius(request.resource.data.creatorSearchRadius)
+                        && isValidSearchRadius(request.resource.data.partnerSearchRadius)
+                        && isValidMeetingFormat(request.resource.data.creatorMeetingFormat)
+                        && isValidMeetingFormat(request.resource.data.partnerMeetingFormat)
+                        && isValidMeetingSnapshot(request.resource.data.meetingSnapshot)
+                      )
+                      // Join flow for second participant
+                      || (
+                        resource.data.partnerUid == null
+                        && request.resource.data.partnerUid == request.auth.uid
+                        && request.resource.data.creatorUid == resource.data.creatorUid
+                        && request.resource.data.participants.size() == 2
+                        && request.auth.uid in request.resource.data.participants
+                        && resource.data.creatorUid in request.resource.data.participants
+                        && isValidSessionStatus(request.resource.data.sessionStatus)
+                        && isValidSearchRadius(request.resource.data.creatorSearchRadius)
+                        && isValidSearchRadius(request.resource.data.partnerSearchRadius)
+                        && isValidMeetingFormat(request.resource.data.creatorMeetingFormat)
+                        && isValidMeetingFormat(request.resource.data.partnerMeetingFormat)
+                        && isValidMeetingSnapshot(request.resource.data.meetingSnapshot)
+                      )
+                    );
+
+      allow delete: if false;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isSelf(uid);
+
+      match /favorites/{docId} {
+        allow read, write: if isSelf(uid);
+      }
+
+      match /meeting_history/{docId} {
+        allow read: if isSelf(uid);
+
+        // Allow creating history for both participants on proposal accept.
+        allow create: if isSelf(uid)
+                      || (
+                        isSignedIn()
+                        && request.resource.data.roomId is string
+                        && userInRoom(request.resource.data.roomId, request.auth.uid)
+                        && userInRoom(request.resource.data.roomId, uid)
+                      );
+
+        // Only owner can edit/delete own history entries.
+        allow update, delete: if isSelf(uid);
+      }
+
+      match /address_memory/{docId} {
+        allow read: if isSelf(uid);
+        allow create, update: if isSelf(uid)
+                              && request.resource.data.address is string
+                              && request.resource.data.address.size() > 2
+                              && request.resource.data.usesCount is int
+                              && request.resource.data.usesCount >= 1;
+        allow delete: if isSelf(uid);
+      }
+    }
+  }
+}
