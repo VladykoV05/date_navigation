@@ -1,16 +1,89 @@
-# date_navigation
+# Date Navigation
 
-A new Flutter project.
+Plan dates together, vote for places, and find a meeting point that works for both users.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## About
 
-A few resources to get you started if this is your first Flutter project:
+**Date Navigation** is a Flutter app for collaborative meeting planning:
+- share room/session
+- sync preferences between two users
+- select meeting format
+- find nearby places around a shared center
+- vote or propose alternatives
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+The app is built with clean, feature-oriented architecture and real-time sync through Firebase.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+
+- Real-time room collaboration for two users
+- Meeting format selection and coordination flow
+- Place discovery with filtering and quality checks
+- Voting / proposing places with synchronized state
+- Favorites and history
+- Adaptive UI with map + control panel workflow
+
+## Tech Stack
+
+- **Framework:** Flutter (Dart)
+- **State Management:** Riverpod
+- **Backend:** Firebase (Auth, Firestore, Analytics, Crashlytics)
+- **Architecture:** Feature-first + layered modules (`presentation`, `domain`, `data`)
+
+## Project Structure
+
+```text
+lib/
+  core/                     # shared services, error/result, theme, utils
+  features/
+    auth/                   # authentication feature
+    account/                # account, favorites, history
+    date_navigation/        # main collaborative planning flow
+test/                       # unit and widget tests
+docs/                       # architecture and feature docs
+```
+
+## Quick Start
+
+### 1) Prerequisites
+
+- Flutter SDK installed
+- Xcode / Android Studio (for device builds)
+- Firebase project configured
+
+### 2) Install dependencies
+
+```bash
+flutter pub get
+```
+
+### 3) Run
+
+```bash
+flutter run
+```
+
+## Development Commands
+
+```bash
+flutter analyze
+flutter test
+flutter clean
+```
+
+## Firebase Notes
+
+For full functionality, platform Firebase configs are required:
+- `android/app/google-services.json`
+- `ios/Runner/GoogleService-Info.plist`
+
+## Roadmap Ideas
+
+- Better onboarding UX for first-time users
+- Extended analytics dashboard for meeting flow
+- More place sources and recommendation signals
+
+## License
+
+This project currently has no license file. Add one if you plan public reuse.
