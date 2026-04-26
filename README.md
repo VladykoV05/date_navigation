@@ -72,11 +72,54 @@ flutter test
 flutter clean
 ```
 
-## Firebase Notes
+## Setup Firebase
 
-For full functionality, platform Firebase configs are required:
-- `android/app/google-services.json`
-- `ios/Runner/GoogleService-Info.plist`
+To run the app with backend features (Auth, Firestore, Analytics, Crashlytics), connect your own Firebase project.
+
+### 1) Create Firebase project
+
+1. Open [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project
+3. Enable:
+   - Authentication (providers you need)
+   - Cloud Firestore
+   - Analytics (optional but recommended)
+   - Crashlytics (optional but recommended)
+
+### 2) Configure Android
+
+1. Add Android app in Firebase with package name from:
+   - `android/app/build.gradle.kts` (`applicationId`)
+2. Download `google-services.json`
+3. Put it here:
+   - `android/app/google-services.json`
+
+### 3) Configure iOS
+
+1. Add iOS app in Firebase with bundle id from Xcode (`Runner` target)
+2. Download `GoogleService-Info.plist`
+3. Put it here:
+   - `ios/Runner/GoogleService-Info.plist`
+
+### 4) Regenerate Flutter Firebase config (recommended)
+
+If you use FlutterFire CLI:
+
+```bash
+dart pub global activate flutterfire_cli
+flutterfire configure
+```
+
+This updates `lib/firebase_options.dart` for your Firebase project.
+
+### 5) Validate setup
+
+```bash
+flutter pub get
+flutter run
+```
+
+If Firebase setup is correct, the app should launch and backend-dependent flows should work.
 
 ## Roadmap Ideas
 
