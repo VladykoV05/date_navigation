@@ -5,7 +5,10 @@ class JoinRoom {
   final RoomSessionRepository _repo;
   const JoinRoom(this._repo);
 
-  Future<Result<void>> call({required String roomId, required String userId}) {
-    return _repo.joinRoom(roomId: roomId, userId: userId);
+  Future<Result<String>> call({
+    required String inviteCode,
+    required String userId,
+  }) {
+    return _repo.joinRoom(inviteCode: inviteCode, userId: userId);
   }
 }

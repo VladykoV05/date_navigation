@@ -26,12 +26,15 @@ class RoomLifecycleCoordinator {
   final JoinRoom _joinRoom;
   final AnalyticsService _analytics;
 
+  RoomAccess _access({required String roomId, required String inviteCode}) =>
+      RoomAccess(roomId: roomId, inviteCode: inviteCode);
+
   String generateRoomCode() => (1000 + Random().nextInt(8999)).toString();
 
-  Future<Result<String>> createRoom({required String userId}) async {
+  Future<Result<RoomAccess>> createRoom({required String userId}) async {
     for (var attempt = 0; attempt < _maxCreateRoomAttempts; attempt++) {
-      final code = generateRoomCode();
-      final result = await _createRoom(code, createdBy: userId);
+      final inviteCode = generateRoomCode();
+      final result = await _createRoom(inviteCode, createdBy: userId);
       switch (result) {
         case Err(:final failure):
           final collision = failure.message.contains(
@@ -47,9 +50,11 @@ class RoomLifecycleCoordinator {
             ),
           );
           return Err(failure);
-        case Ok():
+        case Ok(value: final roomId):
           unawaited(_analytics.roomCreated());
-          return Ok(code);
+          return Ok(
+            _access(roomId: roomId, inviteCode: inviteCode),
+          );
       }
     }
     return const Err(
@@ -57,15 +62,21 @@ class RoomLifecycleCoordinator {
     );
   }
 
-  Future<Result<void>> joinRoom({
+  Future<Result<RoomAccess>> joinRoom({
     required String code,
     required String userId,
   }) async {
-    final result = await _joinRoom(roomId: code, userId: userId);
-    if (result is Ok<void>) {
-      unawaited(_analytics.roomJoined());
+    final inviteCode = code.trim();
+    final result = await _joinRoom(inviteCode: inviteCode, userId: userId);
+    switch (result) {
+      case Ok(value: final roomId):
+        unawaited(_analytics.roomJoined());
+        return Ok(
+          _access(roomId: roomId, inviteCode: inviteCode),
+        );
+      case Err(:final failure):
+        return Err(failure);
     }
-    return result;
   }
 
   Future<Result<void>> completeSession({
@@ -78,4 +89,11 @@ class RoomLifecycleCoordinator {
     }
     return result;
   }
+}
+
+class RoomAccess {
+  const RoomAccess({required this.roomId, required this.inviteCode});
+
+  final String roomId;
+  final String inviteCode;
 }

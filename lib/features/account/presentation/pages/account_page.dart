@@ -261,7 +261,6 @@ class AccountPage extends ConsumerWidget {
     final formattedDate = date == null
         ? 'Время неизвестно'
         : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-    final roomId = item.roomId?.trim();
 
     await showModalBottomSheet<void>(
       context: context,
@@ -286,16 +285,6 @@ class AccountPage extends ConsumerWidget {
                 Expanded(child: Text(formattedDate)),
               ],
             ),
-            if (roomId != null && roomId.isNotEmpty) ...[
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(Icons.tag_outlined, size: 18),
-                  const SizedBox(width: 6),
-                  Expanded(child: Text('Комната: $roomId')),
-                ],
-              ),
-            ],
             const SizedBox(height: 10),
             Row(
               children: [

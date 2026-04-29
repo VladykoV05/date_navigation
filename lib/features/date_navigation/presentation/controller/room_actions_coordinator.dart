@@ -7,9 +7,11 @@ class RoomActionsCoordinator {
   DateNavigationState afterCreateSuccess(
     DateNavigationState state, {
     required String roomId,
+    required String inviteCode,
   }) {
     return state.copyWith(
       roomId: roomId,
+      inviteCode: inviteCode,
       isCreator: true,
       isLoadingRoomAction: false,
     );
@@ -18,9 +20,11 @@ class RoomActionsCoordinator {
   DateNavigationState afterJoinSuccess(
     DateNavigationState state, {
     required String roomId,
+    required String inviteCode,
   }) {
     return state.copyWith(
       roomId: roomId,
+      inviteCode: inviteCode,
       isCreator: false,
       isLoadingRoomAction: false,
       errorMessage: null,

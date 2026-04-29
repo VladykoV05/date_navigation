@@ -8,6 +8,7 @@ import '../../domain/entities/place.dart';
 class RoomSessionSection {
   const RoomSessionSection({
     required this.roomId,
+    required this.inviteCode,
     required this.isCreator,
     required this.point1,
     required this.point2,
@@ -15,6 +16,7 @@ class RoomSessionSection {
   });
 
   final String? roomId;
+  final String? inviteCode;
   final bool isCreator;
   final latlong.LatLng? point1;
   final latlong.LatLng? point2;
@@ -125,6 +127,7 @@ class FailureSection {
 
 class DateNavigationState {
   final String? roomId;
+  final String? inviteCode;
   final bool isCreator;
   final bool isLoadingRoomAction;
   final bool isGeocoding;
@@ -166,6 +169,7 @@ class DateNavigationState {
 
   const DateNavigationState({
     this.roomId,
+    this.inviteCode,
     this.isCreator = false,
     this.isLoadingRoomAction = false,
     this.isGeocoding = false,
@@ -226,6 +230,7 @@ class DateNavigationState {
 
   RoomSessionSection get roomSession => RoomSessionSection(
     roomId: roomId,
+    inviteCode: inviteCode,
     isCreator: isCreator,
     point1: point1,
     point2: point2,
@@ -281,6 +286,7 @@ class DateNavigationState {
 
   DateNavigationState copyWith({
     String? roomId,
+    Object? inviteCode = _unset,
     bool? isCreator,
     bool? isLoadingRoomAction,
     bool? isGeocoding,
@@ -322,6 +328,9 @@ class DateNavigationState {
   }) {
     return DateNavigationState(
       roomId: roomId ?? this.roomId,
+      inviteCode: identical(inviteCode, _unset)
+          ? this.inviteCode
+          : inviteCode as String?,
       isCreator: isCreator ?? this.isCreator,
       isLoadingRoomAction: isLoadingRoomAction ?? this.isLoadingRoomAction,
       isGeocoding: isGeocoding ?? this.isGeocoding,

@@ -5,7 +5,7 @@ class CreateRoom {
   final RoomSessionRepository _repo;
   const CreateRoom(this._repo);
 
-  Future<Result<void>> call(String code, {required String createdBy}) {
+  Future<Result<String>> call(String code, {required String createdBy}) {
     return _repo.createRoom(code, createdBy: createdBy);
   }
 }

@@ -419,8 +419,8 @@ class RoomControlPanel extends StatelessWidget {
           },
           decoration: InputDecoration(
             labelText: 'Адрес',
-            hintText: 'Ваш адрес',
-            helperText: 'Введите адрес, чтобы найти точку встречи',
+            hintText: 'Например: Минск, ул. Ленина 10',
+            helperText: 'Введите ваш точный адрес, чтобы найти общую точку встречи',
             filled: true,
             fillColor: colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(

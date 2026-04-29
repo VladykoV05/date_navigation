@@ -10,16 +10,16 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   RoomSessionRepositoryImpl(this._remote);
 
   @override
-  Future<Result<void>> createRoom(String code, {String? createdBy}) {
+  Future<Result<String>> createRoom(String code, {String? createdBy}) {
     return _remote.createRoom(code, createdBy: createdBy);
   }
 
   @override
-  Future<Result<void>> joinRoom({
-    required String roomId,
+  Future<Result<String>> joinRoom({
+    required String inviteCode,
     required String userId,
   }) {
-    return _remote.joinRoom(roomId: roomId, userId: userId);
+    return _remote.joinRoom(inviteCode: inviteCode, userId: userId);
   }
 
   @override

@@ -107,6 +107,15 @@ extension _DateNavigationPageLayout on _DateNavigationPageState {
       if (mounted) Navigator.of(context).maybePop();
       return;
     }
+    final shouldLeave = await ConfirmDialog.showBinary(
+      context,
+      title: 'Покинуть комнату?',
+      message:
+          'Вы выйдете из текущей комнаты на этом устройстве и вернетесь на стартовый экран.',
+      cancelLabel: UiCopy.noLabel,
+      confirmLabel: UiCopy.leaveRoomConfirm,
+    );
+    if (shouldLeave != true) return;
     ref.read(dateNavigationControllerProvider.notifier).leaveRoom();
     if (mounted) Navigator.of(context).maybePop();
   }

@@ -11,6 +11,7 @@ import 'room_voting_remote_data_source.dart';
 
 class RoomRemoteDataSource {
   static const String roomsCollection = 'rooms';
+  static const String roomInvitesCollection = 'roomInvites';
   static const String usersCollection = 'users';
   static const int defaultRecentHistoryLimit = 10;
   static const int defaultFavoritesLimit = 100;
@@ -42,21 +43,23 @@ class RoomRemoteDataSource {
     );
   }
 
-  Future<Result<void>> createRoom(String code, {String? createdBy}) async {
+  Future<Result<String>> createRoom(String code, {String? createdBy}) async {
     return _sessionDataSource.createRoom(
       code,
       roomsCollection: roomsCollection,
+      invitesCollection: roomInvitesCollection,
       createdBy: createdBy,
     );
   }
 
-  Future<Result<void>> joinRoom({
-    required String roomId,
+  Future<Result<String>> joinRoom({
+    required String inviteCode,
     required String userId,
   }) async {
     return _sessionDataSource.joinRoom(
       roomsCollection: roomsCollection,
-      roomId: roomId,
+      invitesCollection: roomInvitesCollection,
+      inviteCode: inviteCode,
       userId: userId,
     );
   }

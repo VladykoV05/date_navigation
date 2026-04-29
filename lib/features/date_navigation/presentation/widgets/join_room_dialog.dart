@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Future<void> showJoinRoomDialog({
   required BuildContext context,
@@ -30,40 +31,40 @@ class _JoinRoomDialogState extends State<_JoinRoomDialog> {
 
   void _submitCode() {
     final code = _controller.text.trim();
-    if (code.isEmpty) return;
+    if (code.length != 4) return;
     widget.onJoinCode(code);
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    return Padding(
-      padding: EdgeInsets.only(bottom: bottomInset),
-      child: AlertDialog(
-        title: const Text('Введите код'),
-        content: TextField(
-          controller: _controller,
-          keyboardType: TextInputType.number,
-          textInputAction: TextInputAction.done,
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Код комнаты',
-            hintText: 'Например, 123456',
-          ),
-          onSubmitted: (_) => _submitCode(),
+    return AlertDialog(
+      title: const Text('Введите код'),
+      content: TextField(
+        controller: _controller,
+        keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.done,
+        maxLength: 4,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        autofocus: true,
+        decoration: const InputDecoration(
+          labelText: 'Код комнаты',
+          hintText: '4 цифры, например 1234',
+          helperText: 'Введите код, который отправил партнер',
+          counterText: '',
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
-          ),
-          ElevatedButton(
-            onPressed: _submitCode,
-            child: const Text('Войти'),
-          ),
-        ],
+        onSubmitted: (_) => _submitCode(),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Отмена'),
+        ),
+        ElevatedButton(
+          onPressed: _submitCode,
+          child: const Text('Войти'),
+        ),
+      ],
     );
   }
 }

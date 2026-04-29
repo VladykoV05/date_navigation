@@ -201,9 +201,13 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
       case Err(:final failure):
         _setRoomActionLoading(false);
         _setFailure(failure, 'room');
-      case Ok(value: final code):
-        state = _roomActions.afterCreateSuccess(state, roomId: code);
-        _subscribeToRoom(code);
+      case Ok(value: final access):
+        state = _roomActions.afterCreateSuccess(
+          state,
+          roomId: access.roomId,
+          inviteCode: access.inviteCode,
+        );
+        _subscribeToRoom(access.roomId);
     }
   }
 
@@ -222,9 +226,13 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
       case Err(:final failure):
         _setRoomActionLoading(false);
         _setFailure(failure, 'room');
-      case Ok():
-        state = _roomActions.afterJoinSuccess(state, roomId: code);
-        _subscribeToRoom(code);
+      case Ok(value: final access):
+        state = _roomActions.afterJoinSuccess(
+          state,
+          roomId: access.roomId,
+          inviteCode: access.inviteCode,
+        );
+        _subscribeToRoom(access.roomId);
     }
   }
 

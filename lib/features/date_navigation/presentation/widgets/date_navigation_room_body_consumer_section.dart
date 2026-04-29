@@ -46,6 +46,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         onJoinRoom: onShowJoinDialog,
       );
     }
+    final displayCode = view.inviteCode ?? roomId;
     final venueLocked = view.venueLocked;
     final isSessionClosed = view.isSessionClosed;
     final isSessionCompleted = view.sessionStatus == 'completed';
@@ -64,7 +65,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'КОД: $roomId',
+            'КОД: $displayCode',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 18,
@@ -110,14 +111,14 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
                 isScrollControlled: true,
                 showDragHandle: false,
                 builder: (sheetContext) => ScenarioSummarySheet(
-                  roomId: roomId,
+                  roomId: displayCode,
                   scenario: selectedScenario,
                   onSharePressed: () {
                     Navigator.of(sheetContext).pop();
                     SharePlus.instance.share(
                       ShareParams(
                         text: _shareScenarioText(
-                          roomId: roomId,
+                          roomId: displayCode,
                           scenario: selectedScenario,
                         ),
                       ),
@@ -252,7 +253,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       }
     }
     buffer.writeln();
-    buffer.write('Собрано в Date Navigation');
+    buffer.write('Собрано в приложении для встречи');
     return buffer.toString();
   }
 }

@@ -109,6 +109,7 @@ final dateNavigationRoomBodyViewProvider = Provider.autoDispose(
     dateNavigationControllerProvider.select(
       (s) => (
         roomId: s.roomSession.roomId,
+        inviteCode: s.roomSession.inviteCode,
         venueLocked: (s.meeting.finalChoiceName?.isNotEmpty ?? false),
         finalChoiceName: s.meeting.finalChoiceName,
         finalChoicePlace: s.meeting.finalChoicePlace,
@@ -165,6 +166,7 @@ final roomControlPanelViewProvider = Provider.autoDispose((ref) {
     dateNavigationControllerProvider.select(
       (s) => (
         roomId: s.roomSession.roomId,
+        inviteCode: s.roomSession.inviteCode,
         isCreator: s.roomSession.isCreator,
         isSessionClosed: s.roomSession.isClosed,
         sessionStatus: s.roomSession.sessionStatus,
@@ -195,7 +197,7 @@ final roomControlPanelViewProvider = Provider.autoDispose((ref) {
   final currentUserId = ref.watch(
     authSessionProvider.select((auth) => auth.currentUserId ?? ''),
   );
-  final roomId = stateSlice.roomId ?? '';
+  final roomId = stateSlice.inviteCode ?? stateSlice.roomId ?? '';
   final myLocation = stateSlice.isCreator ? stateSlice.point1 : stateSlice.point2;
   final partnerPoint = stateSlice.isCreator ? stateSlice.point2 : stateSlice.point1;
   final mySelectedMeetingFormat = stateSlice.isCreator

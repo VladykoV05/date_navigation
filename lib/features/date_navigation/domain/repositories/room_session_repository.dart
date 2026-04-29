@@ -4,9 +4,9 @@ import 'package:latlong2/latlong.dart' as latlong;
 import '../../../../core/error/result.dart';
 
 abstract interface class RoomSessionRepository {
-  Future<Result<void>> createRoom(String code, {String? createdBy});
-  Future<Result<void>> joinRoom({
-    required String roomId,
+  Future<Result<String>> createRoom(String code, {String? createdBy});
+  Future<Result<String>> joinRoom({
+    required String inviteCode,
     required String userId,
   });
 

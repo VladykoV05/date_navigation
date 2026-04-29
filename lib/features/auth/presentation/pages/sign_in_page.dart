@@ -71,13 +71,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Icon(
-                      Icons.favorite_rounded,
+                      Icons.place_rounded,
                       size: 38,
                       color: colorScheme.primary,
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Date Navigation',
+                      'Приложение для встречи',
                       textAlign: TextAlign.center,
                       style: textTheme.headlineSmall,
                     ),
