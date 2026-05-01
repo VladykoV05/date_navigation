@@ -1,0 +1,11 @@
+{
+  "name": "date-navigation-maintenance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "cleanup:rooms": "node cleanup_rooms.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
