@@ -72,6 +72,27 @@ flutter test
 flutter clean
 ```
 
+## Firestore Room Cleanup
+
+The project includes a maintenance script that removes expired room invites and
+old completed rooms from Firestore:
+
+```bash
+cd scripts
+npm ci
+npm run cleanup:rooms
+```
+
+It can also run automatically through GitHub Actions. Configure these repository
+secrets in GitHub (`Settings` -> `Secrets and variables` -> `Actions`):
+
+- `FIREBASE_PROJECT_ID` - your Firebase project id
+- `FIREBASE_SERVICE_ACCOUNT_JSON` - JSON key for a Firebase service account with
+  Firestore access
+
+The workflow `.github/workflows/cleanup-rooms.yml` runs every day at `03:00 UTC`
+and can also be started manually from the Actions tab.
+
 ## Setup Firebase
 
 To run the app with backend features (Auth, Firestore, Analytics, Crashlytics), connect your own Firebase project.
