@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_navigation/features/date_navigation/domain/entities/room_snapshot.dart';
+import 'package:date_navigation/features/date_navigation/domain/entities/room_status.dart';
 import 'package:date_navigation/features/date_navigation/presentation/controller/meeting_planner_coordinator.dart';
-import 'package:date_navigation/features/date_navigation/presentation/controller/room_document_mapper.dart';
 import 'package:date_navigation/features/date_navigation/presentation/controller/room_sync_coordinator.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
 import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
@@ -8,8 +8,43 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 void main() {
-  final coordinator = RoomSyncCoordinator(const RoomDocumentMapper());
+  const coordinator = RoomSyncCoordinator();
   final planner = MeetingPlannerCoordinator();
+
+  RoomSnapshot snapshot({
+    String creatorUid = 'creator-1',
+    latlong.LatLng? point1,
+    latlong.LatLng? point2,
+    RoomFinalChoiceSnapshot finalChoice = const RoomFinalChoiceSnapshot(),
+    RoomProposalSnapshot proposal = const RoomProposalSnapshot(),
+    Map<String, String> votes = const {},
+    int? creatorSearchRadius,
+    int? partnerSearchRadius,
+    DateTime? creatorSearchRadiusUpdatedAt,
+    DateTime? partnerSearchRadiusUpdatedAt,
+    List<MeetingFormat> creatorMeetingFormats = const [],
+    List<MeetingFormat> partnerMeetingFormats = const [],
+    MeetingFormat? creatorSelectedMeetingFormat,
+    MeetingFormat? partnerSelectedMeetingFormat,
+  }) {
+    return RoomSnapshot(
+      id: 'room-1',
+      creatorUid: creatorUid,
+      point1: point1,
+      point2: point2,
+      finalChoice: finalChoice,
+      proposal: proposal,
+      votes: votes,
+      creatorSearchRadius: creatorSearchRadius,
+      partnerSearchRadius: partnerSearchRadius,
+      creatorSearchRadiusUpdatedAt: creatorSearchRadiusUpdatedAt,
+      partnerSearchRadiusUpdatedAt: partnerSearchRadiusUpdatedAt,
+      creatorMeetingFormats: creatorMeetingFormats,
+      partnerMeetingFormats: partnerMeetingFormats,
+      creatorSelectedMeetingFormat: creatorSelectedMeetingFormat,
+      partnerSelectedMeetingFormat: partnerSelectedMeetingFormat,
+    );
+  }
 
   test('buildOutcome marks venueLocked and resolves final place', () {
     final currentState = DateNavigationState(
@@ -21,18 +56,22 @@ void main() {
       currentState: currentState,
       userId: 'creator-1',
       meetingPlanner: planner,
-      roomData: {
-        'creatorUid': 'creator-1',
-        'point1': {'lat': 53.9, 'lng': 27.56},
-        'point2': {'lat': 53.91, 'lng': 27.57},
-        'finalChoice': 'Cafe X',
-        'finalChoiceLat': 53.905,
-        'finalChoiceLon': 27.565,
-        'finalChoiceAddress': 'Some street',
-        'finalChoiceType': 'cafe',
-        'proposal': {'placeName': 'Cafe X', 'status': 'accepted'},
-        'votes': {'u1': 'Cafe X'},
-      },
+      roomSnapshot: snapshot(
+        point1: const latlong.LatLng(53.9, 27.56),
+        point2: const latlong.LatLng(53.91, 27.57),
+        finalChoice: const RoomFinalChoiceSnapshot(
+          name: 'Cafe X',
+          lat: 53.905,
+          lon: 27.565,
+          address: 'Some street',
+          type: 'cafe',
+        ),
+        proposal: const RoomProposalSnapshot(
+          placeName: 'Cafe X',
+          status: ProposalStatus.accepted,
+        ),
+        votes: const {'u1': 'Cafe X'},
+      ),
     );
 
     expect(outcome.venueLocked, isTrue);
@@ -52,13 +91,11 @@ void main() {
       currentState: currentState,
       userId: 'x',
       meetingPlanner: planner,
-      roomData: {
-        'creatorUid': 'x',
-        'point1': {'lat': 1.0, 'lng': 1.5},
-        'point2': {'lat': 2.0, 'lng': 2.0},
-        'proposal': {},
-        'votes': {},
-      },
+      roomSnapshot: snapshot(
+        creatorUid: 'x',
+        point1: const latlong.LatLng(1.0, 1.5),
+        point2: const latlong.LatLng(2.0, 2.0),
+      ),
     );
 
     expect(outcome.pointsChanged, isTrue);
@@ -72,43 +109,28 @@ void main() {
       currentState: currentState,
       userId: 'creator-1',
       meetingPlanner: planner,
-      roomData: {
-        'creatorUid': 'creator-1',
-        'partnerUid': 'partner-1',
-        'creatorSearchRadius': 500,
-        'partnerSearchRadius': 900,
-        'creatorSearchRadiusUpdatedAt': Timestamp.fromDate(
-          now.subtract(const Duration(minutes: 2)),
-        ),
-        'partnerSearchRadiusUpdatedAt': Timestamp.fromDate(now),
-        'proposal': {},
-        'votes': {},
-      },
+      roomSnapshot: snapshot(
+        creatorSearchRadius: 500,
+        partnerSearchRadius: 900,
+        creatorSearchRadiusUpdatedAt: now.subtract(const Duration(minutes: 2)),
+        partnerSearchRadiusUpdatedAt: now,
+      ),
     );
 
     expect(outcome.nextState.peerSuggestedRadius, 900);
   });
 
   test('buildOutcome does not create peer format suggestions', () {
-    final now = DateTime.now();
     final currentState = const DateNavigationState();
 
     final outcome = coordinator.buildOutcome(
       currentState: currentState,
       userId: 'creator-1',
       meetingPlanner: planner,
-      roomData: {
-        'creatorUid': 'creator-1',
-        'partnerUid': 'partner-1',
-        'creatorMeetingFormat': 'food',
-        'partnerMeetingFormat': 'culture',
-        'creatorMeetingFormatUpdatedAt': Timestamp.fromDate(
-          now.subtract(const Duration(minutes: 3)),
-        ),
-        'partnerMeetingFormatUpdatedAt': Timestamp.fromDate(now),
-        'proposal': {},
-        'votes': {},
-      },
+      roomSnapshot: snapshot(
+        creatorMeetingFormats: const [MeetingFormat.food],
+        partnerMeetingFormats: const [MeetingFormat.culture],
+      ),
     );
 
     expect(outcome.nextState.selectedMeetingFormat, isNull);
@@ -118,23 +140,20 @@ void main() {
   test(
     'buildOutcome does not suggest peer format when sets equal but order differs',
     () {
-      final now = DateTime.now();
       final outcome = coordinator.buildOutcome(
         currentState: const DateNavigationState(),
         userId: 'creator-1',
         meetingPlanner: planner,
-        roomData: {
-          'creatorUid': 'creator-1',
-          'partnerUid': 'partner-1',
-          'creatorMeetingFormats': ['food', 'culture'],
-          'partnerMeetingFormats': ['culture', 'food'],
-          'creatorMeetingFormatUpdatedAt': Timestamp.fromDate(
-            now.subtract(const Duration(minutes: 1)),
-          ),
-          'partnerMeetingFormatUpdatedAt': Timestamp.fromDate(now),
-          'proposal': {},
-          'votes': {},
-        },
+        roomSnapshot: snapshot(
+          creatorMeetingFormats: const [
+            MeetingFormat.food,
+            MeetingFormat.culture,
+          ],
+          partnerMeetingFormats: const [
+            MeetingFormat.culture,
+            MeetingFormat.food,
+          ],
+        ),
       );
 
       expect(outcome.nextState.peerSuggestedMeetingFormat, isNull);
@@ -146,16 +165,18 @@ void main() {
       currentState: const DateNavigationState(),
       userId: 'creator-1',
       meetingPlanner: planner,
-      roomData: {
-        'creatorUid': 'creator-1',
-        'partnerUid': 'partner-1',
-        'creatorMeetingFormats': ['food', 'culture'],
-        'partnerMeetingFormats': ['walk_only', 'culture'],
-        'creatorSelectedMeetingFormat': 'culture',
-        'partnerSelectedMeetingFormat': 'culture',
-        'proposal': {},
-        'votes': {},
-      },
+      roomSnapshot: snapshot(
+        creatorMeetingFormats: const [
+          MeetingFormat.food,
+          MeetingFormat.culture,
+        ],
+        partnerMeetingFormats: const [
+          MeetingFormat.culture,
+          MeetingFormat.walkOnly,
+        ],
+        creatorSelectedMeetingFormat: MeetingFormat.culture,
+        partnerSelectedMeetingFormat: MeetingFormat.culture,
+      ),
     );
 
     expect(outcome.nextState.creatorMeetingFormats, [
@@ -166,8 +187,14 @@ void main() {
       MeetingFormat.culture,
       MeetingFormat.walkOnly,
     ]);
-    expect(outcome.nextState.creatorSelectedMeetingFormat, MeetingFormat.culture);
-    expect(outcome.nextState.partnerSelectedMeetingFormat, MeetingFormat.culture);
+    expect(
+      outcome.nextState.creatorSelectedMeetingFormat,
+      MeetingFormat.culture,
+    );
+    expect(
+      outcome.nextState.partnerSelectedMeetingFormat,
+      MeetingFormat.culture,
+    );
     expect(outcome.nextState.commonMeetingFormats, [MeetingFormat.culture]);
     expect(outcome.nextState.selectedMeetingFormat, MeetingFormat.culture);
   });

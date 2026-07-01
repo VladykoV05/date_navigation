@@ -11,6 +11,7 @@ import '../../../../core/services/navigation_service.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../../../core/utils/place_type_localizer.dart';
 import '../../../../core/utils/show_notification.dart';
+import '../../../user_profile/presentation/controller/favorites_controller.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../widgets/date_navigation_account_menu.dart';
@@ -23,7 +24,6 @@ import '../widgets/join_room_dialog.dart';
 import '../widgets/place_actions_sheet.dart';
 import '../widgets/ui_copy.dart';
 import '../controller/date_navigation_controller.dart';
-import '../controller/favorites_controller.dart';
 import '../controller/providers/date_navigation_provider.dart';
 import '../state/date_navigation_state.dart';
 
@@ -89,7 +89,10 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     );
   }
 
-  void _onStateChanged(DateNavigationState? previous, DateNavigationState next) {
+  void _onStateChanged(
+    DateNavigationState? previous,
+    DateNavigationState next,
+  ) {
     if (!mounted) return;
     _handleFailureNotifications(previous, next);
     _handlePartnerSuggestions(previous, next);
@@ -133,7 +136,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     final myRole = next.roomSession.isCreator ? 'creator' : 'partner';
     final isPendingPartnerProposal =
         next.voting.proposalPlaceName != null &&
-        next.voting.proposalStatus == 'pending' &&
+        (next.voting.proposalStatus?.isPending ?? false) &&
         next.meeting.finalChoiceName == null &&
         next.voting.proposalByRole != myRole;
     final proposalJustChanged =
@@ -151,7 +154,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     }
 
     final isPendingPartnerRevoteRequest =
-        next.meeting.meetingRevoteRequestStatus == 'pending' &&
+        (next.meeting.meetingRevoteRequestStatus?.isPending ?? false) &&
         next.meeting.meetingRevoteRequestByRole != null &&
         next.meeting.meetingRevoteRequestByRole != myRole;
     final revoteRequestJustChanged =
@@ -182,7 +185,8 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     if (myPointChanged && next.meeting.centerPoint == null) {
       _focusOnAddressPoint(myNextPoint);
     }
-    if (hasAllPoints && next.meeting.centerPoint != previous?.meeting.centerPoint) {
+    if (hasAllPoints &&
+        next.meeting.centerPoint != previous?.meeting.centerPoint) {
       _focusOnCenter(next.meeting.centerPoint!);
     }
     final nextFinalChoicePlace = next.meeting.finalChoicePlace;
@@ -246,7 +250,6 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     );
   }
 
-
   Future<void> _submitAddress(DateNavigationController controller) async {
     if (_isSubmittingAddress) return;
     final text = _addressCtrl.text.trim();
@@ -275,7 +278,6 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     FocusScope.of(context).unfocus();
     unawaited(_submitAddress(controller));
   }
-
 
   void _showJoinDialog() {
     showJoinRoomDialog(
@@ -308,7 +310,13 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       onToggleFavorite: () async {
         await ref
             .read(favoritesControllerProvider.notifier)
-            .toggleFavorite(place);
+            .toggleFavorite(
+              placeName: place.name,
+              placeAddress: place.address,
+              placeType: place.type,
+              lat: place.lat,
+              lon: place.lon,
+            );
       },
       onProposePlace: () async {
         await ref
@@ -342,11 +350,6 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       UnknownFailure() => failure.message,
     };
   }
-
 }
 
-enum _DialogType {
-  peerRadiusSuggestion,
-  partnerPlaceProposal,
-  meetingRevote,
-}
+enum _DialogType { peerRadiusSuggestion, partnerPlaceProposal, meetingRevote }

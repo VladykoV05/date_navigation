@@ -2,6 +2,7 @@ import '../meeting_planner_coordinator.dart';
 import '../room_sync_coordinator.dart';
 import '../room_sync_orchestrator.dart';
 import '../../state/date_navigation_state.dart';
+import '../../../domain/entities/room_snapshot.dart';
 
 class RoomStreamUpdate {
   const RoomStreamUpdate({
@@ -23,7 +24,7 @@ class RoomStreamReducer {
 
   RoomStreamUpdate reduce({
     required DateNavigationState currentState,
-    required Map<String, dynamic> roomData,
+    required RoomSnapshot roomSnapshot,
     required String userId,
     required MeetingPlannerCoordinator meetingPlanner,
     required Duration snapshotFreshFor,
@@ -31,7 +32,7 @@ class RoomStreamReducer {
   }) {
     final outcome = _roomSync.buildOutcome(
       currentState: currentState,
-      roomData: roomData,
+      roomSnapshot: roomSnapshot,
       userId: userId,
       meetingPlanner: meetingPlanner,
     );

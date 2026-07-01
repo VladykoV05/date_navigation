@@ -54,7 +54,9 @@ class RequestMeetingRevote {
     return _repo.requestMeetingRevote(
       roomId: roomId,
       userId: userId,
-      formats: formats.map((format) => format.wireValue).toList(growable: false),
+      formats: formats
+          .map((format) => format.wireValue)
+          .toList(growable: false),
     );
   }
 }

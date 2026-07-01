@@ -6,8 +6,10 @@ import '../../../../core/theme/ui_tokens.dart';
 import '../../config/format_chip_config.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
+import '../../domain/entities/room_status.dart';
 import 'confirm_dialog.dart';
 import 'place_card.dart';
+import 'room_control_panel_header.dart';
 import 'ui_copy.dart';
 
 part 'room_control_panel_parts.dart';
@@ -17,8 +19,6 @@ class RoomControlPanel extends StatelessWidget {
   static const double _radiusMax = 3000;
   static const int _radiusDivisions = 14;
   static const int _undoDeletionSeconds = 5;
-  static const double _loadingIndicatorSize = 20;
-  static const double _sessionClosedBannerPadding = 10;
   static const double _waitingParticipantPadding = 30;
   static const double _actionIconSize = 18;
   static const double _topAddressesHeight = 36;
@@ -62,11 +62,11 @@ class RoomControlPanel extends StatelessWidget {
   final MeetingFormat? selectedMeetingFormat;
   final MeetingFormat? lastAgreedMeetingFormat;
   final String? meetingRevoteRequestByRole;
-  final String? meetingRevoteRequestStatus;
+  final RevoteRequestStatus? meetingRevoteRequestStatus;
   final ValueChanged<Set<MeetingFormat>> onMeetingFormatsChanged;
   final ValueChanged<MeetingFormat> onMeetingFormatConfirmed;
   final bool isSessionClosed;
-  final String sessionStatus;
+  final SessionStatus sessionStatus;
   final bool isCreator;
   final VoidCallback onLeaveRoom;
 
@@ -132,17 +132,21 @@ class RoomControlPanel extends StatelessWidget {
         places.any((place) => place.matchesType(selectedType));
     final topAddresses = recentAddresses.take(5).toList(growable: false);
     final otherAddresses = recentAddresses.skip(5).toList(growable: false);
-    final sessionClosedText = sessionStatus == 'completed'
+    final sessionClosedText = sessionStatus.isCompleted
         ? UiCopy.sessionClosedActionsDisabled
         : UiCopy.sessionExpiredActionsDisabled;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTopSection(
-          context,
-          textTheme: textTheme,
-          colorScheme: colorScheme,
+        RoomControlPanelHeader(
+          roomId: roomId,
+          isLoading: isLoading,
+          isGeocoding: isGeocoding,
+          isCalculatingMeeting: isCalculatingMeeting,
+          isLoadingRoomAction: isLoadingRoomAction,
+          isSessionClosed: isSessionClosed,
           sessionClosedText: sessionClosedText,
+          onLeaveRoom: onLeaveRoom,
         ),
         _buildAddressSection(
           context,
@@ -267,7 +271,9 @@ class RoomControlPanel extends StatelessWidget {
   }) {
     if (!isMeetingFormatMatched) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: _emptyStateVerticalPadding),
+        padding: const EdgeInsets.symmetric(
+          vertical: _emptyStateVerticalPadding,
+        ),
         child: Text(
           UiCopy.pickSameFormatFirst,
           style: textTheme.bodyMedium?.copyWith(
@@ -313,90 +319,6 @@ class RoomControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildTopSection(
-    BuildContext context, {
-    required TextTheme textTheme,
-    required ColorScheme colorScheme,
-    required String sessionClosedText,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'КОД: $roomId',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: colorScheme.primary,
-                ),
-              ),
-            ),
-            if (isLoading)
-              const SizedBox(
-                width: _loadingIndicatorSize,
-                height: _loadingIndicatorSize,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-          ],
-        ),
-        if (isSessionClosed) ...[
-          const SizedBox(height: UiSpace.sm),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(_sessionClosedBannerPadding),
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(UiRadius.md),
-            ),
-            child: Text(
-              sessionClosedText,
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ] else ...[
-          const SizedBox(height: UiSpace.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton.icon(
-              onPressed: isLoadingRoomAction
-                  ? null
-                  : () async {
-                      final shouldLeave = await _confirmAction(
-                        context,
-                        title: UiCopy.leaveRoomTitle,
-                        message: UiCopy.leaveRoomMessage,
-                        confirmLabel: UiCopy.leaveRoomConfirm,
-                      );
-                      if (shouldLeave) {
-                        HapticFeedback.mediumImpact();
-                        onLeaveRoom();
-                      }
-                    },
-              icon: const Icon(Icons.logout, size: _actionIconSize),
-              label: const Text('Покинуть комнату'),
-            ),
-          ),
-        ],
-        if (isGeocoding || isCalculatingMeeting || isLoadingRoomAction) ...[
-          const SizedBox(height: 8),
-          Text(
-            _statusText(),
-            style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
   Widget _buildAddressSection(
     BuildContext context, {
     required bool canSubmitAddress,
@@ -420,7 +342,8 @@ class RoomControlPanel extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Адрес',
             hintText: 'Например: Минск, ул. Ленина 10',
-            helperText: 'Введите ваш точный адрес, чтобы найти общую точку встречи',
+            helperText:
+                'Введите ваш точный адрес, чтобы найти общую точку встречи',
             filled: true,
             fillColor: colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(
@@ -517,13 +440,6 @@ class RoomControlPanel extends StatelessWidget {
     );
   }
 
-  String _statusText() {
-    if (isGeocoding) return UiCopy.loadingGeocoding;
-    if (isCalculatingMeeting) return UiCopy.loadingMeeting;
-    if (isLoadingRoomAction) return UiCopy.loadingRoomSync;
-    return UiCopy.loadingGeneric;
-  }
-
   void _toggleMeetingFormat(MeetingFormat format) {
     final current = isCreator ? creatorMeetingFormats : partnerMeetingFormats;
     final next = <MeetingFormat>{...current};
@@ -606,9 +522,7 @@ class RoomControlPanel extends StatelessWidget {
         ),
       ),
     );
-    await Future<void>.delayed(
-      const Duration(seconds: _undoDeletionSeconds),
-    );
+    await Future<void>.delayed(const Duration(seconds: _undoDeletionSeconds));
     if (undone) return;
     if (normalized.length == 1) {
       await onAddressSuggestionDeleted(normalized.first);
@@ -617,31 +531,15 @@ class RoomControlPanel extends StatelessWidget {
     await onAddressSuggestionsDeleted(normalized);
   }
 
-  Future<bool> _confirmAction(
-    BuildContext context, {
-    required String title,
-    required String message,
-    required String confirmLabel,
-  }) async {
-    final shouldProceed = await ConfirmDialog.showBinary(
-      context,
-      title: title,
-      message: message,
-      cancelLabel: UiCopy.noLabel,
-      confirmLabel: confirmLabel,
-    );
-    return shouldProceed == true;
-  }
-
   String _formatStatusText({
     required List<MeetingFormat> myFormats,
     required List<MeetingFormat> partnerFormats,
     required MeetingFormat? myConfirmedFormat,
     required MeetingFormat? lastAgreedFormat,
     required String? meetingRevoteRequestByRole,
-    required String? meetingRevoteRequestStatus,
+    required RevoteRequestStatus? meetingRevoteRequestStatus,
   }) {
-    if (meetingRevoteRequestStatus == 'pending') {
+    if (meetingRevoteRequestStatus?.isPending ?? false) {
       final requestedByMe =
           (isCreator && meetingRevoteRequestByRole == 'creator') ||
           (!isCreator && meetingRevoteRequestByRole == 'partner');
@@ -690,5 +588,4 @@ class RoomControlPanel extends StatelessWidget {
         .replaceAll('{my}', myText)
         .replaceAll('{partner}', partnerText);
   }
-
 }

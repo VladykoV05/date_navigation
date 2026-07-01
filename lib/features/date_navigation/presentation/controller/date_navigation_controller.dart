@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../core/error/failure.dart';
@@ -9,19 +8,20 @@ import '../../../../core/error/result.dart';
 import '../../../../core/services/auth_session.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../user_profile/domain/usecases/remember_user_address.dart';
+import '../../../user_profile/domain/usecases/watch_remembered_addresses.dart';
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
-import '../../domain/usecases/remove_remembered_address.dart';
-import '../../domain/usecases/watch_frequent_addresses.dart';
 import '../../domain/usecases/save_search_radius.dart';
 import '../../domain/usecases/watch_room.dart';
+import 'address_memory_controller.dart';
 import 'address_submission_coordinator.dart';
 import 'date_assistant_coordinator.dart';
+import 'frequent_addresses_subscription_coordinator.dart';
 import 'flows/final_choice_scenario_sync_coordinator.dart';
-import 'reducers/frequent_addresses_reducer.dart';
 import 'meeting_execution_coordinator.dart';
 import 'actions/meeting_collaboration_actions_coordinator.dart';
 import 'actions/meeting_format_actions_coordinator.dart';
@@ -38,15 +38,12 @@ import 'recalculate_policy_coordinator.dart';
 import 'room_actions_coordinator.dart';
 import 'room_interaction_coordinator.dart';
 import 'room_lifecycle_coordinator.dart';
-import 'room_document_mapper.dart';
-import 'room_sync_coordinator.dart';
-import 'room_sync_orchestrator.dart';
-import 'room_sync_reaction_coordinator.dart';
+import 'room_session_controller.dart';
 import 'flows/room_stream_application_coordinator.dart';
-import 'flows/room_stream_effects_coordinator.dart';
-import 'reducers/room_stream_reducer.dart';
+import 'room_stream_subscription_coordinator.dart';
 import 'flows/search_radius_persistence_coordinator.dart';
 import 'actions/vote_scenario_actions_coordinator.dart';
+import 'voting_controller.dart';
 import '../state/date_navigation_state.dart';
 
 class DateNavigationController extends StateNotifier<DateNavigationState> {
@@ -59,8 +56,8 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
     required RoomInteractionCoordinator roomInteraction,
     required RoomLifecycleCoordinator roomLifecycle,
     required WatchRoom watchRoom,
-    required WatchFrequentAddresses watchFrequentAddresses,
-    required RemoveRememberedAddress removeRememberedAddress,
+    required WatchRememberedAddresses watchFrequentAddresses,
+    required RemoveRememberedUserAddress removeRememberedAddress,
     required SaveSearchRadius saveSearchRadius,
     required AuthSession authSession,
     required AnalyticsService analytics,
@@ -85,29 +82,16 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   final RoomInteractionCoordinator _roomInteraction;
   final RoomLifecycleCoordinator _roomLifecycle;
   final WatchRoom _watchRoom;
-  final WatchFrequentAddresses _watchFrequentAddresses;
-  final RemoveRememberedAddress _removeRememberedAddress;
+  final WatchRememberedAddresses _watchFrequentAddresses;
+  final RemoveRememberedUserAddress _removeRememberedAddress;
   final SaveSearchRadius _saveSearchRadius;
   final AuthSession _authSession;
   final AnalyticsService _analytics;
-  final RoomDocumentMapper _roomMapper = const RoomDocumentMapper();
   final MeetingPlannerCoordinator _meetingPlanner = MeetingPlannerCoordinator();
   final RecalculatePolicyCoordinator _recalculatePolicy =
       const RecalculatePolicyCoordinator();
-  late final RoomSyncCoordinator _roomSync = RoomSyncCoordinator(_roomMapper);
-  final RoomSyncReactionCoordinator _roomSyncReaction =
-      const RoomSyncReactionCoordinator();
-  late final RoomSyncOrchestrator _roomSyncOrchestrator = RoomSyncOrchestrator(
-    _roomSyncReaction,
-  );
-  late final RoomStreamReducer _roomStreamReducer = RoomStreamReducer(
-    _roomSync,
-    _roomSyncOrchestrator,
-  );
-  final RoomStreamEffectsCoordinator _roomStreamEffects =
-      const RoomStreamEffectsCoordinator();
-  late final RoomStreamApplicationCoordinator _roomStreamApplication =
-      RoomStreamApplicationCoordinator(_roomStreamEffects);
+  late final RoomStreamSubscriptionCoordinator _roomStreamSubscription =
+      RoomStreamSubscriptionCoordinator(watchRoom: _watchRoom);
   final MeetingGuardCoordinator _meetingGuard = const MeetingGuardCoordinator();
   final MeetingFormatActionsCoordinator _meetingFormatActions =
       const MeetingFormatActionsCoordinator();
@@ -129,16 +113,51 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
       const PartnerFallbackEffectsCoordinator();
   late final PartnerFallbackResultCoordinator _partnerFallbackResult =
       PartnerFallbackResultCoordinator(_partnerFallback);
-  final FrequentAddressesReducer _frequentAddressesReducer =
-      const FrequentAddressesReducer();
+  late final FrequentAddressesSubscriptionCoordinator
+  _frequentAddressesSubscription = FrequentAddressesSubscriptionCoordinator(
+    watchFrequentAddresses: _watchFrequentAddresses,
+  );
   final FinalChoiceScenarioSyncCoordinator _finalChoiceScenarioSync =
       const FinalChoiceScenarioSyncCoordinator();
   final SearchRadiusPersistenceCoordinator _searchRadiusPersistence =
       const SearchRadiusPersistenceCoordinator();
+  late final RoomSessionController _roomSessionController =
+      RoomSessionController(
+        roomLifecycle: _roomLifecycle,
+        roomActions: _roomActions,
+        meetingPlanner: _meetingPlanner,
+        readState: () => state,
+        writeState: (next) => state = next,
+        requireUserId: _requireUserId,
+        setFailure: _setFailure,
+        clearFailure: _clearFailure,
+        setRoomActionLoading: _setRoomActionLoading,
+        cancelRoomSubscription: _roomStreamSubscription.cancel,
+        subscribeToRoom: _subscribeToRoom,
+      );
+  late final AddressMemoryController _addressMemoryController =
+      AddressMemoryController(
+        removeRememberedAddress: _removeRememberedAddress,
+        requireUserId: _requireUserId,
+        setFailure: _setFailure,
+        clearFailure: _clearFailure,
+      );
+  late final VotingController _votingController = VotingController(
+    roomInteraction: _roomInteraction,
+    dateAssistant: _dateAssistant,
+    proposalActions: _proposalActions,
+    voteScenarioActions: _voteScenarioActions,
+    meetingInteraction: _meetingInteraction,
+    readState: () => state,
+    writeState: (next) => state = next,
+    ensureSessionActive: _ensureSessionActive,
+    ensureMeetingFormatMatched: _ensureMeetingFormatMatched,
+    requireUserId: _requireUserId,
+    setFailure: _setFailure,
+    clearFailure: _clearFailure,
+    setRoomActionLoading: _setRoomActionLoading,
+  );
 
-  StreamSubscription? _roomSubscription;
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
-  _addressesSubscription;
   int _geocodeRequestSeq = 0;
 
   String get userId => _authSession.currentUserId ?? '';
@@ -151,11 +170,11 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   void _clearFailure() {
-    state = state.copyWith(errorMessage: null, failureOperation: null);
+    state = state.copyWith(lastFailure: null, failureOperation: null);
   }
 
   void _setFailure(Failure failure, String operation) {
-    state = state.copyWith(errorMessage: failure, failureOperation: operation);
+    state = state.copyWith(lastFailure: failure, failureOperation: operation);
   }
 
   void _setRoomActionLoading(bool value) {
@@ -186,54 +205,17 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
 
   @override
   void dispose() {
-    _roomSubscription?.cancel();
-    _addressesSubscription?.cancel();
+    unawaited(_roomStreamSubscription.cancel());
+    unawaited(_frequentAddressesSubscription.dispose());
     super.dispose();
   }
 
   Future<void> createRoom() async {
-    final uid = _requireUserId('room');
-    if (uid == null) return;
-    _setRoomActionLoading(true);
-    _clearFailure();
-    final res = await _roomLifecycle.createRoom(userId: uid);
-    switch (res) {
-      case Err(:final failure):
-        _setRoomActionLoading(false);
-        _setFailure(failure, 'room');
-      case Ok(value: final access):
-        state = _roomActions.afterCreateSuccess(
-          state,
-          roomId: access.roomId,
-          inviteCode: access.inviteCode,
-        );
-        _subscribeToRoom(access.roomId);
-    }
+    await _roomSessionController.createRoom();
   }
 
   void joinRoom(String code) {
-    if (code.isEmpty) return;
-    unawaited(_joinRoomInternal(code));
-  }
-
-  Future<void> _joinRoomInternal(String code) async {
-    final uid = _requireUserId('room');
-    if (uid == null) return;
-    _setRoomActionLoading(true);
-    _clearFailure();
-    final res = await _roomLifecycle.joinRoom(code: code, userId: uid);
-    switch (res) {
-      case Err(:final failure):
-        _setRoomActionLoading(false);
-        _setFailure(failure, 'room');
-      case Ok(value: final access):
-        state = _roomActions.afterJoinSuccess(
-          state,
-          roomId: access.roomId,
-          inviteCode: access.inviteCode,
-        );
-        _subscribeToRoom(access.roomId);
-    }
+    _roomSessionController.joinRoom(code);
   }
 
   Future<bool> submitMyAddress(String address) async {
@@ -263,25 +245,11 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   Future<void> removeRememberedAddress(String address) async {
-    final uid = _requireUserId('address-memory');
-    if (uid == null) return;
-    final normalized = address.trim();
-    if (normalized.isEmpty) return;
-    final result = await _removeRememberedAddress(
-      userId: uid,
-      address: normalized,
-    );
-    if (result case Err(:final failure)) {
-      _setFailure(failure, 'address-memory');
-    } else {
-      _clearFailure();
-    }
+    await _addressMemoryController.removeRememberedAddress(address);
   }
 
   Future<void> removeRememberedAddresses(Iterable<String> addresses) async {
-    for (final address in addresses) {
-      await removeRememberedAddress(address);
-    }
+    await _addressMemoryController.removeRememberedAddresses(addresses);
   }
 
   void setSelectedType(String? type) {
@@ -444,75 +412,15 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   Future<void> voteForPlace(Place place) async {
-    if (!_ensureSessionActive('vote')) return;
-    if (!_ensureMeetingFormatMatched('vote')) return;
-    final uid = _requireUserId('vote');
-    if (uid == null) return;
-    final command = _voteScenarioActions.buildVoteForPlaceCommand(
-      state: state,
-      userId: uid,
-      place: place,
-    );
-    if (command == null) return;
-    final res = await _roomInteraction.voteForPlace(
-      roomId: command.roomId,
-      userId: command.userId,
-      placeName: command.placeName,
-      meetingFormat: command.meetingFormatWireValue,
-    );
-    final failure = _meetingInteraction.mapInteractionFailure(res);
-    if (failure != null) {
-      _setFailure(failure, 'vote');
-    } else {
-      _clearFailure();
-    }
+    await _votingController.voteForPlace(place);
   }
 
   Future<void> proposePlace(Place place) async {
-    if (!_ensureSessionActive('proposal')) return;
-    if (!_ensureMeetingFormatMatched('proposal')) return;
-    final command = _proposalActions.buildProposePlaceCommand(
-      state: state,
-      place: place,
-    );
-    if (command == null) return;
-    final res = await _roomInteraction.proposePlace(
-      roomId: command.roomId,
-      authorRole: command.authorRole,
-      place: command.place,
-      meetingFormat: command.meetingFormatWireValue,
-    );
-    final failure = _meetingInteraction.mapInteractionFailure(res);
-    if (failure != null) {
-      _setFailure(failure, 'proposal');
-    } else {
-      _clearFailure();
-    }
+    await _votingController.proposePlace(place);
   }
 
   Future<void> respondToProposal(ProposalResponseDecision decision) async {
-    if (!_ensureSessionActive('proposal')) return;
-    if (!_ensureMeetingFormatMatched('proposal')) return;
-    final uid = _requireUserId('proposal');
-    if (uid == null) return;
-    final command = _proposalActions.buildRespondToProposalCommand(
-      state: state,
-      decision: decision,
-      actedByUserId: uid,
-    );
-    if (command == null) return;
-    final res = await _roomInteraction.respondToProposal(
-      roomId: command.roomId,
-      decision: command.decision,
-      actedByUserId: command.actedByUserId,
-      meetingFormat: command.meetingFormatWireValue,
-    );
-    final failure = _meetingInteraction.mapInteractionFailure(res);
-    if (failure != null) {
-      _setFailure(failure, 'proposal');
-    } else {
-      _clearFailure();
-    }
+    await _votingController.respondToProposal(decision);
   }
 
   void clearError() {
@@ -522,37 +430,11 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   Future<void> completeSession() async {
-    final uid = _requireUserId('room');
-    if (uid == null) return;
-    final completeValidationFailure = _roomActions.validateCompleteSession(
-      state,
-    );
-    if (completeValidationFailure != null) {
-      _setFailure(completeValidationFailure, 'room');
-      return;
-    }
-    final roomId = state.roomId;
-    if (roomId == null || roomId.isEmpty) return;
-    if (state.roomSession.isClosed) return;
-    _setRoomActionLoading(true);
-    _clearFailure();
-    final res = await _roomLifecycle.completeSession(
-      roomId: roomId,
-      userId: uid,
-    );
-    _setRoomActionLoading(false);
-    if (res case Err(:final failure)) {
-      _setFailure(failure, 'room');
-    } else {
-      _clearFailure();
-    }
+    await _roomSessionController.completeSession();
   }
 
-  
-
   Future<void> startNewRoom() async {
-    leaveRoom();
-    await createRoom();
+    await _roomSessionController.startNewRoom();
   }
 
   void setMeetingFormats(Set<MeetingFormat> formats) {
@@ -676,8 +558,6 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
     }
   }
 
-  
-
   Future<void> applyPartnerRadiusSuggestion() async {
     if (!_ensureSessionActive('meeting')) return;
     final suggestedRadius = _meetingCollaborationActions
@@ -724,84 +604,39 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   Future<void> selectScenario(DateScenario scenario) async {
-    if (!_ensureSessionActive('meeting')) return;
-    final uid = _requireUserId('meeting');
-    if (uid == null) return;
-    final command = _voteScenarioActions.buildSelectScenarioCommand(
-      state: state,
-      userId: uid,
-      scenario: scenario,
-    );
-    if (command == null) return;
-    _setRoomActionLoading(true);
-    final result = await _dateAssistant.selectScenario(
-      roomId: command.roomId,
-      userId: command.userId,
-      scenario: command.scenario,
-    );
-    _setRoomActionLoading(false);
-    final failure = _meetingInteraction.mapInteractionFailure(result);
-    if (failure != null) {
-      _setFailure(failure, 'meeting');
-      return;
-    }
-    state = _meetingInteraction.onScenarioSelected(state, scenario: scenario);
+    await _votingController.selectScenario(scenario);
   }
 
   /// Выход из комнаты на этом устройстве (подписка снимается, локальное состояние сбрасывается).
   void leaveRoom() {
-    _roomSubscription?.cancel();
-    _roomSubscription = null;
-    _meetingPlanner.resetAll();
-    state = _roomActions.afterLeaveRoom(state);
+    _roomSessionController.leaveRoom();
   }
 
-  
-
   void _subscribeToFrequentAddresses() {
-    final uid = _authSession.currentUserId;
-    if (uid == null || uid.isEmpty) {
-      state = state.copyWith(recentAddresses: const []);
-      return;
-    }
-    _addressesSubscription?.cancel();
-    _addressesSubscription = _watchFrequentAddresses(userId: uid, limit: 50)
-        .listen(
-          (snap) {
-            final addresses = _frequentAddressesReducer.reduce(
-              snap.docs.map((doc) => doc.data()),
-            );
-            state = state.copyWith(recentAddresses: addresses);
-          },
-          onError: (Object error, StackTrace stackTrace) {
-            state = state.copyWith(recentAddresses: const []);
-          },
-        );
+    _frequentAddressesSubscription.bind(
+      userId: _authSession.currentUserId,
+      onData: (addresses) => state = state.copyWith(recentAddresses: addresses),
+    );
   }
 
   void _subscribeToRoom(String code) {
-    _roomSubscription?.cancel();
-    _roomSubscription = _watchRoom(code).listen((snap) {
-      if (!snap.exists) return;
-      final data = snap.data()!;
-      final update = _roomStreamReducer.reduce(
-        currentState: state,
-        roomData: data,
-        userId: userId,
-        meetingPlanner: _meetingPlanner,
-        snapshotFreshFor: _snapshotFreshFor,
-        now: DateTime.now(),
-      );
-      _applyRoomStreamUpdate(update);
-    });
+    _roomStreamSubscription.bind(
+      roomId: code,
+      currentState: () => state,
+      userId: userId,
+      meetingPlanner: _meetingPlanner,
+      snapshotFreshFor: _snapshotFreshFor,
+      onApplication: _applyRoomStreamApplication,
+    );
   }
 
-  void _applyRoomStreamUpdate(RoomStreamUpdate update) {
-    final application = _roomStreamApplication.build(update);
+  void _applyRoomStreamApplication(RoomStreamApplicationResult application) {
     state = application.nextState;
     if (application.matchedFormatToTrack != null) {
       unawaited(
-        _analytics.meetingFormatMatched(format: application.matchedFormatToTrack!),
+        _analytics.meetingFormatMatched(
+          format: application.matchedFormatToTrack!,
+        ),
       );
     }
     if (application.shouldStartMeetingSearch ||
@@ -883,7 +718,9 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   void _handlePartnerFallbackDomainFailure(Failure failure) {
-    final fallbackFailure = _partnerFallbackResult.resolveDomainFailure(failure);
+    final fallbackFailure = _partnerFallbackResult.resolveDomainFailure(
+      failure,
+    );
     if (fallbackFailure.shouldStopLoading) {
       _setMeetingLoading(false);
     }

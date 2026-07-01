@@ -13,7 +13,9 @@ class ScenarioPlan {
 
   Map<String, dynamic> toMap() {
     return {
-      'scenarios': scenarios.map((item) => item.toMap()).toList(growable: false),
+      'scenarios': scenarios
+          .map((item) => item.toMap())
+          .toList(growable: false),
       if (generatedAt != null) 'generatedAt': generatedAt!.toIso8601String(),
       if (selectedScenarioId != null && selectedScenarioId!.isNotEmpty)
         'selectedScenarioId': selectedScenarioId,
@@ -25,7 +27,9 @@ class ScenarioPlan {
     final scenarios = rawScenarios is List
         ? rawScenarios
               .whereType<Map>()
-              .map((item) => DateScenario.fromMap(Map<String, dynamic>.from(item)))
+              .map(
+                (item) => DateScenario.fromMap(Map<String, dynamic>.from(item)),
+              )
               .where((item) => item.id.isNotEmpty)
               .toList(growable: false)
         : const <DateScenario>[];

@@ -1,108 +1,96 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../domain/usecases/usecases.dart';
 import 'repository_providers.dart';
 
-final createRoomProvider = Provider<CreateRoom>((ref) {
+part 'usecase_providers.g.dart';
+
+@Riverpod(keepAlive: true)
+CreateRoom createRoom(Ref ref) {
   return CreateRoom(ref.watch(roomSessionRepositoryProvider));
-});
+}
 
-final joinRoomProvider = Provider<JoinRoom>((ref) {
+@Riverpod(keepAlive: true)
+JoinRoom joinRoom(Ref ref) {
   return JoinRoom(ref.watch(roomSessionRepositoryProvider));
-});
+}
 
-final completeSessionProvider = Provider<CompleteSession>((ref) {
+@Riverpod(keepAlive: true)
+CompleteSession completeSession(Ref ref) {
   return CompleteSession(ref.watch(roomSessionRepositoryProvider));
-});
+}
 
-final watchRoomProvider = Provider<WatchRoom>((ref) {
+@Riverpod(keepAlive: true)
+WatchRoom watchRoom(Ref ref) {
   return WatchRoom(ref.watch(roomSessionRepositoryProvider));
-});
+}
 
-final watchRecentHistoryProvider = Provider<WatchRecentHistory>((ref) {
-  return WatchRecentHistory(ref.watch(meetingHistoryRepositoryProvider));
-});
-
-final watchFavoritesProvider = Provider<WatchFavorites>((ref) {
-  return WatchFavorites(ref.watch(userFavoritesRepositoryProvider));
-});
-
-final watchFrequentAddressesProvider = Provider<WatchFrequentAddresses>((ref) {
-  return WatchFrequentAddresses(ref.watch(userAddressMemoryRepositoryProvider));
-});
-
-final updateLocationProvider = Provider<UpdateLocation>((ref) {
+@Riverpod(keepAlive: true)
+UpdateLocation updateLocation(Ref ref) {
   return UpdateLocation(ref.watch(roomSessionRepositoryProvider));
-});
+}
 
-final voteForPlaceProvider = Provider<VoteForPlace>((ref) {
+@Riverpod(keepAlive: true)
+VoteForPlace voteForPlace(Ref ref) {
   return VoteForPlace(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final proposePlaceProvider = Provider<ProposePlace>((ref) {
+@Riverpod(keepAlive: true)
+ProposePlace proposePlace(Ref ref) {
   return ProposePlace(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final respondToProposalProvider = Provider<RespondToProposal>((ref) {
+@Riverpod(keepAlive: true)
+RespondToProposal respondToProposal(Ref ref) {
   return RespondToProposal(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final upsertFavoriteProvider = Provider<UpsertFavorite>((ref) {
-  return UpsertFavorite(ref.watch(userFavoritesRepositoryProvider));
-});
-
-final removeFavoriteProvider = Provider<RemoveFavorite>((ref) {
-  return RemoveFavorite(ref.watch(userFavoritesRepositoryProvider));
-});
-
-final rememberAddressProvider = Provider<RememberAddress>((ref) {
-  return RememberAddress(ref.watch(userAddressMemoryRepositoryProvider));
-});
-
-final removeRememberedAddressProvider = Provider<RemoveRememberedAddress>((
-  ref,
-) {
-  return RemoveRememberedAddress(
-    ref.watch(userAddressMemoryRepositoryProvider),
-  );
-});
-
-final saveMeetingSnapshotProvider = Provider<SaveMeetingSnapshot>((ref) {
+@Riverpod(keepAlive: true)
+SaveMeetingSnapshot saveMeetingSnapshot(Ref ref) {
   return SaveMeetingSnapshot(ref.watch(meetingSnapshotRepositoryProvider));
-});
+}
 
-final buildDateScenariosProvider = Provider<BuildDateScenarios>((_) {
+@Riverpod(keepAlive: true)
+BuildDateScenarios buildDateScenarios(Ref ref) {
   return const BuildDateScenarios();
-});
+}
 
-final saveSelectedScenarioProvider = Provider<SaveSelectedScenario>((ref) {
+@Riverpod(keepAlive: true)
+SaveSelectedScenario saveSelectedScenario(Ref ref) {
   return SaveSelectedScenario(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final saveMeetingFormatProvider = Provider<SaveMeetingFormat>((ref) {
+@Riverpod(keepAlive: true)
+SaveMeetingFormat saveMeetingFormat(Ref ref) {
   return SaveMeetingFormat(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final confirmMeetingFormatProvider = Provider<ConfirmMeetingFormat>((ref) {
+@Riverpod(keepAlive: true)
+ConfirmMeetingFormat confirmMeetingFormat(Ref ref) {
   return ConfirmMeetingFormat(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final requestMeetingRevoteProvider = Provider<RequestMeetingRevote>((ref) {
+@Riverpod(keepAlive: true)
+RequestMeetingRevote requestMeetingRevote(Ref ref) {
   return RequestMeetingRevote(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final respondMeetingRevoteProvider = Provider<RespondMeetingRevote>((ref) {
+@Riverpod(keepAlive: true)
+RespondMeetingRevote respondMeetingRevote(Ref ref) {
   return RespondMeetingRevote(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final saveSearchRadiusProvider = Provider<SaveSearchRadius>((ref) {
+@Riverpod(keepAlive: true)
+SaveSearchRadius saveSearchRadius(Ref ref) {
   return SaveSearchRadius(ref.watch(roomVotingRepositoryProvider));
-});
+}
 
-final geocodeAddressProvider = Provider<GeocodeAddress>((ref) {
+@Riverpod(keepAlive: true)
+GeocodeAddress geocodeAddress(Ref ref) {
   return GeocodeAddress(ref.watch(geocodingRepositoryProvider));
-});
+}
 
-final findMeetingPointProvider = Provider<FindMeetingPoint>((ref) {
+@Riverpod(keepAlive: true)
+FindMeetingPoint findMeetingPoint(Ref ref) {
   return FindMeetingPoint(ref.watch(meetingRepositoryProvider));
-});
+}

@@ -3,6 +3,7 @@ import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/error/result.dart';
+import '../../../domain/entities/room_status.dart';
 import 'firestore_error_guard.dart';
 
 class RoomSessionRemoteDataSource {
@@ -64,7 +65,7 @@ class RoomSessionRemoteDataSource {
           'finalChoice': null,
           'proposal': null,
           'votes': <String, String>{},
-          'sessionStatus': 'active',
+          'sessionStatus': SessionStatus.active.wireValue,
           'createdAt': Timestamp.fromDate(now),
           'updatedAt': Timestamp.fromDate(now),
           'expiresAt': expiresAt,
@@ -154,7 +155,9 @@ class RoomSessionRemoteDataSource {
             message: 'Комната не найдена',
           );
         }
-        final roomRef = _firestore.collection(roomsCollection).doc(mappedRoomId);
+        final roomRef = _firestore
+            .collection(roomsCollection)
+            .doc(mappedRoomId);
         final snap = await tx.get(roomRef);
         if (!snap.exists) {
           throw FirebaseException(
@@ -300,27 +303,27 @@ class RoomSessionRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
-            .toString();
-        final partnerUid = (data['partnerUid'] ?? '').toString();
-        final field = userId == creatorUid
-            ? 'point1'
-            : (userId == partnerUid ? 'point2' : null);
-        if (field == null) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message: 'Пользователь не является участником комнаты',
-          );
-        }
-        tx.update(roomRef, {
-          field: {'lat': coords.latitude, 'lng': coords.longitude},
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          final partnerUid = (data['partnerUid'] ?? '').toString();
+          final field = userId == creatorUid
+              ? 'point1'
+              : (userId == partnerUid ? 'point2' : null);
+          if (field == null) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: 'Пользователь не является участником комнаты',
+            );
+          }
+          tx.update(roomRef, {
+            field: {'lat': coords.latitude, 'lng': coords.longitude},
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось обновить координаты',
@@ -334,35 +337,35 @@ class RoomSessionRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoidWithFallback(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        if (!snap.exists) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'not-found',
-            message: 'Комната не найдена',
-          );
-        }
-        final data = snap.data() ?? <String, dynamic>{};
-        final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
-            .toString();
-        if (creatorUid.isEmpty || creatorUid != userId) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message: 'Только креатор может завершить сессию',
-          );
-        }
-        if ((data['sessionStatus'] ?? 'active').toString() == 'completed') {
-          return;
-        }
-        tx.update(roomRef, {
-          'sessionStatus': 'completed',
-          'completedAt': FieldValue.serverTimestamp(),
-          'completedBy': userId,
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          if (!snap.exists) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'not-found',
+              message: 'Комната не найдена',
+            );
+          }
+          final data = snap.data() ?? <String, dynamic>{};
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          if (creatorUid.isEmpty || creatorUid != userId) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: 'Только креатор может завершить сессию',
+            );
+          }
+          if (SessionStatus.fromWireValue(data['sessionStatus']).isCompleted) {
+            return;
+          }
+          tx.update(roomRef, {
+            'sessionStatus': SessionStatus.completed.wireValue,
+            'completedAt': FieldValue.serverTimestamp(),
+            'completedBy': userId,
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallbackFor: (e) => switch (e.code) {

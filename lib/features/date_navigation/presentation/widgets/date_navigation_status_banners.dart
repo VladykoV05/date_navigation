@@ -52,9 +52,7 @@ class _SyncSuggestionsBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(
       dateNavigationControllerProvider.select(
-        (s) => (
-          isSessionClosed: s.roomSession.isClosed,
-        ),
+        (s) => (isSessionClosed: s.roomSession.isClosed),
       ),
     );
     if (view.isSessionClosed) return const SizedBox.shrink();
@@ -75,9 +73,9 @@ class _SessionStatusBanner extends ConsumerWidget {
       ),
     );
     final sessionStatus = view.sessionStatus;
-    if (sessionStatus == 'active') return const SizedBox.shrink();
+    if (sessionStatus.isActive) return const SizedBox.shrink();
     final controller = ref.read(dateNavigationControllerProvider.notifier);
-    final text = sessionStatus == 'completed'
+    final text = sessionStatus.isCompleted
         ? UiCopy.sessionCompletedBanner
         : UiCopy.sessionExpiredBanner;
     return _StatusBannerContainer(
@@ -255,4 +253,3 @@ bool _canRetryFailure({
   if (op == 'geocode') return true;
   return false;
 }
-

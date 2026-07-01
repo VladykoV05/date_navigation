@@ -11,8 +11,8 @@ dependencies:
     sdk: flutter
 
   http: ^1.1.0
-  flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.6.1
+  flutter_riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
 
@@ -44,10 +44,10 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.4.6
-  build_runner: ^2.5.4
-  riverpod_generator: ^2.6.5
-  freezed: ^3.0.6
-  json_serializable: ^6.9.0
+  build_runner: ^2.15.0
+  riverpod_generator: ^4.0.0+1
+  freezed: ^3.2.3
+  json_serializable: ^6.11.2
 
 flutter:
   uses-material-design: true

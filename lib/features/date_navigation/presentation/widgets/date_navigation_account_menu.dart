@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/auth_di.dart';
 import '../../../account/account.dart';
-import '../../di/date_navigation_di.dart';
 
 class DateNavigationAccountMenu extends ConsumerWidget {
   const DateNavigationAccountMenu({super.key});

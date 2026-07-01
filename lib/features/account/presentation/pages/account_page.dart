@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/di/auth_di.dart';
 import '../../../../core/utils/place_type_localizer.dart';
 import '../../domain/entities/account_favorite.dart';
 import '../../domain/entities/account_history_item.dart';
 import '../../di/account_di.dart';
+import '../widgets/account_empty_state.dart';
 
 class AccountPage extends ConsumerWidget {
   static const int _defaultMapZoom = 16;
@@ -20,7 +22,7 @@ class AccountPage extends ConsumerWidget {
     final textTheme = theme.textTheme;
     final state = ref.watch(accountControllerProvider);
     final accountController = ref.read(accountControllerProvider.notifier);
-    final user = ref.watch(accountCurrentUserProvider);
+    final user = ref.watch(currentUserProvider);
 
     return DefaultTabController(
       length: 2,
@@ -60,14 +62,7 @@ class AccountPage extends ConsumerWidget {
                   if (state.isLoading)
                     const Center(child: CircularProgressIndicator())
                   else if (state.favorites.isEmpty)
-                    Center(
-                      child: Text(
-                        'Избранное пока пустое',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    )
+                    const AccountEmptyState(message: 'Избранное пока пустое')
                   else
                     ListView.separated(
                       itemCount: state.favorites.length,
@@ -101,13 +96,8 @@ class AccountPage extends ConsumerWidget {
                   if (state.isLoading)
                     const Center(child: CircularProgressIndicator())
                   else if (state.history.isEmpty)
-                    Center(
-                      child: Text(
-                        'История встреч пока пустая',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
+                    const AccountEmptyState(
+                      message: 'История встреч пока пустая',
                     )
                   else
                     ListView.separated(
@@ -365,10 +355,7 @@ class AccountPage extends ConsumerWidget {
 
   Future<void> _openHistoryPlaceOnMap(String placeName) async {
     final query = Uri.encodeComponent(placeName);
-    final url = Uri.parse(
-      '$_yandexMapsBaseUrl?text=$query&z=$_defaultMapZoom',
-    );
+    final url = Uri.parse('$_yandexMapsBaseUrl?text=$query&z=$_defaultMapZoom');
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }
-
 }

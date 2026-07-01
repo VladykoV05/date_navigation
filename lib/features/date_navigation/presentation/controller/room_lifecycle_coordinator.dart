@@ -52,9 +52,7 @@ class RoomLifecycleCoordinator {
           return Err(failure);
         case Ok(value: final roomId):
           unawaited(_analytics.roomCreated());
-          return Ok(
-            _access(roomId: roomId, inviteCode: inviteCode),
-          );
+          return Ok(_access(roomId: roomId, inviteCode: inviteCode));
       }
     }
     return const Err(
@@ -71,9 +69,7 @@ class RoomLifecycleCoordinator {
     switch (result) {
       case Ok(value: final roomId):
         unawaited(_analytics.roomJoined());
-        return Ok(
-          _access(roomId: roomId, inviteCode: inviteCode),
-        );
+        return Ok(_access(roomId: roomId, inviteCode: inviteCode));
       case Err(:final failure):
         return Err(failure);
     }

@@ -6,21 +6,16 @@ import '../../../../../core/error/failure.dart';
 import '../../../../../core/error/result.dart';
 import '../../../domain/entities/voting_decisions.dart';
 import 'room_session_remote_data_source.dart';
-import 'room_user_data_remote_data_source.dart';
 import 'room_voting_remote_data_source.dart';
 
 class RoomRemoteDataSource {
   static const String roomsCollection = 'rooms';
   static const String roomInvitesCollection = 'roomInvites';
   static const String usersCollection = 'users';
-  static const int defaultRecentHistoryLimit = 10;
-  static const int defaultFavoritesLimit = 100;
-  static const int defaultFrequentAddressesLimit = 6;
 
   final FirebaseFirestore _firestore;
   late final RoomSessionRemoteDataSource _sessionDataSource;
   late final RoomVotingRemoteDataSource _votingDataSource;
-  late final RoomUserDataRemoteDataSource _userDataSource;
 
   RoomRemoteDataSource(this._firestore) {
     _initializeDataSources();
@@ -35,11 +30,6 @@ class RoomRemoteDataSource {
       _firestore,
       _mapFirestoreFailure,
       normalizeParticipants: normalizeParticipants,
-    );
-    _userDataSource = RoomUserDataRemoteDataSource(
-      _firestore,
-      _mapFirestoreFailure,
-      favoriteDocId: favoriteDocId,
     );
   }
 
@@ -127,9 +117,24 @@ class RoomRemoteDataSource {
     required ProposalResponseDecision decision,
     required String actedByUserId,
   }) async {
+    final result = await respondToProposalForHistory(
+      roomId: roomId,
+      decision: decision,
+      actedByUserId: actedByUserId,
+    );
+    return switch (result) {
+      Ok() => const Ok(null),
+      Err(:final failure) => Err(failure),
+    };
+  }
+
+  Future<Result<AcceptedProposalHistoryDraft?>> respondToProposalForHistory({
+    required String roomId,
+    required ProposalResponseDecision decision,
+    required String actedByUserId,
+  }) async {
     return _votingDataSource.respondToProposal(
       roomsCollection: roomsCollection,
-      usersCollection: usersCollection,
       roomId: roomId,
       decision: decision,
       actedByUserId: actedByUserId,
@@ -240,95 +245,6 @@ class RoomRemoteDataSource {
     );
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> watchRecentHistory({
-    required String userId,
-    int limit = defaultRecentHistoryLimit,
-  }) {
-    return _userDataSource.watchRecentHistory(
-      usersCollection: usersCollection,
-      userId: userId,
-      limit: limit,
-    );
-  }
-
-  Stream<QuerySnapshot<Map<String, dynamic>>> watchFavorites({
-    required String userId,
-    int limit = defaultFavoritesLimit,
-  }) {
-    return _userDataSource.watchFavorites(
-      usersCollection: usersCollection,
-      userId: userId,
-      limit: limit,
-    );
-  }
-
-  Stream<QuerySnapshot<Map<String, dynamic>>> watchFrequentAddresses({
-    required String userId,
-    int limit = defaultFrequentAddressesLimit,
-  }) {
-    return _userDataSource.watchFrequentAddresses(
-      usersCollection: usersCollection,
-      userId: userId,
-      limit: limit,
-    );
-  }
-
-  Future<Result<void>> upsertFavorite({
-    required String userId,
-    required String placeName,
-    String? placeAddress,
-    String? placeType,
-    double? lat,
-    double? lon,
-  }) async {
-    return _userDataSource.upsertFavorite(
-      usersCollection: usersCollection,
-      userId: userId,
-      placeName: placeName,
-      placeAddress: placeAddress,
-      placeType: placeType,
-      lat: lat,
-      lon: lon,
-    );
-  }
-
-  Future<Result<void>> removeFavorite({
-    required String userId,
-    required String placeName,
-    double? lat,
-    double? lon,
-  }) async {
-    return _userDataSource.removeFavorite(
-      usersCollection: usersCollection,
-      userId: userId,
-      placeName: placeName,
-      lat: lat,
-      lon: lon,
-    );
-  }
-
-  Future<Result<void>> rememberAddress({
-    required String userId,
-    required String address,
-  }) {
-    return _userDataSource.rememberAddress(
-      usersCollection: usersCollection,
-      userId: userId,
-      address: address,
-    );
-  }
-
-  Future<Result<void>> removeRememberedAddress({
-    required String userId,
-    required String address,
-  }) {
-    return _userDataSource.removeRememberedAddress(
-      usersCollection: usersCollection,
-      userId: userId,
-      address: address,
-    );
-  }
-
   @visibleForTesting
   static List<String> normalizeParticipants({
     required String creatorUid,
@@ -343,23 +259,6 @@ class RoomRemoteDataSource {
       actedByUserId.trim(),
     }..removeWhere((id) => id.isEmpty);
     return ids.toList(growable: false);
-  }
-
-  @visibleForTesting
-  static String favoriteDocId({
-    required String placeName,
-    double? lat,
-    double? lon,
-  }) {
-    final normalized = placeName.trim().toLowerCase();
-    final sanitized = normalized.replaceAll(
-      RegExp(r'[^a-z0-9а-яё]+', caseSensitive: false),
-      '_',
-    );
-    final latPart = lat?.toStringAsFixed(5) ?? 'na';
-    final lonPart = lon?.toStringAsFixed(5) ?? 'na';
-    final base = sanitized.isEmpty ? 'favorite_place' : sanitized;
-    return '${base}_${latPart}_$lonPart';
   }
 
   Failure _mapFirestoreFailure(

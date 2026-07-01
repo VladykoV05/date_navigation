@@ -26,7 +26,9 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
   void _scheduleRadiusSuggestionReminder(int suggestedRadius) {
     _radiusSuggestionReminderTimer?.cancel();
     _radiusSuggestionReminderTimer = Timer(
-      const Duration(seconds: _DateNavigationPageState._radiusSuggestionReminderSeconds),
+      const Duration(
+        seconds: _DateNavigationPageState._radiusSuggestionReminderSeconds,
+      ),
       () {
         if (!mounted) return;
         final currentSuggested = ref.read(
@@ -174,10 +176,7 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        action: SnackBarAction(
-          label: actionLabel,
-          onPressed: onActionPressed,
-        ),
+        action: SnackBarAction(label: actionLabel, onPressed: onActionPressed),
       ),
     );
   }

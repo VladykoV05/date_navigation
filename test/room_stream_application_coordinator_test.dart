@@ -9,9 +9,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 void main() {
-  const coordinator = RoomStreamApplicationCoordinator(RoomStreamEffectsCoordinator());
+  const coordinator = RoomStreamApplicationCoordinator(
+    RoomStreamEffectsCoordinator(),
+  );
 
-  RoomStreamUpdate _update({
+  RoomStreamUpdate update({
     required RoomSyncAction reactionAction,
     required latlong.LatLng? point1,
     required latlong.LatLng? point2,
@@ -50,14 +52,14 @@ void main() {
 
   test('build maps fallback action only when both points exist', () {
     final withPoints = coordinator.build(
-      _update(
+      update(
         reactionAction: RoomSyncAction.calculateWithPartnerFallback,
         point1: const latlong.LatLng(1, 1),
         point2: const latlong.LatLng(2, 2),
       ),
     );
     final withoutPoint2 = coordinator.build(
-      _update(
+      update(
         reactionAction: RoomSyncAction.calculateWithPartnerFallback,
         point1: const latlong.LatLng(1, 1),
         point2: null,
@@ -72,7 +74,7 @@ void main() {
 
   test('build propagates track/snapshot/reset flags', () {
     final result = coordinator.build(
-      _update(
+      update(
         reactionAction: RoomSyncAction.none,
         point1: const latlong.LatLng(1, 1),
         point2: const latlong.LatLng(2, 2),

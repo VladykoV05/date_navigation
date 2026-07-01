@@ -9,7 +9,7 @@ import 'package:latlong2/latlong.dart' as latlong;
 void main() {
   const orchestrator = RoomSyncOrchestrator(RoomSyncReactionCoordinator());
 
-  RoomSyncOutcome _outcome({
+  RoomSyncOutcome outcome({
     required DateNavigationState nextState,
     required bool isCreator,
   }) {
@@ -39,7 +39,7 @@ void main() {
 
       final plan = orchestrator.buildPlan(
         previousState: previous,
-        outcome: _outcome(nextState: nextState, isCreator: false),
+        outcome: outcome(nextState: nextState, isCreator: false),
         snapshotFreshFor: const Duration(seconds: 20),
         now: DateTime(2026, 1, 1, 12),
       );

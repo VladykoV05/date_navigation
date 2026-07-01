@@ -1,32 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../user_profile/domain/entities/remembered_address.dart';
 
 class FrequentAddressesReducer {
   const FrequentAddressesReducer();
 
   static const int _minUsesCount = 2;
 
-  List<String> reduce(Iterable<Map<String, dynamic>> documents) {
-    final scoredAddresses = documents
-        .map((data) {
-          final address = (data['address'] ?? '').toString().trim();
-          final usesCount = (data['usesCount'] as num?)?.toInt() ?? 0;
-          final updatedAt = data['updatedAt'];
-          final updatedAtMs = updatedAt is Timestamp
-              ? updatedAt.millisecondsSinceEpoch
-              : 0;
-          return (
-            address: address,
-            usesCount: usesCount,
-            updatedAtMs: updatedAtMs,
-          );
-        })
-        .where((item) => item.address.isNotEmpty && item.usesCount >= _minUsesCount)
-        .toList(growable: false)
-      ..sort((a, b) {
-        final usesCompare = b.usesCount.compareTo(a.usesCount);
-        if (usesCompare != 0) return usesCompare;
-        return b.updatedAtMs.compareTo(a.updatedAtMs);
-      });
+  List<String> reduce(Iterable<RememberedAddress> items) {
+    final scoredAddresses =
+        items
+            .map((item) {
+              final address = item.address.trim();
+              final updatedAtMs = item.updatedAt?.millisecondsSinceEpoch ?? 0;
+              return (
+                address: address,
+                usesCount: item.usesCount,
+                updatedAtMs: updatedAtMs,
+              );
+            })
+            .where(
+              (item) =>
+                  item.address.isNotEmpty && item.usesCount >= _minUsesCount,
+            )
+            .toList(growable: false)
+          ..sort((a, b) {
+            final usesCompare = b.usesCount.compareTo(a.usesCount);
+            if (usesCompare != 0) return usesCompare;
+            return b.updatedAtMs.compareTo(a.updatedAtMs);
+          });
 
     final addresses = <String>[];
     for (final item in scoredAddresses) {

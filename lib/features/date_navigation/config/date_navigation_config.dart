@@ -45,6 +45,6 @@ class DateNavigationConfig {
     'центр услуг',
   ];
 
-  static const int dedupePrecision = 5; 
+  static const int dedupePrecision = 5;
   static const String cacheVersion = 'v1';
 }

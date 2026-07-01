@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../core/error/result.dart';
+import '../entities/room_snapshot.dart';
 
 abstract interface class RoomSessionRepository {
   Future<Result<String>> createRoom(String code, {String? createdBy});
@@ -21,5 +21,5 @@ abstract interface class RoomSessionRepository {
     required String userId,
   });
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> watchRoom(String roomId);
+  Stream<RoomSnapshot> watchRoom(String roomId);
 }

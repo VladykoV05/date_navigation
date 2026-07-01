@@ -6,15 +6,15 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../user_profile/domain/usecases/remember_user_address.dart';
 import '../../domain/usecases/geocode_address.dart';
-import '../../domain/usecases/remember_address.dart';
 import '../../domain/usecases/update_location.dart';
 
 class AddressSubmissionCoordinator {
   const AddressSubmissionCoordinator({
     required GeocodeAddress geocodeAddress,
     required UpdateLocation updateLocation,
-    required RememberAddress rememberAddress,
+    required RememberUserAddress rememberAddress,
     required AnalyticsService analytics,
   }) : _geocodeAddress = geocodeAddress,
        _updateLocation = updateLocation,
@@ -23,7 +23,7 @@ class AddressSubmissionCoordinator {
 
   final GeocodeAddress _geocodeAddress;
   final UpdateLocation _updateLocation;
-  final RememberAddress _rememberAddress;
+  final RememberUserAddress _rememberAddress;
   final AnalyticsService _analytics;
 
   Future<Result<void>> submitAddress({
@@ -65,9 +65,7 @@ class AddressSubmissionCoordinator {
               address: address,
             );
             if (rememberResult case Err(:final failure)) {
-              AppLogger.w(
-                'Remember address failed: ${failure.message}',
-              );
+              AppLogger.w('Remember address failed: ${failure.message}');
             }
             unawaited(_analytics.addressSubmitted());
             return const Ok(null);

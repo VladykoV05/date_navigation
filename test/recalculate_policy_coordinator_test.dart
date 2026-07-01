@@ -7,9 +7,7 @@ void main() {
   const coordinator = RecalculatePolicyCoordinator();
 
   test('canRecalculate returns false when one point is missing', () {
-    final state = DateNavigationState(
-      point1: latlong.LatLng(1, 1),
-    );
+    final state = DateNavigationState(point1: latlong.LatLng(1, 1));
 
     expect(coordinator.canRecalculate(state), isFalse);
   });

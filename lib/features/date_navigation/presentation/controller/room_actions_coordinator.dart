@@ -27,7 +27,7 @@ class RoomActionsCoordinator {
       inviteCode: inviteCode,
       isCreator: false,
       isLoadingRoomAction: false,
-      errorMessage: null,
+      lastFailure: null,
       failureOperation: null,
     );
   }

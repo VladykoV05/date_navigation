@@ -152,15 +152,16 @@ extension _DateNavigationPageLayout on _DateNavigationPageState {
   );
 
   List<double> _buildSnapSizes(double maxChildSize) {
-    final sizes = <double>{
-      _DateNavigationPageState._sheetMinChildSize,
-      _DateNavigationPageState._sheetInitialChildSize,
-      maxChildSize,
-    }..removeWhere(
-      (size) =>
-          size < _DateNavigationPageState._sheetMinChildSize ||
-          size > maxChildSize,
-    );
+    final sizes =
+        <double>{
+          _DateNavigationPageState._sheetMinChildSize,
+          _DateNavigationPageState._sheetInitialChildSize,
+          maxChildSize,
+        }..removeWhere(
+          (size) =>
+              size < _DateNavigationPageState._sheetMinChildSize ||
+              size > maxChildSize,
+        );
     final sorted = sizes.toList()..sort();
     return sorted;
   }

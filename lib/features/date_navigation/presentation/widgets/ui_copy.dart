@@ -41,8 +41,10 @@ class UiCopy {
   static const leaveRoomMessage =
       'Вы выйдете из комнаты на этом устройстве и вернетесь на стартовый экран.';
   static const leaveRoomConfirm = 'Да, выйти';
-  static const sessionClosedActionsDisabled = 'Сессия завершена. Действия отключены.';
-  static const sessionExpiredActionsDisabled = 'Сессия истекла. Действия отключены.';
+  static const sessionClosedActionsDisabled =
+      'Сессия завершена. Действия отключены.';
+  static const sessionExpiredActionsDisabled =
+      'Сессия истекла. Действия отключены.';
 
   static const loadingGeocoding = 'Проверяем адрес...';
   static const loadingMeeting = 'Ищем точку встречи и места...';
@@ -71,7 +73,8 @@ class UiCopy {
   static const notEnoughPoints = 'Недостаточно точек на карте';
 
   static const partnerRadiusSuggestTitle = 'Партнер предлагает радиус';
-  static const partnerRadiusSuggestPrompt = 'Изменить радиус поиска на {radius} м?';
+  static const partnerRadiusSuggestPrompt =
+      'Изменить радиус поиска на {radius} м?';
   static const partnerRadiusAcceptLabel = 'Да, принять';
   static const partnerRadiusReminder = 'Партнер все еще предлагает {radius} м';
   static const creatorChangedRadius = 'Креатор изменил радиус на {radius} м';
@@ -100,7 +103,8 @@ class UiCopy {
   static const formatStatusAgreed = 'Формат согласован: {format}';
   static const formatStatusConfirmedByMe =
       'Ты подтвердил: {format}. Ждем подтверждение партнера.';
-  static const formatStatusRevotingNow = 'Идет пересогласование. Сейчас: {format}.';
+  static const formatStatusRevotingNow =
+      'Идет пересогласование. Сейчас: {format}.';
   static const formatConfirmationMissing = 'не подтвержден';
   static const formatConfirmationLine = 'Ты: {my} • Партнер: {partner}';
   static const formatDraftResetPrompt =

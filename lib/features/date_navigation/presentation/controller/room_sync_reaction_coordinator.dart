@@ -18,7 +18,9 @@ class RoomSyncReactionCoordinator {
     if (outcome.venueLocked) {
       return RoomSyncAction.stopCalculating;
     }
-    if (outcome.point1 == null || outcome.point2 == null || !outcome.pointsChanged) {
+    if (outcome.point1 == null ||
+        outcome.point2 == null ||
+        !outcome.pointsChanged) {
       return RoomSyncAction.none;
     }
     if (outcome.isCreator) {

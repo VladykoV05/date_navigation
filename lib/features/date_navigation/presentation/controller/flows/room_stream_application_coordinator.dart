@@ -59,7 +59,8 @@ class RoomStreamApplicationCoordinator {
           ? outcome.snapshotRadius
           : null,
       shouldResetPlannerOnPointsChanged: effects.resetPlannerOnPointsChanged,
-      shouldStopCalculating: effects.reactionAction == RoomSyncAction.stopCalculating,
+      shouldStopCalculating:
+          effects.reactionAction == RoomSyncAction.stopCalculating,
       shouldCalculateAsCreator:
           effects.reactionAction == RoomSyncAction.calculateAsCreator,
       shouldCalculateWithPartnerFallback: shouldCalculateWithPartnerFallback,

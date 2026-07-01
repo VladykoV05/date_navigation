@@ -15,7 +15,8 @@ class BuildDateScenarios {
 
     return List<DateScenario>.generate(anchors.length, (index) {
       final place = anchors[index];
-      final id = '${format.wireValue}_${index + 1}_${place.name.hashCode.abs()}';
+      final id =
+          '${format.wireValue}_${index + 1}_${place.name.hashCode.abs()}';
       final duration = _durationForFormat(format, index);
       return DateScenario(
         id: id,
@@ -61,7 +62,11 @@ class BuildDateScenarios {
     };
   }
 
-  List<ScenarioStep> _stepsFor(MeetingFormat format, Place place, int duration) {
+  List<ScenarioStep> _stepsFor(
+    MeetingFormat format,
+    Place place,
+    int duration,
+  ) {
     return switch (format) {
       MeetingFormat.food => [
         ScenarioStep(
@@ -72,7 +77,8 @@ class BuildDateScenarios {
         ),
         ScenarioStep(
           title: 'Еда и общение',
-          description: 'Формат под настроение: кофе-брейк или полноценный ужин.',
+          description:
+              'Формат под настроение: кофе-брейк или полноценный ужин.',
           etaMinutes: duration - 15,
           placeName: place.name,
         ),

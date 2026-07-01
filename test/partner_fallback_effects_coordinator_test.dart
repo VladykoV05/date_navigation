@@ -16,10 +16,13 @@ void main() {
     const PartnerFallbackCoordinator(),
   );
 
-  MeetingPoint _meeting({required String placeName}) {
+  MeetingPoint meeting({required String placeName}) {
     return MeetingPoint(
       location: const latlong.LatLng(53.9, 27.56),
-      userRoute: const RouteInfo(duration: Duration(minutes: 10), distance: 1200),
+      userRoute: const RouteInfo(
+        duration: Duration(minutes: 10),
+        distance: 1200,
+      ),
       partnerRoute: const RouteInfo(
         duration: Duration(minutes: 12),
         distance: 1300,
@@ -40,7 +43,7 @@ void main() {
 
     final result = coordinator.buildSuccess(
       state: state,
-      meeting: _meeting(placeName: 'Place A'),
+      meeting: meeting(placeName: 'Place A'),
       point1: const latlong.LatLng(53.9, 27.56),
       point2: const latlong.LatLng(53.91, 27.57),
       meetingPlanner: planner,
@@ -65,7 +68,7 @@ void main() {
 
     final result = coordinator.buildSuccess(
       state: state,
-      meeting: _meeting(placeName: 'Place B'),
+      meeting: meeting(placeName: 'Place B'),
       point1: const latlong.LatLng(53.9, 27.56),
       point2: const latlong.LatLng(53.91, 27.57),
       meetingPlanner: planner,

@@ -1,13 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../core/error/result.dart';
+import '../../domain/entities/room_snapshot.dart';
 import '../../domain/repositories/room_session_repository.dart';
 import '../datasources/remote/room_remote_data_source.dart';
+import '../mappers/room_snapshot_mapper.dart';
 
 class RoomSessionRepositoryImpl implements RoomSessionRepository {
   final RoomRemoteDataSource _remote;
-  RoomSessionRepositoryImpl(this._remote);
+  final RoomSnapshotMapper _roomSnapshotMapper;
+  RoomSessionRepositoryImpl(
+    this._remote, {
+    RoomSnapshotMapper roomSnapshotMapper = const RoomSnapshotMapper(),
+  }) : _roomSnapshotMapper = roomSnapshotMapper;
 
   @override
   Future<Result<String>> createRoom(String code, {String? createdBy}) {
@@ -28,7 +33,11 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
     required String userId,
     required latlong.LatLng coords,
   }) {
-    return _remote.updateLocation(roomId: roomId, userId: userId, coords: coords);
+    return _remote.updateLocation(
+      roomId: roomId,
+      userId: userId,
+      coords: coords,
+    );
   }
 
   @override
@@ -40,7 +49,11 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   }
 
   @override
-  Stream<DocumentSnapshot<Map<String, dynamic>>> watchRoom(String roomId) {
-    return _remote.watchRoom(roomId);
+  Stream<RoomSnapshot> watchRoom(String roomId) {
+    return _remote
+        .watchRoom(roomId)
+        .map(_roomSnapshotMapper.fromDocument)
+        .where((snapshot) => snapshot != null)
+        .cast<RoomSnapshot>();
   }
 }

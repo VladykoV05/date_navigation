@@ -11,10 +11,12 @@ class MeetingCollaborationActionsCoordinator {
   }
 
   bool canRespondToMeetingRevote(DateNavigationState state) {
-    return state.meetingRevoteRequestStatus == 'pending';
+    return state.meetingRevoteRequestStatus?.isPending ?? false;
   }
 
-  Set<MeetingFormat>? resolveMergedFormatsFromPartner(DateNavigationState state) {
+  Set<MeetingFormat>? resolveMergedFormatsFromPartner(
+    DateNavigationState state,
+  ) {
     final partnerFormats = state.isCreator
         ? state.partnerMeetingFormats
         : state.creatorMeetingFormats;

@@ -6,11 +6,12 @@ import '../../domain/entities/place.dart';
 import '../controller/providers/date_navigation_provider.dart';
 import 'map_section.dart';
 
-typedef LoadingMessageBuilder = String Function({
-  required bool isGeocoding,
-  required bool isCalculatingMeeting,
-  required bool isLoadingRoomAction,
-});
+typedef LoadingMessageBuilder =
+    String Function({
+      required bool isGeocoding,
+      required bool isCalculatingMeeting,
+      required bool isLoadingRoomAction,
+    });
 
 class DateNavigationMapConsumerSection extends ConsumerWidget {
   const DateNavigationMapConsumerSection({

@@ -1,22 +1,23 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
+import '../../../../core/error/result.dart';
 import '../../../../core/services/auth_session.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../user_profile/domain/usecases/remove_user_favorite.dart';
+import '../../../user_profile/domain/usecases/upsert_user_favorite.dart';
+import '../../../user_profile/domain/usecases/watch_user_favorites.dart';
+import '../../../user_profile/domain/usecases/watch_user_history.dart';
 import '../../domain/entities/account_favorite.dart';
 import '../../domain/entities/account_history_item.dart';
-import '../../domain/usecases/add_user_favorite.dart';
-import '../../domain/usecases/remove_user_favorite.dart';
-import '../../domain/usecases/watch_user_favorites.dart';
-import '../../domain/usecases/watch_user_history.dart';
 import '../state/account_state.dart';
 
 class AccountController extends StateNotifier<AccountState> {
   AccountController({
     required WatchUserFavorites watchUserFavorites,
     required WatchUserHistory watchUserHistory,
-    required AddUserFavorite addUserFavorite,
+    required UpsertUserFavorite addUserFavorite,
     required RemoveUserFavorite removeUserFavorite,
     required AuthSession authSession,
   }) : _watchUserFavorites = watchUserFavorites,
@@ -30,7 +31,7 @@ class AccountController extends StateNotifier<AccountState> {
 
   final WatchUserFavorites _watchUserFavorites;
   final WatchUserHistory _watchUserHistory;
-  final AddUserFavorite _addUserFavorite;
+  final UpsertUserFavorite _addUserFavorite;
   final RemoveUserFavorite _removeUserFavorite;
   final AuthSession _authSession;
 
@@ -50,7 +51,7 @@ class AccountController extends StateNotifier<AccountState> {
       return;
     }
 
-    _favoritesSub = _watchUserFavorites(_userId).listen(
+    _favoritesSub = _watchUserFavorites(userId: _userId).listen(
       (favorites) {
         _favoritesError = null;
         state = state.copyWith(
@@ -70,7 +71,7 @@ class AccountController extends StateNotifier<AccountState> {
       },
     );
 
-    _historySub = _watchUserHistory(_userId).listen(
+    _historySub = _watchUserHistory(userId: _userId).listen(
       (history) {
         _historyError = null;
         state = state.copyWith(
@@ -95,11 +96,13 @@ class AccountController extends StateNotifier<AccountState> {
 
   Future<void> removeFavorite(AccountFavorite favorite) async {
     if (_userId.isEmpty) return;
-    try {
-      await _removeUserFavorite(userId: _userId, favorite: favorite);
-    } catch (e, s) {
-      AppLogger.e('Account remove favorite failed', e, s);
-      state = state.copyWith(error: 'Не удалось удалить из избранного');
+    final result = await _removeUserFavorite(
+      userId: _userId,
+      favorite: favorite,
+    );
+    if (result case Err(:final failure)) {
+      AppLogger.e('Account remove favorite failed', failure.message);
+      state = state.copyWith(error: failure.message);
     }
   }
 
@@ -107,18 +110,17 @@ class AccountController extends StateNotifier<AccountState> {
     if (_userId.isEmpty) return;
     final normalizedName = item.placeName.trim();
     if (normalizedName.isEmpty) return;
-    try {
-      await _addUserFavorite(
-        userId: _userId,
-        placeName: normalizedName,
-        placeAddress: item.placeAddress,
-        placeType: item.placeType,
-        lat: item.lat,
-        lon: item.lon,
-      );
-    } catch (e, s) {
-      AppLogger.e('Account add favorite from history failed', e, s);
-      state = state.copyWith(error: 'Не удалось добавить в избранное');
+    final result = await _addUserFavorite(
+      userId: _userId,
+      placeName: normalizedName,
+      placeAddress: item.placeAddress,
+      placeType: item.placeType,
+      lat: item.lat,
+      lon: item.lon,
+    );
+    if (result case Err(:final failure)) {
+      AppLogger.e('Account add favorite from history failed', failure.message);
+      state = state.copyWith(error: failure.message);
     }
   }
 

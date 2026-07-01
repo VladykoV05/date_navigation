@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
-import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
+import '../../domain/entities/room_snapshot.dart';
+import '../../domain/entities/room_status.dart';
 import '../state/date_navigation_state.dart';
 import 'meeting_planner_coordinator.dart';
-import 'room_document_mapper.dart';
 
 class RoomSyncOutcome {
   const RoomSyncOutcome({
@@ -34,27 +33,17 @@ class RoomSyncOutcome {
 }
 
 class RoomSyncCoordinator {
-  const RoomSyncCoordinator(this._roomMapper);
-
-  final RoomDocumentMapper _roomMapper;
+  const RoomSyncCoordinator();
 
   RoomSyncOutcome buildOutcome({
     required DateNavigationState currentState,
-    required Map<String, dynamic> roomData,
+    required RoomSnapshot roomSnapshot,
     required String userId,
     required MeetingPlannerCoordinator meetingPlanner,
   }) {
-    final nextPoint1 = _roomMapper.parseLatLng(roomData['point1']);
-    final nextPoint2 = _roomMapper.parseLatLng(roomData['point2']);
-    final proposalRaw = Map<String, dynamic>.from(roomData['proposal'] ?? {});
-    final votesRaw = Map<String, dynamic>.from(roomData['votes'] ?? {});
-    final votes = votesRaw.map((key, value) => MapEntry(key, value.toString()));
-    final snapshotRaw = Map<String, dynamic>.from(
-      roomData['meetingSnapshot'] ?? const <String, dynamic>{},
-    );
-    final meetingRevoteRequestRaw = Map<String, dynamic>.from(
-      roomData['meetingRevoteRequest'] ?? const <String, dynamic>{},
-    );
+    final nextPoint1 = roomSnapshot.point1;
+    final nextPoint2 = roomSnapshot.point2;
+    final votes = roomSnapshot.votes;
 
     final filteredFromCurrent = meetingPlanner.computeFilteredPlaces(
       places: currentState.foundPlaces,
@@ -69,46 +58,30 @@ class RoomSyncCoordinator {
     final oldPoint1 = currentState.point1;
     final oldPoint2 = currentState.point2;
 
-    final creatorUid = (roomData['creatorUid'] ?? '').toString();
-    final isCreator = creatorUid == userId;
-    final snapshotCenter = _roomMapper.parseLatLng(snapshotRaw['center']);
-    final snapshotPlaces = _roomMapper.parsePlaces(snapshotRaw['places']);
-    final snapshotRoute = _roomMapper.parseRoutePoints(
-      snapshotRaw['routePoints'],
-    );
-    final snapshotUpdatedAt = _roomMapper.parseUpdatedAt(
-      snapshotRaw['updatedAt'],
-    );
-    final selectedScenario = _roomMapper.parseSelectedScenario(
-      roomData['selectedScenario'],
-    );
+    final isCreator = roomSnapshot.creatorUid == userId;
+    final meetingSnapshot = roomSnapshot.meetingSnapshot;
+    final snapshotCenter = meetingSnapshot.center;
+    final snapshotPlaces = meetingSnapshot.places;
+    final snapshotRoute = meetingSnapshot.routePoints;
+    final snapshotUpdatedAt = meetingSnapshot.updatedAt;
+    final selectedScenario = roomSnapshot.selectedScenario;
     final hasSnapshot = snapshotCenter != null && snapshotPlaces.isNotEmpty;
-    final snapshotRadius = (snapshotRaw['searchRadius'] as num?)?.toInt();
-    final rawSessionStatus = (roomData['sessionStatus'] ?? 'active').toString();
-    final expiresAtRaw = roomData['expiresAt'];
-    final expiresAt = expiresAtRaw is Timestamp ? expiresAtRaw.toDate() : null;
+    final snapshotRadius = meetingSnapshot.searchRadius;
+    final rawSessionStatus = roomSnapshot.sessionStatus;
+    final expiresAt = roomSnapshot.expiresAt;
     final isExpiredByTime =
-        rawSessionStatus == 'active' &&
+        rawSessionStatus.isActive &&
         expiresAt != null &&
         expiresAt.isBefore(DateTime.now());
-    final sessionStatus = isExpiredByTime ? 'expired' : rawSessionStatus;
-    final creatorMeetingFormats = _parseMeetingFormats(
-      formatsRaw: roomData['creatorMeetingFormats'],
-      legacyRaw: roomData['creatorMeetingFormat'],
-    );
-    final partnerMeetingFormats = _parseMeetingFormats(
-      formatsRaw: roomData['partnerMeetingFormats'],
-      legacyRaw: roomData['partnerMeetingFormat'],
-    );
-    final legacySelectedMeetingFormat = _parseMeetingFormat(
-      roomData['selectedMeetingFormat'],
-    );
+    final sessionStatus = isExpiredByTime
+        ? SessionStatus.expired
+        : rawSessionStatus;
+    final creatorMeetingFormats = roomSnapshot.creatorMeetingFormats;
+    final partnerMeetingFormats = roomSnapshot.partnerMeetingFormats;
     final creatorSelectedMeetingFormat =
-        _parseMeetingFormat(roomData['creatorSelectedMeetingFormat']) ??
-        legacySelectedMeetingFormat;
+        roomSnapshot.creatorSelectedMeetingFormat;
     final partnerSelectedMeetingFormat =
-        _parseMeetingFormat(roomData['partnerSelectedMeetingFormat']) ??
-        legacySelectedMeetingFormat;
+        roomSnapshot.partnerSelectedMeetingFormat;
     final agreedMeetingFormat =
         creatorSelectedMeetingFormat != null &&
             creatorSelectedMeetingFormat == partnerSelectedMeetingFormat
@@ -116,7 +89,7 @@ class RoomSyncCoordinator {
         : null;
     final lastAgreedMeetingFormat =
         agreedMeetingFormat ?? currentState.lastAgreedMeetingFormat;
-    final snapshotMeetingFormat = _parseMeetingFormat(snapshotRaw['meetingFormat']);
+    final snapshotMeetingFormat = meetingSnapshot.meetingFormat;
     final snapshotMatchesFormat =
         agreedMeetingFormat != null &&
         snapshotMeetingFormat != null &&
@@ -124,16 +97,10 @@ class RoomSyncCoordinator {
     final syncedRadius = snapshotRadius != null && snapshotRadius > 0
         ? snapshotRadius.toDouble()
         : currentState.searchRadius;
-    final creatorSearchRadius = (roomData['creatorSearchRadius'] as num?)
-        ?.toInt();
-    final partnerSearchRadius = (roomData['partnerSearchRadius'] as num?)
-        ?.toInt();
-    final creatorRadiusUpdatedAt = _parseTimestamp(
-      roomData['creatorSearchRadiusUpdatedAt'],
-    );
-    final partnerRadiusUpdatedAt = _parseTimestamp(
-      roomData['partnerSearchRadiusUpdatedAt'],
-    );
+    final creatorSearchRadius = roomSnapshot.creatorSearchRadius;
+    final partnerSearchRadius = roomSnapshot.partnerSearchRadius;
+    final creatorRadiusUpdatedAt = roomSnapshot.creatorSearchRadiusUpdatedAt;
+    final partnerRadiusUpdatedAt = roomSnapshot.partnerSearchRadiusUpdatedAt;
     final myPreferredRadius = (isCreator
         ? creatorSearchRadius
         : partnerSearchRadius);
@@ -159,25 +126,18 @@ class RoomSyncCoordinator {
                 peerRadiusUpdatedAt.isAfter(myRadiusUpdatedAt))
         ? peerPreferredRadius
         : null;
-    final meetingRevoteRequestByRole = meetingRevoteRequestRaw['requestedBy']
-        ?.toString();
-    final meetingRevoteRequestStatus = meetingRevoteRequestRaw['status']
-        ?.toString();
+    final meetingRevoteRequestByRole =
+        roomSnapshot.meetingRevoteRequest.requestedBy;
+    final meetingRevoteRequestStatus = roomSnapshot.meetingRevoteRequest.status;
 
-    final finalChoiceName = _roomMapper.nonEmptyTrimmed(
-      roomData['finalChoice'],
-    );
+    final finalChoiceName = roomSnapshot.finalChoice.name;
     final lookupForFinalChoice = <Place>[
       ...snapshotPlaces,
       ...currentState.foundPlaces,
     ];
     final resolvedFinalPlace = finalChoiceName == null
         ? null
-        : _roomMapper.placeFromFinalChoiceDoc(
-            roomData,
-            finalChoiceName,
-            lookupForFinalChoice,
-          );
+        : roomSnapshot.finalChoice.resolvePlace(lookupForFinalChoice);
     final venueLocked = finalChoiceName != null;
 
     late final latlong.LatLng? nextCenter;
@@ -212,7 +172,8 @@ class RoomSyncCoordinator {
         meetingFormat: agreedMeetingFormat,
       );
     } else {
-      final formatChanged = currentState.selectedMeetingFormat != agreedMeetingFormat;
+      final formatChanged =
+          currentState.selectedMeetingFormat != agreedMeetingFormat;
       if (formatChanged) {
         // Never keep stale places when agreed format changed.
         nextCenter = null;
@@ -239,13 +200,13 @@ class RoomSyncCoordinator {
       point2: nextPoint2,
       finalChoiceName: finalChoiceName,
       finalChoicePlace: venueLocked ? resolvedFinalPlace : null,
-      proposalPlaceName: proposalRaw['placeName']?.toString(),
-      proposalPlaceAddress: proposalRaw['placeAddress']?.toString(),
-      proposalPlaceType: proposalRaw['placeType']?.toString(),
-      proposalByRole: proposalRaw['proposedBy']?.toString(),
-      proposalStatus: proposalRaw['status']?.toString(),
+      proposalPlaceName: roomSnapshot.proposal.placeName,
+      proposalPlaceAddress: roomSnapshot.proposal.placeAddress,
+      proposalPlaceType: roomSnapshot.proposal.placeType,
+      proposalByRole: roomSnapshot.proposal.proposedBy,
+      proposalStatus: roomSnapshot.proposal.status,
       votesByUser: votes,
-      voteCounts: _roomMapper.buildVoteCounts(votes),
+      voteCounts: _buildVoteCounts(votes),
       centerPoint: nextCenter,
       foundPlaces: nextFound,
       routePoints: nextRoute,
@@ -254,9 +215,7 @@ class RoomSyncCoordinator {
       creatorChangedRadiusTo: null,
       peerSuggestedRadius: venueLocked ? null : peerSuggestedRadius,
       peerSuggestedMeetingFormat: null,
-      errorMessage: venueLocked || hasSnapshot
-          ? null
-          : currentState.lastFailure,
+      lastFailure: venueLocked || hasSnapshot ? null : currentState.lastFailure,
       failureOperation: venueLocked || hasSnapshot
           ? null
           : currentState.failureOperation,
@@ -286,39 +245,11 @@ class RoomSyncCoordinator {
     );
   }
 
-  MeetingFormat? _parseMeetingFormat(dynamic raw) {
-    final value = (raw ?? '').toString().trim();
-    if (value.isEmpty) return null;
-    return MeetingFormat.fromWireValue(value);
-  }
-
-  List<MeetingFormat> _parseMeetingFormats({
-    required dynamic formatsRaw,
-    required dynamic legacyRaw,
-  }) {
-    final parsed = <MeetingFormat>[];
-    if (formatsRaw is List) {
-      for (final value in formatsRaw) {
-        final format = _parseMeetingFormat(value);
-        if (format != null && !parsed.contains(format)) {
-          parsed.add(format);
-        }
-      }
+  Map<String, int> _buildVoteCounts(Map<String, String> votes) {
+    final counts = <String, int>{};
+    for (final placeName in votes.values) {
+      counts[placeName] = (counts[placeName] ?? 0) + 1;
     }
-    if (parsed.isNotEmpty) return _sortFormats(parsed);
-    final legacyFormat = _parseMeetingFormat(legacyRaw);
-    if (legacyFormat == null) return const [];
-    return [legacyFormat];
-  }
-
-  DateTime? _parseTimestamp(dynamic raw) {
-    if (raw is Timestamp) return raw.toDate();
-    return null;
-  }
-
-  List<MeetingFormat> _sortFormats(List<MeetingFormat> values) {
-    final sorted = List<MeetingFormat>.from(values);
-    sorted.sort((a, b) => a.index.compareTo(b.index));
-    return sorted;
+    return counts;
   }
 }

@@ -8,6 +8,7 @@ import '../local/cache_service.dart';
 import '../../../domain/entities/date_vibe.dart';
 import '../../../domain/entities/place.dart';
 import '../../../config/date_navigation_config.dart';
+import '../../mappers/overpass_place_mapper.dart';
 import 'nominatim_places_client.dart';
 import 'place_discovery_pipeline.dart';
 import 'place_quality_service.dart';
@@ -23,6 +24,7 @@ class PlacesRemoteDataSource {
   final CacheService _cache;
   final PlaceQualityService _qualityService;
   final NominatimPlacesClient _nominatimClient;
+  final OverpassPlaceMapper _overpassPlaceMapper;
   final Map<String, Future<List<Place>>> _inFlight = {};
 
   final Map<String, String> _headers = {
@@ -35,9 +37,12 @@ class PlacesRemoteDataSource {
     CacheService? cache,
     PlaceQualityService? qualityService,
     NominatimPlacesClient? nominatimClient,
+    OverpassPlaceMapper? overpassPlaceMapper,
   }) : _client = client,
        _cache = cache ?? CacheService(),
        _qualityService = qualityService ?? const PlaceQualityService(),
+       _overpassPlaceMapper =
+           overpassPlaceMapper ?? const OverpassPlaceMapper(),
        _nominatimClient =
            nominatimClient ??
            NominatimPlacesClient(
@@ -175,9 +180,9 @@ class PlacesRemoteDataSource {
                 final nodeLike = Map<String, dynamic>.from(element);
                 nodeLike['lat'] = element['center']['lat'];
                 nodeLike['lon'] = element['center']['lon'];
-                places.add(Place.fromOverpassJson(nodeLike));
+                places.add(_overpassPlaceMapper.fromJson(nodeLike));
               } else if (element['type'] == 'node' && element['lat'] != null) {
-                places.add(Place.fromOverpassJson(element));
+                places.add(_overpassPlaceMapper.fromJson(element));
               }
             } catch (e) {
               AppLogger.w('⚠️ Ошибка парсинга элемента: $e');

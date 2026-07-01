@@ -1,5 +1,6 @@
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/place.dart';
+import 'package:date_navigation/features/date_navigation/domain/entities/room_status.dart';
 import 'package:date_navigation/features/date_navigation/presentation/widgets/room_control_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,7 +59,7 @@ void main() {
             onMeetingFormatsChanged: onMeetingFormatsChanged,
             onMeetingFormatConfirmed: onMeetingFormatConfirmed,
             isSessionClosed: false,
-            sessionStatus: 'active',
+            sessionStatus: SessionStatus.active,
             isCreator: true,
             onLeaveRoom: () {},
           ),

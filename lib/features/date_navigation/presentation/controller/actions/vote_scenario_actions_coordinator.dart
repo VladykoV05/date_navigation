@@ -55,6 +55,10 @@ class VoteScenarioActionsCoordinator {
     if (userId.isEmpty) return null;
     final roomId = state.roomId;
     if (roomId == null || roomId.isEmpty) return null;
-    return SelectScenarioCommand(roomId: roomId, userId: userId, scenario: scenario);
+    return SelectScenarioCommand(
+      roomId: roomId,
+      userId: userId,
+      scenario: scenario,
+    );
   }
 }

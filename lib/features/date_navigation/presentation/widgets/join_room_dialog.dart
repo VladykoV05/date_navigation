@@ -60,10 +60,7 @@ class _JoinRoomDialogState extends State<_JoinRoomDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Отмена'),
         ),
-        ElevatedButton(
-          onPressed: _submitCode,
-          child: const Text('Войти'),
-        ),
+        ElevatedButton(onPressed: _submitCode, child: const Text('Войти')),
       ],
     );
   }

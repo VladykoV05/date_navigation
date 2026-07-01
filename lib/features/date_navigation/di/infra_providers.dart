@@ -1,26 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/di/auth_di.dart';
-import '../../../core/services/auth_sign_out_service.dart';
+export '../../../core/di/firestore_di.dart';
 
-final httpClientProvider = Provider<http.Client>((ref) {
+part 'infra_providers.g.dart';
+
+@Riverpod(keepAlive: true)
+http.Client httpClient(Ref ref) {
   final client = http.Client();
   ref.onDispose(client.close);
   return client;
-});
-
-final firestoreProvider = Provider<FirebaseFirestore>(
-  (ref) => FirebaseFirestore.instance,
-);
-
-final googleSignInProvider = Provider<GoogleSignIn>((ref) => GoogleSignIn());
-
-final authSignOutServiceProvider = Provider<AuthSignOutService>(
-  (ref) => AuthSignOutService(
-    authSession: ref.watch(authSessionProvider),
-    googleSignIn: ref.watch(googleSignInProvider),
-  ),
-);
+}

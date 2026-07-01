@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/di/auth_di.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../core/utils/show_notification.dart';
-import '../../di/auth_di.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});

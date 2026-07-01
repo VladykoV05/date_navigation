@@ -26,7 +26,11 @@ void main() {
     final point1 = const latlong.LatLng(53.9, 27.56);
     final point2 = const latlong.LatLng(53.91, 27.57);
 
-    final request = coordinator.build(state: state, point1: point1, point2: point2);
+    final request = coordinator.build(
+      state: state,
+      point1: point1,
+      point2: point2,
+    );
 
     expect(request, isNotNull);
     expect(request!.searchRadius, 800);

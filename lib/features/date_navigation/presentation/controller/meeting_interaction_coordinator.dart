@@ -39,7 +39,8 @@ class MeetingInteractionCoordinator {
         : null;
     final lastAgreedMeetingFormat =
         selectedMeetingFormat ?? state.lastAgreedMeetingFormat;
-    final shouldClearPlaces = selectedMeetingFormat != state.selectedMeetingFormat;
+    final shouldClearPlaces =
+        selectedMeetingFormat != state.selectedMeetingFormat;
     return state.copyWith(
       creatorMeetingFormats: creatorMeetingFormats,
       partnerMeetingFormats: partnerMeetingFormats,
@@ -76,7 +77,8 @@ class MeetingInteractionCoordinator {
         : null;
     final lastAgreedMeetingFormat =
         nextSelectedMeetingFormat ?? state.lastAgreedMeetingFormat;
-    final shouldClearPlaces = nextSelectedMeetingFormat != state.selectedMeetingFormat;
+    final shouldClearPlaces =
+        nextSelectedMeetingFormat != state.selectedMeetingFormat;
     return state.copyWith(
       creatorSelectedMeetingFormat: creatorSelectedMeetingFormat,
       partnerSelectedMeetingFormat: partnerSelectedMeetingFormat,
@@ -97,7 +99,7 @@ class MeetingInteractionCoordinator {
   }) {
     return state.copyWith(
       selectedScenario: scenario,
-      errorMessage: null,
+      lastFailure: null,
       failureOperation: null,
     );
   }

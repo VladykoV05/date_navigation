@@ -9,6 +9,20 @@ typedef FirestoreFailureMapper =
 class FirestoreErrorGuard {
   const FirestoreErrorGuard._();
 
+  static Future<Result<T>> run<T>(
+    Future<T> Function() action, {
+    required FirestoreFailureMapper mapper,
+    required String fallback,
+  }) async {
+    try {
+      return Ok(await action());
+    } on FirebaseException catch (e) {
+      return mapFirebase(e, mapper: mapper, fallback: fallback);
+    } catch (_) {
+      return mapUnknown(fallback);
+    }
+  }
+
   static Future<Result<void>> runVoid(
     Future<void> Function() action, {
     required FirestoreFailureMapper mapper,
@@ -41,7 +55,7 @@ class FirestoreErrorGuard {
     }
   }
 
-  static Result<void> mapFirebase(
+  static Result<T> mapFirebase<T>(
     FirebaseException e, {
     required FirestoreFailureMapper mapper,
     required String fallback,
@@ -49,7 +63,7 @@ class FirestoreErrorGuard {
     return Err(mapper(e, fallback: fallback));
   }
 
-  static Result<void> mapUnknown(String message) {
+  static Result<T> mapUnknown<T>(String message) {
     return Err(UnknownFailure(message));
   }
 }

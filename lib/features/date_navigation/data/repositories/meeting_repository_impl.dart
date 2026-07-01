@@ -72,5 +72,4 @@ class MeetingRepositoryImpl implements MeetingRepository {
       return const Err(UnknownFailure('Не удалось рассчитать точку встречи'));
     }
   }
-
 }

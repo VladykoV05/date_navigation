@@ -45,7 +45,9 @@ class DateScenario {
     final steps = rawSteps is List
         ? rawSteps
               .whereType<Map>()
-              .map((item) => ScenarioStep.fromMap(Map<String, dynamic>.from(item)))
+              .map(
+                (item) => ScenarioStep.fromMap(Map<String, dynamic>.from(item)),
+              )
               .toList(growable: false)
         : const <ScenarioStep>[];
     final anchorRaw = raw['anchorPlace'];

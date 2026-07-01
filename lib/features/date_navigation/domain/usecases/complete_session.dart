@@ -5,10 +5,7 @@ class CompleteSession {
   final RoomSessionRepository _repo;
   const CompleteSession(this._repo);
 
-  Future<Result<void>> call({
-    required String roomId,
-    required String userId,
-  }) {
+  Future<Result<void>> call({required String roomId, required String userId}) {
     return _repo.completeSession(roomId: roomId, userId: userId);
   }
 }

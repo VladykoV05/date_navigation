@@ -55,11 +55,14 @@ class MeetingFormatActionsCoordinator {
         !currentMyFormats.containsAll(normalizedNext);
     if (!hasChanges) return const MeetingFormatActionDecision.noop();
     final hasAgreedFormat = state.selectedMeetingFormat != null;
-    final hasPendingRevoteRequest = state.meetingRevoteRequestStatus == 'pending';
+    final hasPendingRevoteRequest =
+        state.meetingRevoteRequestStatus?.isPending ?? false;
     if (!hasAgreedFormat) {
       return MeetingFormatActionDecision.selectFormats(normalizedNext);
     }
-    if (hasPendingRevoteRequest) return const MeetingFormatActionDecision.noop();
+    if (hasPendingRevoteRequest) {
+      return const MeetingFormatActionDecision.noop();
+    }
     return MeetingFormatActionDecision.requestRevote(normalizedNext);
   }
 
@@ -78,13 +81,14 @@ class MeetingFormatActionsCoordinator {
     if (!changingAlreadyAgreedFormat) {
       return MeetingFormatActionDecision.confirmFormat(format);
     }
-    if (state.meetingRevoteRequestStatus == 'pending') {
+    if (state.meetingRevoteRequestStatus?.isPending ?? false) {
       return const MeetingFormatActionDecision.noop();
     }
-    final myFormats = (state.isCreator
-            ? state.creatorMeetingFormats
-            : state.partnerMeetingFormats)
-        .toSet();
+    final myFormats =
+        (state.isCreator
+                ? state.creatorMeetingFormats
+                : state.partnerMeetingFormats)
+            .toSet();
     return MeetingFormatActionDecision.requestRevote(myFormats);
   }
 }

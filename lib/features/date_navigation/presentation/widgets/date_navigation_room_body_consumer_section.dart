@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../user_profile/presentation/controller/favorites_controller.dart';
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/place.dart';
 import '../controller/date_navigation_controller.dart';
 import '../controller/providers/date_navigation_provider.dart';
-import '../controller/favorites_controller.dart';
 import 'confirm_dialog.dart';
 import 'place_card.dart';
 import 'room_control_panel.dart';
@@ -49,7 +49,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
     final displayCode = view.inviteCode ?? roomId;
     final venueLocked = view.venueLocked;
     final isSessionClosed = view.isSessionClosed;
-    final isSessionCompleted = view.sessionStatus == 'completed';
+    final isSessionCompleted = view.sessionStatus.isCompleted;
     final sessionClosedLabel = isSessionCompleted
         ? UiCopy.sessionCompletedHint
         : UiCopy.sessionExpiredHint;

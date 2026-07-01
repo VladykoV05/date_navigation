@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../../core/di/analytics_di.dart';
 import '../../../../../core/di/auth_di.dart';
+import '../../../../user_profile/di/user_profile_providers.dart';
 import '../../../di/date_navigation_di.dart';
 import '../../state/date_navigation_state.dart';
 import '../../view_models/room_control_panel_view_data.dart';
@@ -17,7 +19,7 @@ final addressSubmissionCoordinatorProvider =
       (ref) => AddressSubmissionCoordinator(
         geocodeAddress: ref.watch(geocodeAddressProvider),
         updateLocation: ref.watch(updateLocationProvider),
-        rememberAddress: ref.watch(rememberAddressProvider),
+        rememberAddress: ref.watch(profileRememberUserAddressProvider),
         analytics: ref.watch(analyticsServiceProvider),
       ),
     );
@@ -73,8 +75,12 @@ final dateNavigationControllerProvider =
         roomInteraction: ref.watch(roomInteractionCoordinatorProvider),
         roomLifecycle: ref.watch(roomLifecycleCoordinatorProvider),
         watchRoom: ref.watch(watchRoomProvider),
-        watchFrequentAddresses: ref.watch(watchFrequentAddressesProvider),
-        removeRememberedAddress: ref.watch(removeRememberedAddressProvider),
+        watchFrequentAddresses: ref.watch(
+          profileWatchRememberedAddressesProvider,
+        ),
+        removeRememberedAddress: ref.watch(
+          profileRemoveRememberedUserAddressProvider,
+        ),
         saveSearchRadius: ref.watch(saveSearchRadiusProvider),
         authSession: ref.watch(authSessionProvider),
         analytics: ref.watch(analyticsServiceProvider),
@@ -198,8 +204,12 @@ final roomControlPanelViewProvider = Provider.autoDispose((ref) {
     authSessionProvider.select((auth) => auth.currentUserId ?? ''),
   );
   final roomId = stateSlice.inviteCode ?? stateSlice.roomId ?? '';
-  final myLocation = stateSlice.isCreator ? stateSlice.point1 : stateSlice.point2;
-  final partnerPoint = stateSlice.isCreator ? stateSlice.point2 : stateSlice.point1;
+  final myLocation = stateSlice.isCreator
+      ? stateSlice.point1
+      : stateSlice.point2;
+  final partnerPoint = stateSlice.isCreator
+      ? stateSlice.point2
+      : stateSlice.point1;
   final mySelectedMeetingFormat = stateSlice.isCreator
       ? stateSlice.creatorSelectedMeetingFormat
       : stateSlice.partnerSelectedMeetingFormat;

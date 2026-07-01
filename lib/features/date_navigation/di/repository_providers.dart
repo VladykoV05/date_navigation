@@ -1,55 +1,47 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../user_profile/di/user_profile_providers.dart';
 import '../data/repositories/geocoding_repository_impl.dart';
-import '../data/repositories/meeting_history_repository_impl.dart';
 import '../data/repositories/meeting_repository_impl.dart';
 import '../data/repositories/meeting_snapshot_repository_impl.dart';
 import '../data/repositories/room_session_repository_impl.dart';
 import '../data/repositories/room_voting_repository_impl.dart';
-import '../data/repositories/user_address_memory_repository_impl.dart';
-import '../data/repositories/user_favorites_repository_impl.dart';
 import '../domain/repositories/geocoding_repository.dart';
-import '../domain/repositories/meeting_history_repository.dart';
 import '../domain/repositories/meeting_repository.dart';
 import '../domain/repositories/meeting_snapshot_repository.dart';
 import '../domain/repositories/room_session_repository.dart';
 import '../domain/repositories/room_voting_repository.dart';
-import '../domain/repositories/user_address_memory_repository.dart';
-import '../domain/repositories/user_favorites_repository.dart';
 import 'data_providers.dart';
 
-final roomSessionRepositoryProvider = Provider<RoomSessionRepository>(
-  (ref) => RoomSessionRepositoryImpl(ref.watch(roomRemoteDataSourceProvider)),
-);
+part 'repository_providers.g.dart';
 
-final roomVotingRepositoryProvider = Provider<RoomVotingRepository>(
-  (ref) => RoomVotingRepositoryImpl(ref.watch(roomRemoteDataSourceProvider)),
-);
+@Riverpod(keepAlive: true)
+RoomSessionRepository roomSessionRepository(Ref ref) {
+  return RoomSessionRepositoryImpl(ref.watch(roomRemoteDataSourceProvider));
+}
 
-final userFavoritesRepositoryProvider = Provider<UserFavoritesRepository>(
-  (ref) => UserFavoritesRepositoryImpl(ref.watch(roomRemoteDataSourceProvider)),
-);
+@Riverpod(keepAlive: true)
+RoomVotingRepository roomVotingRepository(Ref ref) {
+  return RoomVotingRepositoryImpl(
+    ref.watch(roomRemoteDataSourceProvider),
+    ref.watch(profileRecordMeetingHistoryProvider),
+  );
+}
 
-final userAddressMemoryRepositoryProvider = Provider<UserAddressMemoryRepository>(
-  (ref) =>
-      UserAddressMemoryRepositoryImpl(ref.watch(roomRemoteDataSourceProvider)),
-);
+@Riverpod(keepAlive: true)
+MeetingSnapshotRepository meetingSnapshotRepository(Ref ref) {
+  return MeetingSnapshotRepositoryImpl(ref.watch(roomRemoteDataSourceProvider));
+}
 
-final meetingSnapshotRepositoryProvider = Provider<MeetingSnapshotRepository>(
-  (ref) => MeetingSnapshotRepositoryImpl(ref.watch(roomRemoteDataSourceProvider)),
-);
-
-final meetingHistoryRepositoryProvider = Provider<MeetingHistoryRepository>(
-  (ref) => MeetingHistoryRepositoryImpl(ref.watch(roomRemoteDataSourceProvider)),
-);
-
-final geocodingRepositoryProvider = Provider<GeocodingRepository>((ref) {
+@Riverpod(keepAlive: true)
+GeocodingRepository geocodingRepository(Ref ref) {
   return GeocodingRepositoryImpl(ref.watch(geocodingRemoteDataSourceProvider));
-});
+}
 
-final meetingRepositoryProvider = Provider<MeetingRepository>((ref) {
+@Riverpod(keepAlive: true)
+MeetingRepository meetingRepository(Ref ref) {
   return MeetingRepositoryImpl(
     ref.watch(osrmRemoteDataSourceProvider),
     ref.watch(placesRemoteDataSourceProvider),
   );
-});
+}

@@ -2,6 +2,7 @@ import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
+import '../../domain/entities/room_status.dart';
 
 class RoomControlPanelViewData {
   const RoomControlPanelViewData({
@@ -52,9 +53,9 @@ class RoomControlPanelViewData {
   final MeetingFormat? selectedMeetingFormat;
   final MeetingFormat? lastAgreedMeetingFormat;
   final String? meetingRevoteRequestByRole;
-  final String? meetingRevoteRequestStatus;
+  final RevoteRequestStatus? meetingRevoteRequestStatus;
   final Map<String, int> voteCounts;
   final String? myVotePlaceName;
   final bool isSessionClosed;
-  final String sessionStatus;
+  final SessionStatus sessionStatus;
 }

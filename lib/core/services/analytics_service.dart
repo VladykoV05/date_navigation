@@ -8,10 +8,8 @@ class AnalyticsService {
 
   Future<void> roomJoined() => _analytics.logEvent(name: 'room_joined');
 
-  Future<void> roomClosed({required String reason}) => _analytics.logEvent(
-    name: 'room_closed',
-    parameters: {'reason': reason},
-  );
+  Future<void> roomClosed({required String reason}) =>
+      _analytics.logEvent(name: 'room_closed', parameters: {'reason': reason});
 
   Future<void> addressSubmitted() =>
       _analytics.logEvent(name: 'address_submitted');
@@ -32,10 +30,8 @@ class AnalyticsService {
         parameters: {'format': format},
       );
 
-  Future<void> meetingFormatMatched({required String format}) => _analytics.logEvent(
-    name: 'meeting_format_matched',
-    parameters: {'format': format},
-  );
+  Future<void> meetingFormatMatched({required String format}) => _analytics
+      .logEvent(name: 'meeting_format_matched', parameters: {'format': format});
 
   Future<void> placeSelectedAfterFormat({
     required String format,
@@ -45,11 +41,13 @@ class AnalyticsService {
     parameters: {'format': format, 'action': action},
   );
 
-  Future<void> planGenerated({required String format, required int stepsCount}) =>
-      _analytics.logEvent(
-        name: 'plan_generated',
-        parameters: {'format': format, 'steps_count': stepsCount},
-      );
+  Future<void> planGenerated({
+    required String format,
+    required int stepsCount,
+  }) => _analytics.logEvent(
+    name: 'plan_generated',
+    parameters: {'format': format, 'steps_count': stepsCount},
+  );
 
   Future<void> proposalResponded({required bool accepted}) =>
       _analytics.logEvent(

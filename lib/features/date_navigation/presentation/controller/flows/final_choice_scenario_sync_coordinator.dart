@@ -36,7 +36,10 @@ class FinalChoiceScenarioSyncCoordinator {
     final place =
         state.meeting.finalChoicePlace ??
         Place(name: finalChoiceName, lat: 0, lon: 0);
-    final scenarios = dateAssistant.buildScenarios(format: format, places: [place]);
+    final scenarios = dateAssistant.buildScenarios(
+      format: format,
+      places: [place],
+    );
     final nextState = meetingState.applyScenarioSync(
       state: state,
       scenarios: scenarios,

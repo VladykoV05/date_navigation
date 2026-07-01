@@ -28,69 +28,38 @@ Future<void> showPlaceActionsSheet({
       builder: (context, setModalState) {
         final colorScheme = Theme.of(context).colorScheme;
         return Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(UiRadius.lg)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            PlaceDetailsSheet(
-              place: place,
-              startPoint: myPoint,
-              partnerPoint: partnerPoint,
-              navigationService: navigationService,
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(UiRadius.lg),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                UiSpace.lg,
-                0,
-                UiSpace.lg,
-                UiSpace.xxl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PlaceDetailsSheet(
+                place: place,
+                startPoint: myPoint,
+                partnerPoint: partnerPoint,
+                navigationService: navigationService,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: FilledButton.tonalIcon(
-                      icon: Icon(
-                        isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                      ),
-                      label: Text(
-                        isFavorite ? 'Убрать из избранного' : 'В избранное',
-                      ),
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      onPressed: isBusy
-                          ? null
-                          : () async {
-                              setModalState(() => isBusy = true);
-                              try {
-                                await onToggleFavorite();
-                                if (context.mounted) {
-                                  HapticFeedback.selectionClick();
-                                  ShowNotification.showSnackBar(
-                                    context,
-                                    isFavorite
-                                        ? 'Удалено из избранного'
-                                        : 'Добавлено в избранное',
-                                  );
-                                  Navigator.pop(context);
-                                }
-                              } finally {
-                                if (context.mounted) {
-                                  setModalState(() => isBusy = false);
-                                }
-                              }
-                            },
-                    ),
-                  ),
-                  if (canProposePlace) const SizedBox(width: UiSpace.xs),
-                  if (canProposePlace)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  UiSpace.lg,
+                  0,
+                  UiSpace.lg,
+                  UiSpace.xxl,
+                ),
+                child: Row(
+                  children: [
                     Expanded(
                       child: FilledButton.tonalIcon(
-                        icon: const Icon(Icons.send),
-                        label: const Text('Предложить'),
+                        icon: Icon(
+                          isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                        ),
+                        label: Text(
+                          isFavorite ? 'Убрать из избранного' : 'В избранное',
+                        ),
                         style: FilledButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
                         ),
@@ -99,12 +68,14 @@ Future<void> showPlaceActionsSheet({
                             : () async {
                                 setModalState(() => isBusy = true);
                                 try {
-                                  await onProposePlace();
+                                  await onToggleFavorite();
                                   if (context.mounted) {
-                                    HapticFeedback.lightImpact();
+                                    HapticFeedback.selectionClick();
                                     ShowNotification.showSnackBar(
                                       context,
-                                      'Место предложено партнеру',
+                                      isFavorite
+                                          ? 'Удалено из избранного'
+                                          : 'Добавлено в избранное',
                                     );
                                     Navigator.pop(context);
                                   }
@@ -116,12 +87,43 @@ Future<void> showPlaceActionsSheet({
                               },
                       ),
                     ),
-                ],
+                    if (canProposePlace) const SizedBox(width: UiSpace.xs),
+                    if (canProposePlace)
+                      Expanded(
+                        child: FilledButton.tonalIcon(
+                          icon: const Icon(Icons.send),
+                          label: const Text('Предложить'),
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 50),
+                          ),
+                          onPressed: isBusy
+                              ? null
+                              : () async {
+                                  setModalState(() => isBusy = true);
+                                  try {
+                                    await onProposePlace();
+                                    if (context.mounted) {
+                                      HapticFeedback.lightImpact();
+                                      ShowNotification.showSnackBar(
+                                        context,
+                                        'Место предложено партнеру',
+                                      );
+                                      Navigator.pop(context);
+                                    }
+                                  } finally {
+                                    if (context.mounted) {
+                                      setModalState(() => isBusy = false);
+                                    }
+                                  }
+                                },
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
       },
     ),
   );

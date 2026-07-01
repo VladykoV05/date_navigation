@@ -1,17 +1,3 @@
-class AccountFavorite {
-  final String id;
-  final String name;
-  final String? address;
-  final String? type;
-  final double? lat;
-  final double? lon;
+import '../../../user_profile/domain/entities/user_favorite.dart';
 
-  const AccountFavorite({
-    required this.id,
-    required this.name,
-    this.address,
-    this.type,
-    this.lat,
-    this.lon,
-  });
-}
+typedef AccountFavorite = UserFavorite;

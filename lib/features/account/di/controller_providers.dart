@@ -1,17 +1,17 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
+import '../../../core/di/auth_di.dart';
+import '../../user_profile/di/user_profile_providers.dart';
 import '../presentation/controller/account_controller.dart';
 import '../presentation/state/account_state.dart';
-import 'infra_providers.dart';
-import 'usecase_providers.dart';
 
 final accountControllerProvider =
     StateNotifierProvider.autoDispose<AccountController, AccountState>(
       (ref) => AccountController(
-        watchUserFavorites: ref.watch(watchUserFavoritesProvider),
-        watchUserHistory: ref.watch(watchUserHistoryProvider),
-        addUserFavorite: ref.watch(addUserFavoriteProvider),
-        removeUserFavorite: ref.watch(removeUserFavoriteProvider),
-        authSession: ref.watch(accountAuthSessionProvider),
+        watchUserFavorites: ref.watch(profileWatchUserFavoritesProvider),
+        watchUserHistory: ref.watch(profileWatchUserHistoryProvider),
+        addUserFavorite: ref.watch(profileUpsertUserFavoriteProvider),
+        removeUserFavorite: ref.watch(profileRemoveUserFavoriteProvider),
+        authSession: ref.watch(authSessionProvider),
       ),
     );

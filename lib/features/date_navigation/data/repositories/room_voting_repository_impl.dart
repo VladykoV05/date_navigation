@@ -1,11 +1,16 @@
 import '../../../../core/error/result.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../user_profile/domain/usecases/record_meeting_history.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../domain/repositories/room_voting_repository.dart';
 import '../datasources/remote/room_remote_data_source.dart';
+import '../datasources/remote/room_voting_remote_data_source.dart';
 
 class RoomVotingRepositoryImpl implements RoomVotingRepository {
   final RoomRemoteDataSource _remote;
-  RoomVotingRepositoryImpl(this._remote);
+  final RecordMeetingHistory _recordMeetingHistory;
+
+  RoomVotingRepositoryImpl(this._remote, this._recordMeetingHistory);
 
   @override
   Future<Result<void>> voteForPlace({
@@ -46,12 +51,35 @@ class RoomVotingRepositoryImpl implements RoomVotingRepository {
     required String roomId,
     required ProposalResponseDecision decision,
     required String actedByUserId,
-  }) {
-    return _remote.respondToProposal(
+  }) async {
+    final response = await _remote.respondToProposalForHistory(
       roomId: roomId,
       decision: decision,
       actedByUserId: actedByUserId,
     );
+    return switch (response) {
+      Err(:final failure) => Err(failure),
+      Ok(value: null) => const Ok(null),
+      Ok(value: final draft?) => await _recordMeetingHistoryBestEffort(draft),
+    };
+  }
+
+  Future<Result<void>> _recordMeetingHistoryBestEffort(
+    AcceptedProposalHistoryDraft draft,
+  ) async {
+    final result = await _recordMeetingHistory(
+      roomId: draft.roomId,
+      placeName: draft.placeName,
+      participantIds: draft.participantIds,
+      placeAddress: draft.placeAddress,
+      placeType: draft.placeType,
+      lat: draft.lat,
+      lon: draft.lon,
+    );
+    if (result case Err(:final failure)) {
+      AppLogger.e('Meeting history write failed', failure.message);
+    }
+    return const Ok(null);
   }
 
   @override

@@ -80,7 +80,7 @@ class PlaceCard extends StatelessWidget {
                     ],
                   ],
                 ),
-              const SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   place.address ?? 'Адрес не указан',
                   maxLines: 1,
@@ -89,72 +89,74 @@ class PlaceCard extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
-              const SizedBox(height: 6),
-              if (userLocation != null)
-                Row(
-                  children: [
-                    Icon(Icons.person, size: 12, color: colorScheme.primary),
-                    const SizedBox(width: 4),
-                    Text(
-                      _formatDistance(
-                        place.distanceTo(
-                          userLocation!.latitude,
-                          userLocation!.longitude,
-                        ),
-                      ),
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              const SizedBox(height: 6),
-              if (score != null || onVote != null) ...[
-                Row(
-                  children: [
-                    if (score != null)
-                      Text(
-                        'Score: ${score!.toStringAsFixed(2)}',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colorScheme.tertiary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    if (onVote != null) ...[
-                      const Spacer(),
-                      IconButton(
-                        onPressed: onVote,
-                        iconSize: 20,
-                        constraints: const BoxConstraints(
-                          minWidth: 48,
-                          minHeight: 48,
-                        ),
-                        tooltip: isVotedByMe ? 'Убрать голос' : 'Проголосовать',
-                        icon: Icon(
-                          isVotedByMe
-                              ? Icons.thumb_up
-                              : Icons.thumb_up_alt_outlined,
-                          color: isVotedByMe
-                              ? colorScheme.primary
-                              : colorScheme.onSurfaceVariant,
-                        ),
-                      ),
+                const SizedBox(height: 6),
+                if (userLocation != null)
+                  Row(
+                    children: [
+                      Icon(Icons.person, size: 12, color: colorScheme.primary),
                       const SizedBox(width: 4),
                       Text(
-                        '$voteCount',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        _formatDistance(
+                          place.distanceTo(
+                            userLocation!.latitude,
+                            userLocation!.longitude,
+                          ),
+                        ),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
-                  ],
-                ),
+                  ),
                 const SizedBox(height: 6),
-              ],
-              _buildTypeChip(
-                visual: visual,
-                labelText: typeLabels.firstOrNull ?? visual.label,
-                secondaryText: null,
-              ),
+                if (score != null || onVote != null) ...[
+                  Row(
+                    children: [
+                      if (score != null)
+                        Text(
+                          'Score: ${score!.toStringAsFixed(2)}',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.tertiary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      if (onVote != null) ...[
+                        const Spacer(),
+                        IconButton(
+                          onPressed: onVote,
+                          iconSize: 20,
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                          tooltip: isVotedByMe
+                              ? 'Убрать голос'
+                              : 'Проголосовать',
+                          icon: Icon(
+                            isVotedByMe
+                                ? Icons.thumb_up
+                                : Icons.thumb_up_alt_outlined,
+                            color: isVotedByMe
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$voteCount',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                ],
+                _buildTypeChip(
+                  visual: visual,
+                  labelText: typeLabels.firstOrNull ?? visual.label,
+                  secondaryText: null,
+                ),
               ],
             ),
           ),
@@ -163,10 +165,7 @@ class PlaceCard extends StatelessWidget {
     );
   }
 
-  List<String> _buildTypeLabels(
-    Place place, {
-    String? selectedTypeContext,
-  }) {
+  List<String> _buildTypeLabels(Place place, {String? selectedTypeContext}) {
     if (selectedTypeContext == 'swimming_pool' &&
         place.types.contains('swimming_pool')) {
       // In "Pool" filter show only pool label.

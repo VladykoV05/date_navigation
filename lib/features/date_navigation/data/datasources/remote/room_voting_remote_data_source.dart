@@ -3,8 +3,29 @@ import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/error/result.dart';
+import '../../../domain/entities/room_status.dart';
 import '../../../domain/entities/voting_decisions.dart';
 import 'firestore_error_guard.dart';
+
+class AcceptedProposalHistoryDraft {
+  const AcceptedProposalHistoryDraft({
+    required this.roomId,
+    required this.placeName,
+    required this.participantIds,
+    this.placeAddress,
+    this.placeType,
+    this.lat,
+    this.lon,
+  });
+
+  final String roomId;
+  final String placeName;
+  final List<String> participantIds;
+  final String? placeAddress;
+  final String? placeType;
+  final double? lat;
+  final double? lon;
+}
 
 class RoomVotingRemoteDataSource {
   const RoomVotingRemoteDataSource(
@@ -38,30 +59,30 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        final finalChoice = (data['finalChoice'] ?? '').toString();
-        if (finalChoice.isNotEmpty) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'failed-precondition',
-            message: 'Голосование закрыто после финального выбора',
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          final finalChoice = (data['finalChoice'] ?? '').toString();
+          if (finalChoice.isNotEmpty) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'failed-precondition',
+              message: 'Голосование закрыто после финального выбора',
+            );
+          }
+          final participants = List<String>.from(
+            data['participants'] ?? const <String>[],
           );
-        }
-        final participants = List<String>.from(
-          data['participants'] ?? const <String>[],
-        );
-        if (!participants.contains(userId)) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message: 'Только участники комнаты могут голосовать',
-          );
-        }
-        tx.update(roomRef, {'votes.$userId': placeName});
-      });
+          if (!participants.contains(userId)) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: 'Только участники комнаты могут голосовать',
+            );
+          }
+          tx.update(roomRef, {'votes.$userId': placeName});
+        });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось проголосовать',
@@ -80,40 +101,39 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        if ((data['finalChoice'] ?? '').toString().isNotEmpty) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'failed-precondition',
-            message: 'Финальное место уже выбрано',
-          );
-        }
-        tx.update(roomRef, {
-          'proposal': {
-            'placeName': placeName,
-            'lat': lat,
-            'lon': lon,
-            if (placeAddress != null && placeAddress.isNotEmpty)
-              'placeAddress': placeAddress,
-            if (placeType != null && placeType.isNotEmpty)
-              'placeType': placeType,
-            'proposedBy': authorRole.wireValue,
-            'status': 'pending',
-          },
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          if ((data['finalChoice'] ?? '').toString().isNotEmpty) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'failed-precondition',
+              message: 'Финальное место уже выбрано',
+            );
+          }
+          tx.update(roomRef, {
+            'proposal': {
+              'placeName': placeName,
+              'lat': lat,
+              'lon': lon,
+              if (placeAddress != null && placeAddress.isNotEmpty)
+                'placeAddress': placeAddress,
+              if (placeType != null && placeType.isNotEmpty)
+                'placeType': placeType,
+              'proposedBy': authorRole.wireValue,
+              'status': ProposalStatus.pending.wireValue,
+            },
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось предложить место',
     );
   }
 
-  Future<Result<void>> respondToProposal({
+  Future<Result<AcceptedProposalHistoryDraft?>> respondToProposal({
     required String roomsCollection,
-    required String usersCollection,
     required String roomId,
     required ProposalResponseDecision decision,
     required String actedByUserId,
@@ -126,7 +146,7 @@ class RoomVotingRemoteDataSource {
     String? acceptedPlaceType;
     double? acceptedLat;
     double? acceptedLon;
-    return FirestoreErrorGuard.runVoid(
+    return FirestoreErrorGuard.run(
       () async {
         await _firestore.runTransaction((tx) async {
           final snap = await tx.get(roomRef);
@@ -134,9 +154,12 @@ class RoomVotingRemoteDataSource {
           final proposal = Map<String, dynamic>.from(data['proposal'] ?? {});
           final placeName = (proposal['placeName'] ?? '').toString();
           if (placeName.isEmpty) return;
-          final proposalStatus = (proposal['status'] ?? 'pending').toString();
+          final proposalStatus = ProposalStatus.fromWireValue(
+            proposal['status'] ?? ProposalStatus.pending.wireValue,
+          );
           final currentFinalChoice = (data['finalChoice'] ?? '').toString();
-          if (currentFinalChoice.isNotEmpty || proposalStatus != 'pending') {
+          if (currentFinalChoice.isNotEmpty ||
+              proposalStatus != ProposalStatus.pending) {
             return;
           }
 
@@ -161,7 +184,7 @@ class RoomVotingRemoteDataSource {
 
             final update = <String, dynamic>{
               'finalChoice': placeName,
-              'proposal.status': 'accepted',
+              'proposal.status': ProposalStatus.accepted.wireValue,
             };
             if (pLat != null && pLon != null) {
               update['finalChoiceLat'] = pLat;
@@ -182,7 +205,9 @@ class RoomVotingRemoteDataSource {
             acceptedLat = pLat;
             acceptedLon = pLon;
           } else {
-            tx.update(roomRef, {'proposal.status': 'rejected'});
+            tx.update(roomRef, {
+              'proposal.status': ProposalStatus.rejected.wireValue,
+            });
           }
         });
 
@@ -190,8 +215,7 @@ class RoomVotingRemoteDataSource {
             acceptedPlaceName != null &&
             acceptedPlaceName!.isNotEmpty &&
             acceptedParticipantIds.isNotEmpty) {
-          await _appendMeetingHistoryEntries(
-            usersCollection: usersCollection,
+          return AcceptedProposalHistoryDraft(
             roomId: roomId,
             placeName: acceptedPlaceName!,
             participantIds: acceptedParticipantIds,
@@ -201,47 +225,11 @@ class RoomVotingRemoteDataSource {
             lon: acceptedLon,
           );
         }
+        return null;
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось ответить на предложение',
     );
-  }
-
-  Future<void> _appendMeetingHistoryEntries({
-    required String usersCollection,
-    required String roomId,
-    required String placeName,
-    required List<String> participantIds,
-    String? placeAddress,
-    String? placeType,
-    double? lat,
-    double? lon,
-  }) async {
-    final batch = _firestore.batch();
-    for (final userId in participantIds) {
-      final counterpartyUid = participantIds.firstWhere(
-        (id) => id != userId,
-        orElse: () => '',
-      );
-      final historyRef = _firestore
-          .collection(usersCollection)
-          .doc(userId)
-          .collection('meeting_history')
-          .doc(roomId);
-      batch.set(historyRef, {
-        'roomId': roomId,
-        'placeName': placeName,
-        if (placeAddress != null && placeAddress.trim().isNotEmpty)
-          'placeAddress': placeAddress.trim(),
-        if (placeType != null && placeType.trim().isNotEmpty)
-          'placeType': placeType.trim(),
-        if (lat != null) 'lat': lat,
-        if (lon != null) 'lon': lon,
-        'createdAt': FieldValue.serverTimestamp(),
-        'counterpartyUid': counterpartyUid,
-      }, SetOptions(merge: true));
-    }
-    await batch.commit();
   }
 
   Future<Result<void>> saveMeetingSnapshot({
@@ -255,33 +243,36 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final normalizedRoutePoints = routePoints
-          .map((p) => {'lat': p.latitude, 'lng': p.longitude})
-          .toList(growable: false);
-      final normalizedPlaces = List<Map<String, dynamic>>.from(places)
-        ..sort((a, b) {
-          final byName = (a['name'] ?? '').toString().compareTo(
-            (b['name'] ?? '').toString(),
-          );
-          if (byName != 0) return byName;
-          final byLat = ((a['lat'] as num?)?.toDouble() ?? 0.0).compareTo(
-            (b['lat'] as num?)?.toDouble() ?? 0.0,
-          );
-          if (byLat != 0) return byLat;
-          return ((a['lon'] as num?)?.toDouble() ?? 0.0).compareTo(
-            (b['lon'] as num?)?.toDouble() ?? 0.0,
-          );
+        final normalizedRoutePoints = routePoints
+            .map((p) => {'lat': p.latitude, 'lng': p.longitude})
+            .toList(growable: false);
+        final normalizedPlaces = List<Map<String, dynamic>>.from(places)
+          ..sort((a, b) {
+            final byName = (a['name'] ?? '').toString().compareTo(
+              (b['name'] ?? '').toString(),
+            );
+            if (byName != 0) return byName;
+            final byLat = ((a['lat'] as num?)?.toDouble() ?? 0.0).compareTo(
+              (b['lat'] as num?)?.toDouble() ?? 0.0,
+            );
+            if (byLat != 0) return byLat;
+            return ((a['lon'] as num?)?.toDouble() ?? 0.0).compareTo(
+              (b['lon'] as num?)?.toDouble() ?? 0.0,
+            );
+          });
+        await _firestore.collection(roomsCollection).doc(roomId).update({
+          'meetingSnapshot': {
+            'center': {
+              'lat': centerPoint.latitude,
+              'lng': centerPoint.longitude,
+            },
+            'routePoints': normalizedRoutePoints,
+            'places': normalizedPlaces,
+            'searchRadius': searchRadius,
+            'meetingFormat': meetingFormat,
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
         });
-      await _firestore.collection(roomsCollection).doc(roomId).update({
-        'meetingSnapshot': {
-          'center': {'lat': centerPoint.latitude, 'lng': centerPoint.longitude},
-          'routePoints': normalizedRoutePoints,
-          'places': normalizedPlaces,
-          'searchRadius': searchRadius,
-          'meetingFormat': meetingFormat,
-          'updatedAt': FieldValue.serverTimestamp(),
-        },
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось синхронизировать результаты',
@@ -296,13 +287,13 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      await _firestore.collection(roomsCollection).doc(roomId).update({
-        'selectedScenario': {
-          ...scenario,
-          'selectedByUserId': selectedByUserId,
-          'selectedAt': FieldValue.serverTimestamp(),
-        },
-      });
+        await _firestore.collection(roomsCollection).doc(roomId).update({
+          'selectedScenario': {
+            ...scenario,
+            'selectedByUserId': selectedByUserId,
+            'selectedAt': FieldValue.serverTimestamp(),
+          },
+        });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось сохранить сценарий встречи',
@@ -317,48 +308,48 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
-            .toString();
-        final partnerUid = (data['partnerUid'] ?? '').toString();
-        final field = userId == creatorUid
-            ? 'creatorMeetingFormat'
-            : (userId == partnerUid ? 'partnerMeetingFormat' : null);
-        if (field == null) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message: 'Только участники комнаты могут выбрать формат встречи',
-          );
-        }
-        final updatedAtField = userId == creatorUid
-            ? 'creatorMeetingFormatUpdatedAt'
-            : 'partnerMeetingFormatUpdatedAt';
-        final selectedField = userId == creatorUid
-            ? 'creatorSelectedMeetingFormat'
-            : 'partnerSelectedMeetingFormat';
-        final uniqueFormats = <String>{
-          for (final value in formats)
-            value.trim().toLowerCase().replaceAll(' ', '_'),
-        }.where((value) => value.isNotEmpty).toList(growable: false)
-          ..sort();
-        final currentSelected = (data[selectedField] ?? '')
-            .toString()
-            .trim()
-            .toLowerCase()
-            .replaceAll(' ', '_');
-        tx.update(roomRef, {
-          field: uniqueFormats.isEmpty ? null : uniqueFormats.first,
-          '${field}s': uniqueFormats,
-          updatedAtField: FieldValue.serverTimestamp(),
-          if (currentSelected.isNotEmpty && !uniqueFormats.contains(currentSelected))
-            selectedField: FieldValue.delete(),
-          'selectedMeetingFormat': FieldValue.delete(), // legacy field
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          final partnerUid = (data['partnerUid'] ?? '').toString();
+          final field = userId == creatorUid
+              ? 'creatorMeetingFormat'
+              : (userId == partnerUid ? 'partnerMeetingFormat' : null);
+          if (field == null) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: 'Только участники комнаты могут выбрать формат встречи',
+            );
+          }
+          final updatedAtField = userId == creatorUid
+              ? 'creatorMeetingFormatUpdatedAt'
+              : 'partnerMeetingFormatUpdatedAt';
+          final selectedField = userId == creatorUid
+              ? 'creatorSelectedMeetingFormat'
+              : 'partnerSelectedMeetingFormat';
+          final uniqueFormats = <String>{
+            for (final value in formats)
+              value.trim().toLowerCase().replaceAll(' ', '_'),
+          }.where((value) => value.isNotEmpty).toList(growable: false)..sort();
+          final currentSelected = (data[selectedField] ?? '')
+              .toString()
+              .trim()
+              .toLowerCase()
+              .replaceAll(' ', '_');
+          tx.update(roomRef, {
+            field: uniqueFormats.isEmpty ? null : uniqueFormats.first,
+            '${field}s': uniqueFormats,
+            updatedAtField: FieldValue.serverTimestamp(),
+            if (currentSelected.isNotEmpty &&
+                !uniqueFormats.contains(currentSelected))
+              selectedField: FieldValue.delete(),
+            'selectedMeetingFormat': FieldValue.delete(), // legacy field
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось сохранить формат встречи',
@@ -373,56 +364,61 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
-            .toString();
-        final partnerUid = (data['partnerUid'] ?? '').toString();
-        final requestByRole = userId == creatorUid
-            ? 'creator'
-            : (userId == partnerUid ? 'partner' : null);
-        if (requestByRole == null) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message:
-                'Только участники комнаты могут запрашивать пересогласование',
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          final partnerUid = (data['partnerUid'] ?? '').toString();
+          final requestByRole = userId == creatorUid
+              ? 'creator'
+              : (userId == partnerUid ? 'partner' : null);
+          if (requestByRole == null) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message:
+                  'Только участники комнаты могут запрашивать пересогласование',
+            );
+          }
+          final currentRequest = Map<String, dynamic>.from(
+            data['meetingRevoteRequest'] ?? const <String, dynamic>{},
           );
-        }
-        final currentRequest = Map<String, dynamic>.from(
-          data['meetingRevoteRequest'] ?? const <String, dynamic>{},
-        );
-        final requestStatus = (currentRequest['status'] ?? '').toString();
-        if (requestStatus == 'pending') {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'failed-precondition',
-            message: 'Запрос на пересогласование уже отправлен',
+          final requestStatus = RevoteRequestStatus.fromWireValue(
+            currentRequest['status'],
           );
-        }
-        final uniqueFormats = <String>{
-          for (final value in formats)
-            value.trim().toLowerCase().replaceAll(' ', '_'),
-        }.where((value) => value.isNotEmpty).toList(growable: false)
-          ..sort();
-        final creatorFormats = requestByRole == 'creator'
-            ? uniqueFormats
-            : List<String>.from(data['creatorMeetingFormats'] ?? const <String>[]);
-        final partnerFormats = requestByRole == 'partner'
-            ? uniqueFormats
-            : List<String>.from(data['partnerMeetingFormats'] ?? const <String>[]);
-        tx.update(roomRef, {
-          'meetingRevoteRequest': {
-            'status': 'pending',
-            'requestedBy': requestByRole,
-            'creatorFormats': creatorFormats,
-            'partnerFormats': partnerFormats,
-            'requestedAt': FieldValue.serverTimestamp(),
-          },
+          if (requestStatus == RevoteRequestStatus.pending) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'failed-precondition',
+              message: 'Запрос на пересогласование уже отправлен',
+            );
+          }
+          final uniqueFormats = <String>{
+            for (final value in formats)
+              value.trim().toLowerCase().replaceAll(' ', '_'),
+          }.where((value) => value.isNotEmpty).toList(growable: false)..sort();
+          final creatorFormats = requestByRole == 'creator'
+              ? uniqueFormats
+              : List<String>.from(
+                  data['creatorMeetingFormats'] ?? const <String>[],
+                );
+          final partnerFormats = requestByRole == 'partner'
+              ? uniqueFormats
+              : List<String>.from(
+                  data['partnerMeetingFormats'] ?? const <String>[],
+                );
+          tx.update(roomRef, {
+            'meetingRevoteRequest': {
+              'status': RevoteRequestStatus.pending.wireValue,
+              'requestedBy': requestByRole,
+              'creatorFormats': creatorFormats,
+              'partnerFormats': partnerFormats,
+              'requestedAt': FieldValue.serverTimestamp(),
+            },
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось запросить пересогласование',
@@ -438,60 +434,66 @@ class RoomVotingRemoteDataSource {
     final isAccepted = decision.isAccepted;
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
-            .toString();
-        final partnerUid = (data['partnerUid'] ?? '').toString();
-        final myRole = userId == creatorUid
-            ? 'creator'
-            : (userId == partnerUid ? 'partner' : null);
-        if (myRole == null) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message:
-                'Только участники комнаты могут отвечать на пересогласование',
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          final partnerUid = (data['partnerUid'] ?? '').toString();
+          final myRole = userId == creatorUid
+              ? 'creator'
+              : (userId == partnerUid ? 'partner' : null);
+          if (myRole == null) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message:
+                  'Только участники комнаты могут отвечать на пересогласование',
+            );
+          }
+          final request = Map<String, dynamic>.from(
+            data['meetingRevoteRequest'] ?? const <String, dynamic>{},
           );
-        }
-        final request = Map<String, dynamic>.from(
-          data['meetingRevoteRequest'] ?? const <String, dynamic>{},
-        );
-        final status = (request['status'] ?? '').toString();
-        final requestedBy = (request['requestedBy'] ?? '').toString();
-        if (status != 'pending' || requestedBy.isEmpty) return;
-        if (requestedBy == myRole) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'failed-precondition',
-            message: 'Нельзя подтвердить собственный запрос',
+          final status = RevoteRequestStatus.fromWireValue(request['status']);
+          final requestedBy = (request['requestedBy'] ?? '').toString();
+          if (status != RevoteRequestStatus.pending || requestedBy.isEmpty) {
+            return;
+          }
+          if (requestedBy == myRole) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'failed-precondition',
+              message: 'Нельзя подтвердить собственный запрос',
+            );
+          }
+          if (!isAccepted) {
+            tx.update(roomRef, {'meetingRevoteRequest': FieldValue.delete()});
+            return;
+          }
+          final creatorFormats = List<String>.from(
+            request['creatorFormats'] ?? const <String>[],
           );
-        }
-        if (!isAccepted) {
-          tx.update(roomRef, {'meetingRevoteRequest': FieldValue.delete()});
-          return;
-        }
-        final creatorFormats = List<String>.from(
-          request['creatorFormats'] ?? const <String>[],
-        );
-        final partnerFormats = List<String>.from(
-          request['partnerFormats'] ?? const <String>[],
-        );
-        tx.update(roomRef, {
-          'creatorMeetingFormats': creatorFormats,
-          'creatorMeetingFormat': creatorFormats.isEmpty ? null : creatorFormats.first,
-          'partnerMeetingFormats': partnerFormats,
-          'partnerMeetingFormat': partnerFormats.isEmpty ? null : partnerFormats.first,
-          'creatorMeetingFormatUpdatedAt': FieldValue.serverTimestamp(),
-          'partnerMeetingFormatUpdatedAt': FieldValue.serverTimestamp(),
-          'creatorSelectedMeetingFormat': FieldValue.delete(),
-          'partnerSelectedMeetingFormat': FieldValue.delete(),
-          'selectedMeetingFormat': FieldValue.delete(),
-          'meetingRevoteRequest': FieldValue.delete(),
+          final partnerFormats = List<String>.from(
+            request['partnerFormats'] ?? const <String>[],
+          );
+          tx.update(roomRef, {
+            'creatorMeetingFormats': creatorFormats,
+            'creatorMeetingFormat': creatorFormats.isEmpty
+                ? null
+                : creatorFormats.first,
+            'partnerMeetingFormats': partnerFormats,
+            'partnerMeetingFormat': partnerFormats.isEmpty
+                ? null
+                : partnerFormats.first,
+            'creatorMeetingFormatUpdatedAt': FieldValue.serverTimestamp(),
+            'partnerMeetingFormatUpdatedAt': FieldValue.serverTimestamp(),
+            'creatorSelectedMeetingFormat': FieldValue.delete(),
+            'partnerSelectedMeetingFormat': FieldValue.delete(),
+            'selectedMeetingFormat': FieldValue.delete(),
+            'meetingRevoteRequest': FieldValue.delete(),
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось обработать запрос пересогласования',
@@ -546,31 +548,31 @@ class RoomVotingRemoteDataSource {
   }) async {
     return FirestoreErrorGuard.runVoid(
       () async {
-      final roomRef = _firestore.collection(roomsCollection).doc(roomId);
-      await _firestore.runTransaction((tx) async {
-        final snap = await tx.get(roomRef);
-        final data = snap.data() ?? <String, dynamic>{};
-        final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
-            .toString();
-        final partnerUid = (data['partnerUid'] ?? '').toString();
-        final field = userId == creatorUid
-            ? 'creatorSearchRadius'
-            : (userId == partnerUid ? 'partnerSearchRadius' : null);
-        if (field == null) {
-          throw FirebaseException(
-            plugin: 'cloud_firestore',
-            code: 'permission-denied',
-            message: 'Только участники комнаты могут менять радиус',
-          );
-        }
-        final updatedAtField = userId == creatorUid
-            ? 'creatorSearchRadiusUpdatedAt'
-            : 'partnerSearchRadiusUpdatedAt';
-        tx.update(roomRef, {
-          field: radius,
-          updatedAtField: FieldValue.serverTimestamp(),
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          final data = snap.data() ?? <String, dynamic>{};
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          final partnerUid = (data['partnerUid'] ?? '').toString();
+          final field = userId == creatorUid
+              ? 'creatorSearchRadius'
+              : (userId == partnerUid ? 'partnerSearchRadius' : null);
+          if (field == null) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: 'Только участники комнаты могут менять радиус',
+            );
+          }
+          final updatedAtField = userId == creatorUid
+              ? 'creatorSearchRadiusUpdatedAt'
+              : 'partnerSearchRadiusUpdatedAt';
+          tx.update(roomRef, {
+            field: radius,
+            updatedAtField: FieldValue.serverTimestamp(),
+          });
         });
-      });
       },
       mapper: _mapFirestoreFailure,
       fallback: 'Не удалось сохранить радиус поиска',

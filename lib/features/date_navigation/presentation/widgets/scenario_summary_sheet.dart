@@ -42,7 +42,9 @@ class ScenarioSummarySheet extends StatelessWidget {
             const SizedBox(height: UiSpace.md),
             Text(
               'Итоговый план встречи',
-              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: UiSpace.xs),
             Text(
@@ -54,7 +56,9 @@ class ScenarioSummarySheet extends StatelessWidget {
             const SizedBox(height: UiSpace.md),
             Text(
               scenario.title,
-              style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: UiSpace.xs),
             Text(scenario.description, style: textTheme.bodyMedium),
@@ -67,7 +71,9 @@ class ScenarioSummarySheet extends StatelessWidget {
               const SizedBox(height: UiSpace.sm),
               Text(
                 'Точка встречи: ${anchor.name}',
-                style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               if (anchor.address != null && anchor.address!.isNotEmpty)
                 Text(
@@ -81,7 +87,9 @@ class ScenarioSummarySheet extends StatelessWidget {
               const SizedBox(height: UiSpace.md),
               Text(
                 'Шаги',
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: UiSpace.xs),
               ...List.generate(scenario.steps.length, (index) {
