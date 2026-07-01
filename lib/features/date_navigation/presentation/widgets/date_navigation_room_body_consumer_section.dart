@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../user_profile/user_profile.dart';
-import '../../domain/entities/date_scenario.dart';
-import '../../domain/entities/place.dart';
+import '../mappers/place_view_mapper.dart';
+import '../view_data/place_view_data.dart';
 import '../controllers/date_navigation_controller.dart';
 import '../providers/date_navigation_provider.dart';
+import '../providers/meeting_favorites_provider.dart';
 import './confirm_dialog.dart';
 import './place_card.dart';
 import './room_control_panel.dart';
@@ -31,14 +31,14 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
   final VoidCallback onSubmitAddress;
   final ValueChanged<String> onAddressSuggestionSelected;
   final VoidCallback onShowJoinDialog;
-  final void Function(Place) onPlaceTap;
+  final void Function(PlaceViewData) onPlaceTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final view = ref.watch(dateNavigationRoomBodyViewProvider);
-    final favoriteState = ref.watch(favoritesControllerProvider);
+    final favoriteState = ref.watch(meetingFavoritesControllerProvider);
     final roomId = view.roomId;
     if (roomId == null) {
       return WelcomeView(
@@ -55,12 +55,16 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         : UiCopy.sessionExpiredHint;
     if (venueLocked) {
       final name = view.finalChoiceName;
-      final place = view.finalChoicePlace;
+      final place = view.finalChoicePlace == null
+          ? null
+          : PlaceViewMapper.fromPlace(view.finalChoicePlace!);
       final isCreator = view.isCreator;
       final point1 = view.point1;
       final point2 = view.point2;
       final myPoint = isCreator ? point1 : point2;
-      final selectedScenario = view.selectedScenario;
+      final selectedScenario = view.selectedScenario == null
+          ? null
+          : PlaceViewMapper.fromScenario(view.selectedScenario!);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -204,10 +208,10 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       onSearchRadiusChanged: controller.setSearchRadius,
       onSearchRadiusChangeEnd: controller.recalculateForRadius,
       onRetryPlaces: controller.recalculateForRadius,
-      onVotePlace: controller.voteForPlace,
+      onVotePlace: (place) => controller.voteForPlace(PlaceViewMapper.toPlace(place)),
       voteCounts: panelView.voteCounts,
       myVotePlaceName: panelView.myVotePlaceName,
-      scoreForPlace: controller.scorePlace,
+      scoreForPlace: (place) => controller.scorePlace(PlaceViewMapper.toPlace(place)),
       isFavoritePlace: (place) => favoriteState.containsPlace(
         placeName: place.name,
         lat: place.lat,
@@ -223,8 +227,12 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       lastAgreedMeetingFormat: panelView.lastAgreedMeetingFormat,
       meetingRevoteRequestByRole: panelView.meetingRevoteRequestByRole,
       meetingRevoteRequestStatus: panelView.meetingRevoteRequestStatus,
-      onMeetingFormatsChanged: controller.setMeetingFormats,
-      onMeetingFormatConfirmed: controller.confirmMeetingFormat,
+      onMeetingFormatsChanged: (formats) => controller.setMeetingFormats(
+        PlaceViewMapper.toMeetingFormats(formats),
+      ),
+      onMeetingFormatConfirmed: (format) => controller.confirmMeetingFormat(
+        PlaceViewMapper.toMeetingFormat(format),
+      ),
       onLeaveRoom: () {
         controller.leaveRoom();
         addressController.clear();
@@ -237,7 +245,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
 
   String _shareScenarioText({
     required String roomId,
-    required DateScenario scenario,
+    required ScenarioViewData scenario,
   }) {
     final buffer = StringBuffer()
       ..writeln('План встречи в комнате #$roomId')

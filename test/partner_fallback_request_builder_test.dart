@@ -1,8 +1,8 @@
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
-import 'package:date_navigation/features/date_navigation/presentation/flows/partner_fallback_request_builder.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:date_navigation/features/date_navigation/application/flows/partner_fallback_request_builder.dart';
+import 'package:date_navigation/features/date_navigation/application/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart' as latlong;
+import 'package:date_navigation/features/date_navigation/domain/value_objects/geo_coordinate.dart';
 
 void main() {
   const coordinator = PartnerFallbackRequestBuilder();
@@ -13,8 +13,8 @@ void main() {
     );
     final request = coordinator.build(
       state: state,
-      point1: const latlong.LatLng(53.9, 27.56),
-      point2: const latlong.LatLng(53.91, 27.57),
+      point1: const GeoCoordinate(latitude: 53.9, longitude: 27.56),
+      point2: const GeoCoordinate(latitude: 53.91, longitude: 27.57),
     );
 
     expect(request, isNull);
@@ -27,8 +27,8 @@ void main() {
         selectedMeetingFormat: MeetingFormat.food,
       ),
     );
-    final point1 = const latlong.LatLng(53.9, 27.56);
-    final point2 = const latlong.LatLng(53.91, 27.57);
+    final point1 = const GeoCoordinate(latitude: 53.9, longitude: 27.56);
+    final point2 = const GeoCoordinate(latitude: 53.91, longitude: 27.57);
 
     final request = coordinator.build(
       state: state,

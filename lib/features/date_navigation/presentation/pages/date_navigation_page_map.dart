@@ -1,26 +1,27 @@
 part of 'date_navigation_page.dart';
 
 extension _DateNavigationPageMap on _DateNavigationPageState {
-  void _focusOnAddressPoint(latlong.LatLng? point) {
-    if (point == null) return;
+  void _focusOnAddressPoint(GeoCoordinate? point) {
+    final mapPoint = GeoMapMapper.toLatLngOrNull(point);
+    if (mapPoint == null) return;
     unawaited(
       _animateMapCamera(
-        center: point,
+        center: mapPoint,
         zoom: _DateNavigationPageState._addressFocusZoom,
       ),
     );
   }
 
-  void _focusOnCenter(latlong.LatLng centerPoint) {
+  void _focusOnCenter(GeoCoordinate centerPoint) {
     unawaited(
       _animateMapCamera(
-        center: centerPoint,
+        center: GeoMapMapper.toLatLng(centerPoint),
         zoom: _DateNavigationPageState._centerFocusZoom,
       ),
     );
   }
 
-  void _focusOnChosenVenue(Place place) {
+  void _focusOnChosenVenue(PlaceViewData place) {
     unawaited(
       _animateMapCamera(
         center: latlong.LatLng(place.lat, place.lon),
@@ -55,8 +56,12 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
 
   List<latlong.LatLng> _collectPointsForFit(DateNavigationState state) {
     final points = <latlong.LatLng>[];
-    if (state.room.point1 != null) points.add(state.room.point1!);
-    if (state.room.point2 != null) points.add(state.room.point2!);
+    if (state.room.point1 != null) {
+      points.add(GeoMapMapper.toLatLng(state.room.point1!));
+    }
+    if (state.room.point2 != null) {
+      points.add(GeoMapMapper.toLatLng(state.room.point2!));
+    }
     final hasLockedFinalChoice =
         state.meeting.finalChoiceName != null &&
         state.meeting.finalChoiceName!.isNotEmpty;
@@ -66,10 +71,10 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
       return points;
     }
     if (state.meeting.centerPoint != null) {
-      points.add(state.meeting.centerPoint!);
+      points.add(GeoMapMapper.toLatLng(state.meeting.centerPoint!));
     }
     if (state.meeting.routePoints.isNotEmpty) {
-      points.addAll(state.meeting.routePoints);
+      points.addAll(GeoMapMapper.toLatLngList(state.meeting.routePoints));
     }
     return points;
   }

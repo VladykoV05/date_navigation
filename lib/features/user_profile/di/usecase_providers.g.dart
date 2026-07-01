@@ -55,7 +55,7 @@ final class ProfileWatchUserFavoritesProvider
 }
 
 String _$profileWatchUserFavoritesHash() =>
-    r'28a0dd9567260562e09067c3911c9296f23bbd9a';
+    r'ca46df2e3f1565ac6f3aa3659cd24d0acd7714a6';
 
 @ProviderFor(profileWatchUserHistory)
 final profileWatchUserHistoryProvider = ProfileWatchUserHistoryProvider._();
@@ -102,7 +102,7 @@ final class ProfileWatchUserHistoryProvider
 }
 
 String _$profileWatchUserHistoryHash() =>
-    r'935bc64d6492dd2f51d5700c8fcde696034021dc';
+    r'b80557d63682f48f2022f6b9aca45e46b2a5072e';
 
 @ProviderFor(profileWatchRememberedAddresses)
 final profileWatchRememberedAddressesProvider =
@@ -151,7 +151,7 @@ final class ProfileWatchRememberedAddressesProvider
 }
 
 String _$profileWatchRememberedAddressesHash() =>
-    r'f6bc02660de9868764f268e12c4c992466a67a95';
+    r'8a33ae5cefdce5dd3df8391308ef4d52a1560bfe';
 
 @ProviderFor(profileUpsertUserFavorite)
 final profileUpsertUserFavoriteProvider = ProfileUpsertUserFavoriteProvider._();
@@ -199,7 +199,7 @@ final class ProfileUpsertUserFavoriteProvider
 }
 
 String _$profileUpsertUserFavoriteHash() =>
-    r'c3b43b2ee222edd27289920adeff9907fe64925a';
+    r'eb3ae8a37d587c51124e09587589f7785e3153f0';
 
 @ProviderFor(profileRemoveUserFavorite)
 final profileRemoveUserFavoriteProvider = ProfileRemoveUserFavoriteProvider._();
@@ -247,7 +247,7 @@ final class ProfileRemoveUserFavoriteProvider
 }
 
 String _$profileRemoveUserFavoriteHash() =>
-    r'36e9d3bdca79ff6f20248d4309bd6b97cc28df63';
+    r'1d35a3fbb3ebac59c9faec75bab7418d31270736';
 
 @ProviderFor(profileRemoveUserFavoriteByPlace)
 final profileRemoveUserFavoriteByPlaceProvider =
@@ -296,7 +296,7 @@ final class ProfileRemoveUserFavoriteByPlaceProvider
 }
 
 String _$profileRemoveUserFavoriteByPlaceHash() =>
-    r'061b3193134805d1fd5e3c0526d4d3e387e692ea';
+    r'8615aee5d19f08c44025413373ee75359f7f1565';
 
 @ProviderFor(profileRememberUserAddress)
 final profileRememberUserAddressProvider =
@@ -345,7 +345,7 @@ final class ProfileRememberUserAddressProvider
 }
 
 String _$profileRememberUserAddressHash() =>
-    r'913a4910562596d5fb5dee3ca499979644075e64';
+    r'bc37332bd9f4eb6b2844240a8e6ea16ed8d7d35d';
 
 @ProviderFor(profileRemoveRememberedUserAddress)
 final profileRemoveRememberedUserAddressProvider =
@@ -395,7 +395,7 @@ final class ProfileRemoveRememberedUserAddressProvider
 }
 
 String _$profileRemoveRememberedUserAddressHash() =>
-    r'a4c7aa13f6fac908b18b8d28100f3a26f129014e';
+    r'7bfe836f826efe1e960ad3dce778da6e92f18def';
 
 @ProviderFor(profileRecordMeetingHistory)
 final profileRecordMeetingHistoryProvider =
@@ -444,4 +444,4 @@ final class ProfileRecordMeetingHistoryProvider
 }
 
 String _$profileRecordMeetingHistoryHash() =>
-    r'7c2fdfe375fbddca9bebf35591e08b0763abe32a';
+    r'cbef18d78ac23d6d4fa52b68a5c65b755f4b0294';

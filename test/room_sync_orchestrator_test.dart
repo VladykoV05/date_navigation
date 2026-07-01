@@ -1,10 +1,10 @@
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_orchestrator.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_reaction_policy.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_snapshot_reducer.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_sync_orchestrator.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_sync_reaction_policy.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_snapshot_reducer.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:date_navigation/features/date_navigation/application/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart' as latlong;
+import 'package:date_navigation/features/date_navigation/domain/value_objects/geo_coordinate.dart';
 
 void main() {
   const orchestrator = RoomSyncOrchestrator(RoomSyncReactionPolicy());
@@ -20,8 +20,8 @@ void main() {
       venueLocked: false,
       hasSnapshot: false,
       snapshotUpdatedAt: null,
-      point1: const latlong.LatLng(53.9, 27.56),
-      point2: const latlong.LatLng(53.91, 27.57),
+      point1: const GeoCoordinate(latitude: 53.9, longitude: 27.56),
+      point2: const GeoCoordinate(latitude: 53.91, longitude: 27.57),
       snapshotRadius: null,
       snapshotMatchesFormat: false,
     );
@@ -33,8 +33,8 @@ void main() {
       final previous = const DateNavigationState();
       final nextState = const DateNavigationState(
         room: RoomSessionState(
-          point1: latlong.LatLng(53.9, 27.56),
-          point2: latlong.LatLng(53.91, 27.57),
+          point1: GeoCoordinate(latitude: 53.9, longitude: 27.56),
+          point2: GeoCoordinate(latitude: 53.91, longitude: 27.57),
         ),
         meeting: MeetingPlanningState(
           selectedMeetingFormat: MeetingFormat.food,

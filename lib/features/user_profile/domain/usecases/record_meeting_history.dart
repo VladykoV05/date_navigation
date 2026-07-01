@@ -1,10 +1,10 @@
 import '../../../../core/error/result.dart';
-import '../repositories/user_profile_repository.dart';
+import '../repositories/meeting_history_repository.dart';
 
 class RecordMeetingHistory {
   const RecordMeetingHistory(this._repo);
 
-  final UserProfileRepository _repo;
+  final MeetingHistoryRepository _repo;
 
   Future<Result<void>> call({
     required String roomId,

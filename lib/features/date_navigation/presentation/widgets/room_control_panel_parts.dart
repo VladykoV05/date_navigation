@@ -14,16 +14,16 @@ class _DateAssistantSection extends StatelessWidget {
     required this.onMeetingFormatConfirmed,
   });
 
-  final List<MeetingFormat> myFormats;
-  final MeetingFormat? selectedMeetingFormat;
-  final MeetingFormat? mySelectedMeetingFormat;
-  final MeetingFormat? partnerSelectedMeetingFormat;
-  final List<MeetingFormat> commonMeetingFormats;
+  final List<MeetingFormatView> myFormats;
+  final MeetingFormatView? selectedMeetingFormat;
+  final MeetingFormatView? mySelectedMeetingFormat;
+  final MeetingFormatView? partnerSelectedMeetingFormat;
+  final List<MeetingFormatView> commonMeetingFormats;
   final bool canSelectMeetingFormat;
   final String statusText;
   final String confirmationText;
-  final ValueChanged<MeetingFormat> onToggleMeetingFormat;
-  final ValueChanged<MeetingFormat> onMeetingFormatConfirmed;
+  final ValueChanged<MeetingFormatView> onToggleMeetingFormat;
+  final ValueChanged<MeetingFormatView> onMeetingFormatConfirmed;
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +60,11 @@ class _DateAssistantSection extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: MeetingFormat.values
+            children: MeetingFormatView.values
                 .map((format) {
                   final selected = myFormats.contains(format);
                   return ChoiceChip(
-                    label: Text(FormatChipConfig.formatLabel(format)),
+                    label: Text(format.label),
                     selected: selected,
                     onSelected: canSelectMeetingFormat
                         ? (_) => onToggleMeetingFormat(format)
@@ -83,7 +83,7 @@ class _DateAssistantSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: UiSpace.xs),
-            _CommonMeetingFormatSelector(
+            _CommonMeetingFormatViewSelector(
               commonMeetingFormats: commonMeetingFormats,
               mySelectedMeetingFormat: mySelectedMeetingFormat,
               canSelectMeetingFormat: canSelectMeetingFormat,
@@ -219,7 +219,7 @@ class _PlaceTypeFilterChips extends StatelessWidget {
     required this.onTypeChanged,
   });
 
-  final MeetingFormat? selectedMeetingFormat;
+  final MeetingFormatView? selectedMeetingFormat;
   final String? selectedType;
   final bool isSessionClosed;
   final ValueChanged<String?> onTypeChanged;
@@ -227,7 +227,7 @@ class _PlaceTypeFilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final types = FormatChipConfig.optionsFor(selectedMeetingFormat);
+    final types = FormatChipConfig.optionsForWire(selectedMeetingFormat?.wireValue);
     return SizedBox(
       height: _chipRowHeight,
       child: ListView(
@@ -283,27 +283,27 @@ class _PlaceTypeFilterChips extends StatelessWidget {
   }
 }
 
-class _CommonMeetingFormatSelector extends StatefulWidget {
-  const _CommonMeetingFormatSelector({
+class _CommonMeetingFormatViewSelector extends StatefulWidget {
+  const _CommonMeetingFormatViewSelector({
     required this.commonMeetingFormats,
     required this.mySelectedMeetingFormat,
     required this.canSelectMeetingFormat,
     required this.onMeetingFormatConfirmed,
   });
 
-  final List<MeetingFormat> commonMeetingFormats;
-  final MeetingFormat? mySelectedMeetingFormat;
+  final List<MeetingFormatView> commonMeetingFormats;
+  final MeetingFormatView? mySelectedMeetingFormat;
   final bool canSelectMeetingFormat;
-  final ValueChanged<MeetingFormat> onMeetingFormatConfirmed;
+  final ValueChanged<MeetingFormatView> onMeetingFormatConfirmed;
 
   @override
-  State<_CommonMeetingFormatSelector> createState() =>
-      _CommonMeetingFormatSelectorState();
+  State<_CommonMeetingFormatViewSelector> createState() =>
+      _CommonMeetingFormatViewSelectorState();
 }
 
-class _CommonMeetingFormatSelectorState
-    extends State<_CommonMeetingFormatSelector> {
-  MeetingFormat? _draftFormat;
+class _CommonMeetingFormatViewSelectorState
+    extends State<_CommonMeetingFormatViewSelector> {
+  MeetingFormatView? _draftFormat;
   bool _isResetDialogOpen = false;
 
   @override
@@ -313,7 +313,7 @@ class _CommonMeetingFormatSelectorState
   }
 
   @override
-  void didUpdateWidget(covariant _CommonMeetingFormatSelector oldWidget) {
+  void didUpdateWidget(covariant _CommonMeetingFormatViewSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.mySelectedMeetingFormat != widget.mySelectedMeetingFormat) {
       _draftFormat = widget.mySelectedMeetingFormat;
@@ -337,7 +337,7 @@ class _CommonMeetingFormatSelectorState
         _draftFormat != widget.mySelectedMeetingFormat;
   }
 
-  void _onFormatSelected(bool isSelected, MeetingFormat format) {
+  void _onFormatSelected(bool isSelected, MeetingFormatView format) {
     setState(() {
       _draftFormat = isSelected ? format : null;
     });
@@ -380,7 +380,7 @@ class _CommonMeetingFormatSelectorState
           children: widget.commonMeetingFormats
               .map(
                 (format) => ChoiceChip(
-                  label: Text(FormatChipConfig.formatLabel(format)),
+                  label: Text(format.label),
                   selected: _draftFormat == format,
                   onSelected: widget.canSelectMeetingFormat
                       ? (isSelected) => _onFormatSelected(isSelected, format)

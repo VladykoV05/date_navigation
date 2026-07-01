@@ -13,45 +13,47 @@ part 'usecase_providers.g.dart';
 
 @Riverpod(keepAlive: true)
 WatchUserFavorites profileWatchUserFavorites(Ref ref) {
-  return WatchUserFavorites(ref.watch(userProfileRepositoryProvider));
+  return WatchUserFavorites(ref.watch(favoritesRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 WatchUserHistory profileWatchUserHistory(Ref ref) {
-  return WatchUserHistory(ref.watch(userProfileRepositoryProvider));
+  return WatchUserHistory(ref.watch(meetingHistoryRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 WatchRememberedAddresses profileWatchRememberedAddresses(Ref ref) {
-  return WatchRememberedAddresses(ref.watch(userProfileRepositoryProvider));
+  return WatchRememberedAddresses(ref.watch(addressMemoryRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 UpsertUserFavorite profileUpsertUserFavorite(Ref ref) {
-  return UpsertUserFavorite(ref.watch(userProfileRepositoryProvider));
+  return UpsertUserFavorite(ref.watch(favoritesRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RemoveUserFavorite profileRemoveUserFavorite(Ref ref) {
-  return RemoveUserFavorite(ref.watch(userProfileRepositoryProvider));
+  return RemoveUserFavorite(ref.watch(favoritesRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RemoveUserFavoriteByPlace profileRemoveUserFavoriteByPlace(Ref ref) {
-  return RemoveUserFavoriteByPlace(ref.watch(userProfileRepositoryProvider));
+  return RemoveUserFavoriteByPlace(ref.watch(favoritesRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RememberUserAddress profileRememberUserAddress(Ref ref) {
-  return RememberUserAddress(ref.watch(userProfileRepositoryProvider));
+  return RememberUserAddress(ref.watch(addressMemoryRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RemoveRememberedUserAddress profileRemoveRememberedUserAddress(Ref ref) {
-  return RemoveRememberedUserAddress(ref.watch(userProfileRepositoryProvider));
+  return RemoveRememberedUserAddress(
+    ref.watch(addressMemoryRepositoryProvider),
+  );
 }
 
 @Riverpod(keepAlive: true)
 RecordMeetingHistory profileRecordMeetingHistory(Ref ref) {
-  return RecordMeetingHistory(ref.watch(userProfileRepositoryProvider));
+  return RecordMeetingHistory(ref.watch(meetingHistoryRepositoryProvider));
 }

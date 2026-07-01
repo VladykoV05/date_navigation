@@ -1,10 +1,10 @@
 import '../../../../core/error/result.dart';
-import '../repositories/user_profile_repository.dart';
+import '../repositories/favorites_repository.dart';
 
 class UpsertUserFavorite {
   const UpsertUserFavorite(this._repo);
 
-  final UserProfileRepository _repo;
+  final FavoritesRepository _repo;
 
   Future<Result<void>> call({
     required String userId,

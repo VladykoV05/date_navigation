@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:latlong2/latlong.dart' as latlong;
+import '../../domain/value_objects/geo_coordinate.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
@@ -11,18 +11,18 @@ import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../domain/usecases/save_search_radius.dart';
-import '../services/date_assistant_service.dart';
-import '../flows/final_choice_scenario_sync_flow.dart';
-import '../flows/partner_fallback_flow.dart';
-import '../flows/partner_fallback_effects.dart';
-import '../flows/partner_fallback_request_builder.dart';
-import '../flows/partner_fallback_result_resolver.dart';
-import '../services/meeting_execution_service.dart';
+import '../../application/services/date_assistant_service.dart';
+import '../../application/services/meeting_execution_service.dart';
+import '../../application/flows/final_choice_scenario_sync_flow.dart';
+import '../../application/flows/partner_fallback_flow.dart';
+import '../../application/flows/partner_fallback_effects.dart';
+import '../../application/flows/partner_fallback_request_builder.dart';
+import '../../application/flows/partner_fallback_result_resolver.dart';
 import './meeting_format_controller.dart';
 import './search_radius_controller.dart';
-import '../runtime/meeting_planner_runtime.dart';
-import '../state_transitions/meeting_state_transitions.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/runtime/meeting_planner_runtime.dart';
+import '../../application/state_transitions/meeting_state_transitions.dart';
+import '../../application/state/date_navigation_state.dart';
 
 typedef MeetingStateReader = DateNavigationState Function();
 typedef MeetingStateWriter = void Function(DateNavigationState state);
@@ -224,8 +224,8 @@ class MeetingPlanningController {
     required int req,
     required String meetingKey,
     required MeetingPoint meeting,
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
     required MeetingFormat format,
   }) {
     var state = _readState();
@@ -298,8 +298,8 @@ class MeetingPlanningController {
   }
 
   Future<void> calculateMeetingFallbackForPartner({
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
   }) async {
     final state = _readState();
     if (!_partnerFallback.canRun(
@@ -357,8 +357,8 @@ class MeetingPlanningController {
 
   void _handlePartnerFallbackSuccess({
     required MeetingPoint meeting,
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
   }) {
     final effects = _partnerFallbackEffects.buildSuccess(
       state: _readState(),

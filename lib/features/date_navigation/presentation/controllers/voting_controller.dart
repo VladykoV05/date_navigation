@@ -3,12 +3,12 @@ import '../../../../core/error/result.dart';
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
-import '../actions/proposal_actions.dart';
-import '../actions/vote_scenario_actions.dart';
-import '../state_transitions/meeting_interaction_transitions.dart';
-import '../services/room_interaction_service.dart';
-import '../services/date_assistant_service.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/actions/proposal_actions.dart';
+import '../../application/actions/vote_scenario_actions.dart';
+import '../../application/state_transitions/meeting_interaction_transitions.dart';
+import '../../application/services/date_assistant_service.dart';
+import '../../application/services/room_interaction_service.dart';
+import '../../application/state/date_navigation_state.dart';
 
 typedef VotingStateReader = DateNavigationState Function();
 typedef VotingStateWriter = void Function(DateNavigationState state);

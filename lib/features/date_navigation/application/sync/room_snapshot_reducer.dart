@@ -1,8 +1,7 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../domain/entities/place.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/entities/room_status.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../state/date_navigation_state.dart';
 import '../runtime/meeting_planner_runtime.dart';
 
@@ -26,8 +25,8 @@ class RoomSyncOutcome {
   final bool venueLocked;
   final bool hasSnapshot;
   final DateTime? snapshotUpdatedAt;
-  final latlong.LatLng? point1;
-  final latlong.LatLng? point2;
+  final GeoCoordinate? point1;
+  final GeoCoordinate? point2;
   final int? snapshotRadius;
   final bool snapshotMatchesFormat;
 }
@@ -140,9 +139,9 @@ class RoomSnapshotReducer {
         : roomSnapshot.finalChoice.resolvePlace(lookupForFinalChoice);
     final venueLocked = finalChoiceName != null;
 
-    late final latlong.LatLng? nextCenter;
+    late final GeoCoordinate? nextCenter;
     late final List<Place> nextFound;
-    late final List<latlong.LatLng> nextRoute;
+    late final List<GeoCoordinate> nextRoute;
     late final List<Place> nextFiltered;
 
     if (venueLocked) {

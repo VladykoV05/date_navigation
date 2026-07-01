@@ -1,3 +1,4 @@
+import 'package:date_navigation/features/date_navigation/presentation/state/meeting_favorites_state.dart';
 import 'package:date_navigation/features/user_profile/user_profile.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,8 +19,8 @@ void main() {
     expect(first.docId, isNot(second.docId));
   });
 
-  test('favorites state checks places by composite identity', () {
-    const state = FavoritesState(
+  test('meeting favorites state checks places by composite identity', () {
+    const state = MeetingFavoritesState(
       isLoading: false,
       favorites: [
         UserFavorite(

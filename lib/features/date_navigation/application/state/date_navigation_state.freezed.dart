@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RoomSessionState {
 
- String? get roomId; String? get inviteCode; bool get isCreator; latlong.LatLng? get point1; latlong.LatLng? get point2; SessionStatus get sessionStatus;
+ String? get roomId; String? get inviteCode; bool get isCreator; GeoCoordinate? get point1; GeoCoordinate? get point2; SessionStatus get sessionStatus;
 /// Create a copy of RoomSessionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $RoomSessionStateCopyWith<$Res>  {
   factory $RoomSessionStateCopyWith(RoomSessionState value, $Res Function(RoomSessionState) _then) = _$RoomSessionStateCopyWithImpl;
 @useResult
 $Res call({
- String? roomId, String? inviteCode, bool isCreator, latlong.LatLng? point1, latlong.LatLng? point2, SessionStatus sessionStatus
+ String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, SessionStatus sessionStatus
 });
 
 
@@ -68,8 +68,8 @@ roomId: freezed == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_no
 as String?,inviteCode: freezed == inviteCode ? _self.inviteCode : inviteCode // ignore: cast_nullable_to_non_nullable
 as String?,isCreator: null == isCreator ? _self.isCreator : isCreator // ignore: cast_nullable_to_non_nullable
 as bool,point1: freezed == point1 ? _self.point1 : point1 // ignore: cast_nullable_to_non_nullable
-as latlong.LatLng?,point2: freezed == point2 ? _self.point2 : point2 // ignore: cast_nullable_to_non_nullable
-as latlong.LatLng?,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
+as GeoCoordinate?,point2: freezed == point2 ? _self.point2 : point2 // ignore: cast_nullable_to_non_nullable
+as GeoCoordinate?,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
 as SessionStatus,
   ));
 }
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  latlong.LatLng? point1,  latlong.LatLng? point2,  SessionStatus sessionStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  SessionStatus sessionStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RoomSessionState() when $default != null:
 return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.sessionStatus);case _:
@@ -176,7 +176,7 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  latlong.LatLng? point1,  latlong.LatLng? point2,  SessionStatus sessionStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  SessionStatus sessionStatus)  $default,) {final _that = this;
 switch (_that) {
 case _RoomSessionState():
 return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.sessionStatus);case _:
@@ -196,7 +196,7 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? roomId,  String? inviteCode,  bool isCreator,  latlong.LatLng? point1,  latlong.LatLng? point2,  SessionStatus sessionStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  SessionStatus sessionStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _RoomSessionState() when $default != null:
 return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.sessionStatus);case _:
@@ -217,8 +217,8 @@ class _RoomSessionState extends RoomSessionState {
 @override final  String? roomId;
 @override final  String? inviteCode;
 @override@JsonKey() final  bool isCreator;
-@override final  latlong.LatLng? point1;
-@override final  latlong.LatLng? point2;
+@override final  GeoCoordinate? point1;
+@override final  GeoCoordinate? point2;
 @override@JsonKey() final  SessionStatus sessionStatus;
 
 /// Create a copy of RoomSessionState
@@ -251,7 +251,7 @@ abstract mixin class _$RoomSessionStateCopyWith<$Res> implements $RoomSessionSta
   factory _$RoomSessionStateCopyWith(_RoomSessionState value, $Res Function(_RoomSessionState) _then) = __$RoomSessionStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? roomId, String? inviteCode, bool isCreator, latlong.LatLng? point1, latlong.LatLng? point2, SessionStatus sessionStatus
+ String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, SessionStatus sessionStatus
 });
 
 
@@ -274,8 +274,8 @@ roomId: freezed == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_no
 as String?,inviteCode: freezed == inviteCode ? _self.inviteCode : inviteCode // ignore: cast_nullable_to_non_nullable
 as String?,isCreator: null == isCreator ? _self.isCreator : isCreator // ignore: cast_nullable_to_non_nullable
 as bool,point1: freezed == point1 ? _self.point1 : point1 // ignore: cast_nullable_to_non_nullable
-as latlong.LatLng?,point2: freezed == point2 ? _self.point2 : point2 // ignore: cast_nullable_to_non_nullable
-as latlong.LatLng?,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
+as GeoCoordinate?,point2: freezed == point2 ? _self.point2 : point2 // ignore: cast_nullable_to_non_nullable
+as GeoCoordinate?,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
 as SessionStatus,
   ));
 }
@@ -286,7 +286,7 @@ as SessionStatus,
 /// @nodoc
 mixin _$MeetingPlanningState {
 
- String? get finalChoiceName; Place? get finalChoicePlace; List<Place> get foundPlaces; List<Place> get filteredPlaces; latlong.LatLng? get centerPoint; List<latlong.LatLng> get routePoints; String? get selectedType; double get searchRadius; int? get creatorChangedRadiusTo; int? get peerSuggestedRadius; MeetingFormat? get peerSuggestedMeetingFormat; DateScenario? get selectedScenario; List<MeetingFormat> get creatorMeetingFormats; List<MeetingFormat> get partnerMeetingFormats; MeetingFormat? get creatorSelectedMeetingFormat; MeetingFormat? get partnerSelectedMeetingFormat; MeetingFormat? get selectedMeetingFormat; MeetingFormat? get lastAgreedMeetingFormat; List<DateScenario> get dateScenarios; String? get meetingRevoteRequestByRole; RevoteRequestStatus? get meetingRevoteRequestStatus;
+ String? get finalChoiceName; Place? get finalChoicePlace; List<Place> get foundPlaces; List<Place> get filteredPlaces; GeoCoordinate? get centerPoint; List<GeoCoordinate> get routePoints; String? get selectedType; double get searchRadius; int? get creatorChangedRadiusTo; int? get peerSuggestedRadius; MeetingFormat? get peerSuggestedMeetingFormat; DateScenario? get selectedScenario; List<MeetingFormat> get creatorMeetingFormats; List<MeetingFormat> get partnerMeetingFormats; MeetingFormat? get creatorSelectedMeetingFormat; MeetingFormat? get partnerSelectedMeetingFormat; MeetingFormat? get selectedMeetingFormat; MeetingFormat? get lastAgreedMeetingFormat; List<DateScenario> get dateScenarios; String? get meetingRevoteRequestByRole; RevoteRequestStatus? get meetingRevoteRequestStatus;
 /// Create a copy of MeetingPlanningState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -317,7 +317,7 @@ abstract mixin class $MeetingPlanningStateCopyWith<$Res>  {
   factory $MeetingPlanningStateCopyWith(MeetingPlanningState value, $Res Function(MeetingPlanningState) _then) = _$MeetingPlanningStateCopyWithImpl;
 @useResult
 $Res call({
- String? finalChoiceName, Place? finalChoicePlace, List<Place> foundPlaces, List<Place> filteredPlaces, latlong.LatLng? centerPoint, List<latlong.LatLng> routePoints, String? selectedType, double searchRadius, int? creatorChangedRadiusTo, int? peerSuggestedRadius, MeetingFormat? peerSuggestedMeetingFormat, DateScenario? selectedScenario, List<MeetingFormat> creatorMeetingFormats, List<MeetingFormat> partnerMeetingFormats, MeetingFormat? creatorSelectedMeetingFormat, MeetingFormat? partnerSelectedMeetingFormat, MeetingFormat? selectedMeetingFormat, MeetingFormat? lastAgreedMeetingFormat, List<DateScenario> dateScenarios, String? meetingRevoteRequestByRole, RevoteRequestStatus? meetingRevoteRequestStatus
+ String? finalChoiceName, Place? finalChoicePlace, List<Place> foundPlaces, List<Place> filteredPlaces, GeoCoordinate? centerPoint, List<GeoCoordinate> routePoints, String? selectedType, double searchRadius, int? creatorChangedRadiusTo, int? peerSuggestedRadius, MeetingFormat? peerSuggestedMeetingFormat, DateScenario? selectedScenario, List<MeetingFormat> creatorMeetingFormats, List<MeetingFormat> partnerMeetingFormats, MeetingFormat? creatorSelectedMeetingFormat, MeetingFormat? partnerSelectedMeetingFormat, MeetingFormat? selectedMeetingFormat, MeetingFormat? lastAgreedMeetingFormat, List<DateScenario> dateScenarios, String? meetingRevoteRequestByRole, RevoteRequestStatus? meetingRevoteRequestStatus
 });
 
 
@@ -341,8 +341,8 @@ as String?,finalChoicePlace: freezed == finalChoicePlace ? _self.finalChoicePlac
 as Place?,foundPlaces: null == foundPlaces ? _self.foundPlaces : foundPlaces // ignore: cast_nullable_to_non_nullable
 as List<Place>,filteredPlaces: null == filteredPlaces ? _self.filteredPlaces : filteredPlaces // ignore: cast_nullable_to_non_nullable
 as List<Place>,centerPoint: freezed == centerPoint ? _self.centerPoint : centerPoint // ignore: cast_nullable_to_non_nullable
-as latlong.LatLng?,routePoints: null == routePoints ? _self.routePoints : routePoints // ignore: cast_nullable_to_non_nullable
-as List<latlong.LatLng>,selectedType: freezed == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
+as GeoCoordinate?,routePoints: null == routePoints ? _self.routePoints : routePoints // ignore: cast_nullable_to_non_nullable
+as List<GeoCoordinate>,selectedType: freezed == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
 as String?,searchRadius: null == searchRadius ? _self.searchRadius : searchRadius // ignore: cast_nullable_to_non_nullable
 as double,creatorChangedRadiusTo: freezed == creatorChangedRadiusTo ? _self.creatorChangedRadiusTo : creatorChangedRadiusTo // ignore: cast_nullable_to_non_nullable
 as int?,peerSuggestedRadius: freezed == peerSuggestedRadius ? _self.peerSuggestedRadius : peerSuggestedRadius // ignore: cast_nullable_to_non_nullable
@@ -442,7 +442,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? finalChoiceName,  Place? finalChoicePlace,  List<Place> foundPlaces,  List<Place> filteredPlaces,  latlong.LatLng? centerPoint,  List<latlong.LatLng> routePoints,  String? selectedType,  double searchRadius,  int? creatorChangedRadiusTo,  int? peerSuggestedRadius,  MeetingFormat? peerSuggestedMeetingFormat,  DateScenario? selectedScenario,  List<MeetingFormat> creatorMeetingFormats,  List<MeetingFormat> partnerMeetingFormats,  MeetingFormat? creatorSelectedMeetingFormat,  MeetingFormat? partnerSelectedMeetingFormat,  MeetingFormat? selectedMeetingFormat,  MeetingFormat? lastAgreedMeetingFormat,  List<DateScenario> dateScenarios,  String? meetingRevoteRequestByRole,  RevoteRequestStatus? meetingRevoteRequestStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? finalChoiceName,  Place? finalChoicePlace,  List<Place> foundPlaces,  List<Place> filteredPlaces,  GeoCoordinate? centerPoint,  List<GeoCoordinate> routePoints,  String? selectedType,  double searchRadius,  int? creatorChangedRadiusTo,  int? peerSuggestedRadius,  MeetingFormat? peerSuggestedMeetingFormat,  DateScenario? selectedScenario,  List<MeetingFormat> creatorMeetingFormats,  List<MeetingFormat> partnerMeetingFormats,  MeetingFormat? creatorSelectedMeetingFormat,  MeetingFormat? partnerSelectedMeetingFormat,  MeetingFormat? selectedMeetingFormat,  MeetingFormat? lastAgreedMeetingFormat,  List<DateScenario> dateScenarios,  String? meetingRevoteRequestByRole,  RevoteRequestStatus? meetingRevoteRequestStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MeetingPlanningState() when $default != null:
 return $default(_that.finalChoiceName,_that.finalChoicePlace,_that.foundPlaces,_that.filteredPlaces,_that.centerPoint,_that.routePoints,_that.selectedType,_that.searchRadius,_that.creatorChangedRadiusTo,_that.peerSuggestedRadius,_that.peerSuggestedMeetingFormat,_that.selectedScenario,_that.creatorMeetingFormats,_that.partnerMeetingFormats,_that.creatorSelectedMeetingFormat,_that.partnerSelectedMeetingFormat,_that.selectedMeetingFormat,_that.lastAgreedMeetingFormat,_that.dateScenarios,_that.meetingRevoteRequestByRole,_that.meetingRevoteRequestStatus);case _:
@@ -463,7 +463,7 @@ return $default(_that.finalChoiceName,_that.finalChoicePlace,_that.foundPlaces,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? finalChoiceName,  Place? finalChoicePlace,  List<Place> foundPlaces,  List<Place> filteredPlaces,  latlong.LatLng? centerPoint,  List<latlong.LatLng> routePoints,  String? selectedType,  double searchRadius,  int? creatorChangedRadiusTo,  int? peerSuggestedRadius,  MeetingFormat? peerSuggestedMeetingFormat,  DateScenario? selectedScenario,  List<MeetingFormat> creatorMeetingFormats,  List<MeetingFormat> partnerMeetingFormats,  MeetingFormat? creatorSelectedMeetingFormat,  MeetingFormat? partnerSelectedMeetingFormat,  MeetingFormat? selectedMeetingFormat,  MeetingFormat? lastAgreedMeetingFormat,  List<DateScenario> dateScenarios,  String? meetingRevoteRequestByRole,  RevoteRequestStatus? meetingRevoteRequestStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? finalChoiceName,  Place? finalChoicePlace,  List<Place> foundPlaces,  List<Place> filteredPlaces,  GeoCoordinate? centerPoint,  List<GeoCoordinate> routePoints,  String? selectedType,  double searchRadius,  int? creatorChangedRadiusTo,  int? peerSuggestedRadius,  MeetingFormat? peerSuggestedMeetingFormat,  DateScenario? selectedScenario,  List<MeetingFormat> creatorMeetingFormats,  List<MeetingFormat> partnerMeetingFormats,  MeetingFormat? creatorSelectedMeetingFormat,  MeetingFormat? partnerSelectedMeetingFormat,  MeetingFormat? selectedMeetingFormat,  MeetingFormat? lastAgreedMeetingFormat,  List<DateScenario> dateScenarios,  String? meetingRevoteRequestByRole,  RevoteRequestStatus? meetingRevoteRequestStatus)  $default,) {final _that = this;
 switch (_that) {
 case _MeetingPlanningState():
 return $default(_that.finalChoiceName,_that.finalChoicePlace,_that.foundPlaces,_that.filteredPlaces,_that.centerPoint,_that.routePoints,_that.selectedType,_that.searchRadius,_that.creatorChangedRadiusTo,_that.peerSuggestedRadius,_that.peerSuggestedMeetingFormat,_that.selectedScenario,_that.creatorMeetingFormats,_that.partnerMeetingFormats,_that.creatorSelectedMeetingFormat,_that.partnerSelectedMeetingFormat,_that.selectedMeetingFormat,_that.lastAgreedMeetingFormat,_that.dateScenarios,_that.meetingRevoteRequestByRole,_that.meetingRevoteRequestStatus);case _:
@@ -483,7 +483,7 @@ return $default(_that.finalChoiceName,_that.finalChoicePlace,_that.foundPlaces,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? finalChoiceName,  Place? finalChoicePlace,  List<Place> foundPlaces,  List<Place> filteredPlaces,  latlong.LatLng? centerPoint,  List<latlong.LatLng> routePoints,  String? selectedType,  double searchRadius,  int? creatorChangedRadiusTo,  int? peerSuggestedRadius,  MeetingFormat? peerSuggestedMeetingFormat,  DateScenario? selectedScenario,  List<MeetingFormat> creatorMeetingFormats,  List<MeetingFormat> partnerMeetingFormats,  MeetingFormat? creatorSelectedMeetingFormat,  MeetingFormat? partnerSelectedMeetingFormat,  MeetingFormat? selectedMeetingFormat,  MeetingFormat? lastAgreedMeetingFormat,  List<DateScenario> dateScenarios,  String? meetingRevoteRequestByRole,  RevoteRequestStatus? meetingRevoteRequestStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? finalChoiceName,  Place? finalChoicePlace,  List<Place> foundPlaces,  List<Place> filteredPlaces,  GeoCoordinate? centerPoint,  List<GeoCoordinate> routePoints,  String? selectedType,  double searchRadius,  int? creatorChangedRadiusTo,  int? peerSuggestedRadius,  MeetingFormat? peerSuggestedMeetingFormat,  DateScenario? selectedScenario,  List<MeetingFormat> creatorMeetingFormats,  List<MeetingFormat> partnerMeetingFormats,  MeetingFormat? creatorSelectedMeetingFormat,  MeetingFormat? partnerSelectedMeetingFormat,  MeetingFormat? selectedMeetingFormat,  MeetingFormat? lastAgreedMeetingFormat,  List<DateScenario> dateScenarios,  String? meetingRevoteRequestByRole,  RevoteRequestStatus? meetingRevoteRequestStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _MeetingPlanningState() when $default != null:
 return $default(_that.finalChoiceName,_that.finalChoicePlace,_that.foundPlaces,_that.filteredPlaces,_that.centerPoint,_that.routePoints,_that.selectedType,_that.searchRadius,_that.creatorChangedRadiusTo,_that.peerSuggestedRadius,_that.peerSuggestedMeetingFormat,_that.selectedScenario,_that.creatorMeetingFormats,_that.partnerMeetingFormats,_that.creatorSelectedMeetingFormat,_that.partnerSelectedMeetingFormat,_that.selectedMeetingFormat,_that.lastAgreedMeetingFormat,_that.dateScenarios,_that.meetingRevoteRequestByRole,_that.meetingRevoteRequestStatus);case _:
@@ -498,7 +498,7 @@ return $default(_that.finalChoiceName,_that.finalChoicePlace,_that.foundPlaces,_
 
 
 class _MeetingPlanningState extends MeetingPlanningState {
-  const _MeetingPlanningState({this.finalChoiceName, this.finalChoicePlace, final  List<Place> foundPlaces = const [], final  List<Place> filteredPlaces = const [], this.centerPoint, final  List<latlong.LatLng> routePoints = const [], this.selectedType, this.searchRadius = 500.0, this.creatorChangedRadiusTo, this.peerSuggestedRadius, this.peerSuggestedMeetingFormat, this.selectedScenario, final  List<MeetingFormat> creatorMeetingFormats = const [], final  List<MeetingFormat> partnerMeetingFormats = const [], this.creatorSelectedMeetingFormat, this.partnerSelectedMeetingFormat, this.selectedMeetingFormat, this.lastAgreedMeetingFormat, final  List<DateScenario> dateScenarios = const [], this.meetingRevoteRequestByRole, this.meetingRevoteRequestStatus}): _foundPlaces = foundPlaces,_filteredPlaces = filteredPlaces,_routePoints = routePoints,_creatorMeetingFormats = creatorMeetingFormats,_partnerMeetingFormats = partnerMeetingFormats,_dateScenarios = dateScenarios,super._();
+  const _MeetingPlanningState({this.finalChoiceName, this.finalChoicePlace, final  List<Place> foundPlaces = const [], final  List<Place> filteredPlaces = const [], this.centerPoint, final  List<GeoCoordinate> routePoints = const [], this.selectedType, this.searchRadius = 500.0, this.creatorChangedRadiusTo, this.peerSuggestedRadius, this.peerSuggestedMeetingFormat, this.selectedScenario, final  List<MeetingFormat> creatorMeetingFormats = const [], final  List<MeetingFormat> partnerMeetingFormats = const [], this.creatorSelectedMeetingFormat, this.partnerSelectedMeetingFormat, this.selectedMeetingFormat, this.lastAgreedMeetingFormat, final  List<DateScenario> dateScenarios = const [], this.meetingRevoteRequestByRole, this.meetingRevoteRequestStatus}): _foundPlaces = foundPlaces,_filteredPlaces = filteredPlaces,_routePoints = routePoints,_creatorMeetingFormats = creatorMeetingFormats,_partnerMeetingFormats = partnerMeetingFormats,_dateScenarios = dateScenarios,super._();
   
 
 @override final  String? finalChoiceName;
@@ -517,9 +517,9 @@ class _MeetingPlanningState extends MeetingPlanningState {
   return EqualUnmodifiableListView(_filteredPlaces);
 }
 
-@override final  latlong.LatLng? centerPoint;
- final  List<latlong.LatLng> _routePoints;
-@override@JsonKey() List<latlong.LatLng> get routePoints {
+@override final  GeoCoordinate? centerPoint;
+ final  List<GeoCoordinate> _routePoints;
+@override@JsonKey() List<GeoCoordinate> get routePoints {
   if (_routePoints is EqualUnmodifiableListView) return _routePoints;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_routePoints);
@@ -589,7 +589,7 @@ abstract mixin class _$MeetingPlanningStateCopyWith<$Res> implements $MeetingPla
   factory _$MeetingPlanningStateCopyWith(_MeetingPlanningState value, $Res Function(_MeetingPlanningState) _then) = __$MeetingPlanningStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? finalChoiceName, Place? finalChoicePlace, List<Place> foundPlaces, List<Place> filteredPlaces, latlong.LatLng? centerPoint, List<latlong.LatLng> routePoints, String? selectedType, double searchRadius, int? creatorChangedRadiusTo, int? peerSuggestedRadius, MeetingFormat? peerSuggestedMeetingFormat, DateScenario? selectedScenario, List<MeetingFormat> creatorMeetingFormats, List<MeetingFormat> partnerMeetingFormats, MeetingFormat? creatorSelectedMeetingFormat, MeetingFormat? partnerSelectedMeetingFormat, MeetingFormat? selectedMeetingFormat, MeetingFormat? lastAgreedMeetingFormat, List<DateScenario> dateScenarios, String? meetingRevoteRequestByRole, RevoteRequestStatus? meetingRevoteRequestStatus
+ String? finalChoiceName, Place? finalChoicePlace, List<Place> foundPlaces, List<Place> filteredPlaces, GeoCoordinate? centerPoint, List<GeoCoordinate> routePoints, String? selectedType, double searchRadius, int? creatorChangedRadiusTo, int? peerSuggestedRadius, MeetingFormat? peerSuggestedMeetingFormat, DateScenario? selectedScenario, List<MeetingFormat> creatorMeetingFormats, List<MeetingFormat> partnerMeetingFormats, MeetingFormat? creatorSelectedMeetingFormat, MeetingFormat? partnerSelectedMeetingFormat, MeetingFormat? selectedMeetingFormat, MeetingFormat? lastAgreedMeetingFormat, List<DateScenario> dateScenarios, String? meetingRevoteRequestByRole, RevoteRequestStatus? meetingRevoteRequestStatus
 });
 
 
@@ -613,8 +613,8 @@ as String?,finalChoicePlace: freezed == finalChoicePlace ? _self.finalChoicePlac
 as Place?,foundPlaces: null == foundPlaces ? _self._foundPlaces : foundPlaces // ignore: cast_nullable_to_non_nullable
 as List<Place>,filteredPlaces: null == filteredPlaces ? _self._filteredPlaces : filteredPlaces // ignore: cast_nullable_to_non_nullable
 as List<Place>,centerPoint: freezed == centerPoint ? _self.centerPoint : centerPoint // ignore: cast_nullable_to_non_nullable
-as latlong.LatLng?,routePoints: null == routePoints ? _self._routePoints : routePoints // ignore: cast_nullable_to_non_nullable
-as List<latlong.LatLng>,selectedType: freezed == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
+as GeoCoordinate?,routePoints: null == routePoints ? _self._routePoints : routePoints // ignore: cast_nullable_to_non_nullable
+as List<GeoCoordinate>,selectedType: freezed == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
 as String?,searchRadius: null == searchRadius ? _self.searchRadius : searchRadius // ignore: cast_nullable_to_non_nullable
 as double,creatorChangedRadiusTo: freezed == creatorChangedRadiusTo ? _self.creatorChangedRadiusTo : creatorChangedRadiusTo // ignore: cast_nullable_to_non_nullable
 as int?,peerSuggestedRadius: freezed == peerSuggestedRadius ? _self.peerSuggestedRadius : peerSuggestedRadius // ignore: cast_nullable_to_non_nullable

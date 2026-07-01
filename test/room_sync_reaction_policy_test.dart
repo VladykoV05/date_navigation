@@ -1,8 +1,8 @@
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_snapshot_reducer.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_reaction_policy.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_snapshot_reducer.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_sync_reaction_policy.dart';
+import 'package:date_navigation/features/date_navigation/application/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart' as latlong;
+import 'package:date_navigation/features/date_navigation/domain/value_objects/geo_coordinate.dart';
 
 void main() {
   const coordinator = RoomSyncReactionPolicy();
@@ -16,8 +16,8 @@ void main() {
     required bool hasSnapshot,
     bool snapshotMatchesFormat = true,
     DateTime? snapshotUpdatedAt,
-    latlong.LatLng? point1,
-    latlong.LatLng? point2,
+    GeoCoordinate? point1,
+    GeoCoordinate? point2,
   }) {
     return RoomSyncOutcome(
       nextState: const DateNavigationState(),
@@ -40,8 +40,8 @@ void main() {
         pointsChanged: true,
         isCreator: true,
         hasSnapshot: false,
-        point1: latlong.LatLng(1, 1),
-        point2: latlong.LatLng(2, 2),
+        point1: GeoCoordinate(latitude: 1, longitude: 1),
+        point2: GeoCoordinate(latitude: 2, longitude: 2),
       ),
       snapshotFreshFor: snapshotFreshFor,
       now: now,
@@ -57,8 +57,8 @@ void main() {
         pointsChanged: true,
         isCreator: true,
         hasSnapshot: false,
-        point1: latlong.LatLng(1, 1),
-        point2: latlong.LatLng(2, 2),
+        point1: GeoCoordinate(latitude: 1, longitude: 1),
+        point2: GeoCoordinate(latitude: 2, longitude: 2),
       ),
       snapshotFreshFor: snapshotFreshFor,
       now: now,
@@ -75,8 +75,8 @@ void main() {
         isCreator: false,
         hasSnapshot: true,
         snapshotUpdatedAt: now.subtract(const Duration(seconds: 30)),
-        point1: latlong.LatLng(1, 1),
-        point2: latlong.LatLng(2, 2),
+        point1: GeoCoordinate(latitude: 1, longitude: 1),
+        point2: GeoCoordinate(latitude: 2, longitude: 2),
       ),
       snapshotFreshFor: snapshotFreshFor,
       now: now,
@@ -94,8 +94,8 @@ void main() {
         hasSnapshot: true,
         snapshotMatchesFormat: false,
         snapshotUpdatedAt: now.subtract(const Duration(seconds: 5)),
-        point1: latlong.LatLng(1, 1),
-        point2: latlong.LatLng(2, 2),
+        point1: GeoCoordinate(latitude: 1, longitude: 1),
+        point2: GeoCoordinate(latitude: 2, longitude: 2),
       ),
       snapshotFreshFor: snapshotFreshFor,
       now: now,

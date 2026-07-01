@@ -2,10 +2,10 @@ import 'dart:async';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
-import '../runtime/meeting_planner_runtime.dart';
-import '../state_transitions/room_session_state_transitions.dart';
-import '../services/room_lifecycle_service.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/runtime/meeting_planner_runtime.dart';
+import '../../application/state_transitions/room_session_state_transitions.dart';
+import '../../application/services/room_lifecycle_service.dart';
+import '../../application/state/date_navigation_state.dart';
 
 typedef DateNavigationStateReader = DateNavigationState Function();
 typedef DateNavigationStateWriter = void Function(DateNavigationState state);

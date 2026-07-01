@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart' as latlong;
-
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../../../../core/services/navigation_service.dart';
-import '../../domain/entities/place.dart';
+import '../view_data/place_view_data.dart';
 
 class PlaceDetailsSheet extends StatelessWidget {
-  final Place place;
-  final latlong.LatLng? startPoint;
-  final latlong.LatLng? partnerPoint;
+  final PlaceViewData place;
+  final GeoCoordinate? startPoint;
+  final GeoCoordinate? partnerPoint;
   final NavigationService navigationService;
 
   const PlaceDetailsSheet({

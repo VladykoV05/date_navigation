@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart' as latlong;
-
-import '../../domain/entities/place.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
+import '../view_data/place_view_data.dart';
 import './place_visuals.dart';
 
 class PlaceCard extends StatelessWidget {
-  final Place place;
+  final PlaceViewData place;
   final VoidCallback onTap;
-  final latlong.LatLng? userLocation;
+  final GeoCoordinate? userLocation;
   final double? score;
   final VoidCallback? onVote;
   final int voteCount;
@@ -165,7 +164,7 @@ class PlaceCard extends StatelessWidget {
     );
   }
 
-  List<String> _buildTypeLabels(Place place, {String? selectedTypeContext}) {
+  List<String> _buildTypeLabels(PlaceViewData place, {String? selectedTypeContext}) {
     if (selectedTypeContext == 'swimming_pool' &&
         place.types.contains('swimming_pool')) {
       // In "Pool" filter show only pool label.

@@ -1,11 +1,11 @@
 import '../../../../core/error/result.dart';
 import '../entities/user_favorite.dart';
-import '../repositories/user_profile_repository.dart';
+import '../repositories/favorites_repository.dart';
 
 class RemoveUserFavorite {
   const RemoveUserFavorite(this._repo);
 
-  final UserProfileRepository _repo;
+  final FavoritesRepository _repo;
 
   Future<Result<void>> call({
     required String userId,
@@ -18,7 +18,7 @@ class RemoveUserFavorite {
 class RemoveUserFavoriteByPlace {
   const RemoveUserFavoriteByPlace(this._repo);
 
-  final UserProfileRepository _repo;
+  final FavoritesRepository _repo;
 
   Future<Result<void>> call({
     required String userId,

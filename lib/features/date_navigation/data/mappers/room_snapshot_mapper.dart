@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/entities/room_status.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
+import 'geo_coordinate_mapper.dart';
 
 class RoomSnapshotMapper {
   const RoomSnapshotMapper();
@@ -92,9 +93,8 @@ class RoomSnapshotMapper {
     );
   }
 
-  static latlong.LatLng? _parseLatLng(dynamic raw) {
-    if (raw == null) return null;
-    return latlong.LatLng(raw['lat'], raw['lng']);
+  static GeoCoordinate? _parseLatLng(dynamic raw) {
+    return GeoCoordinateMapper.fromWireMap(raw);
   }
 
   static String? _nonEmptyTrimmed(dynamic value) {
@@ -107,18 +107,8 @@ class RoomSnapshotMapper {
     return null;
   }
 
-  static List<latlong.LatLng> _parseRoutePoints(dynamic raw) {
-    if (raw is! List) return const [];
-    return raw
-        .whereType<Map>()
-        .map(
-          (point) => latlong.LatLng(
-            (point['lat'] as num?)?.toDouble() ?? 0,
-            (point['lng'] as num?)?.toDouble() ?? 0,
-          ),
-        )
-        .where((point) => point.latitude != 0 || point.longitude != 0)
-        .toList(growable: false);
+  static List<GeoCoordinate> _parseRoutePoints(dynamic raw) {
+    return GeoCoordinateMapper.routePointsFromWireList(raw);
   }
 
   static List<Place> _parsePlaces(dynamic raw) {

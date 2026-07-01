@@ -12,24 +12,24 @@ import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../domain/usecases/save_search_radius.dart';
 import '../../domain/usecases/watch_room.dart';
+import '../../application/policies/meeting_guard_policy.dart';
+import '../../application/services/address_submission_service.dart';
+import '../../application/services/date_assistant_service.dart';
+import '../../application/services/meeting_execution_service.dart';
+import '../../application/services/room_interaction_service.dart';
+import '../../application/services/room_lifecycle_service.dart';
 import './address_memory_controller.dart';
-import '../services/address_submission_service.dart';
-import '../services/date_assistant_service.dart';
 import '../subscriptions/frequent_addresses_subscription.dart';
-import '../policies/meeting_guard_policy.dart';
-import '../services/meeting_execution_service.dart';
-import '../state_transitions/meeting_interaction_transitions.dart';
+import '../../application/state_transitions/meeting_interaction_transitions.dart';
 import './meeting_planning_controller.dart';
-import '../actions/proposal_actions.dart';
-import '../state_transitions/room_session_state_transitions.dart';
-import '../services/room_interaction_service.dart';
-import '../services/room_lifecycle_service.dart';
+import '../../application/actions/proposal_actions.dart';
+import '../../application/state_transitions/room_session_state_transitions.dart';
 import './room_session_controller.dart';
-import '../flows/room_stream_application.dart';
+import '../../application/flows/room_stream_application.dart';
 import '../subscriptions/room_stream_subscription.dart';
-import '../actions/vote_scenario_actions.dart';
+import '../../application/actions/vote_scenario_actions.dart';
 import './voting_controller.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/state/date_navigation_state.dart';
 
 class DateNavigationController extends StateNotifier<DateNavigationState> {
   static const Duration _snapshotFreshFor = Duration(seconds: 20);
@@ -174,14 +174,18 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   }
 
   bool _ensureSessionActive(String operation) {
-    final failure = _meetingGuard.ensureSessionActive(state);
+    final failure = _meetingGuard.ensureSessionActive(
+      isSessionClosed: state.room.isClosed,
+    );
     if (failure == null) return true;
     _setFailure(failure, operation);
     return false;
   }
 
   bool _ensureMeetingFormatMatched(String operation) {
-    final failure = _meetingGuard.ensureMeetingFormatMatched(state);
+    final failure = _meetingGuard.ensureMeetingFormatMatched(
+      selectedMeetingFormat: state.meeting.selectedMeetingFormat,
+    );
     if (failure == null) return true;
     _setFailure(failure, operation);
     return false;

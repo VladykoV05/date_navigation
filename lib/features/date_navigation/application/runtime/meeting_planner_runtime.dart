@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../config/format_chip_config.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 
 class MeetingPlannerRuntime {
   String? _lastMeetingKey;
@@ -103,8 +102,8 @@ class MeetingPlannerRuntime {
   }
 
   String buildMeetingKey({
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
     required int searchRadius,
     required MeetingFormat format,
   }) {
@@ -115,10 +114,10 @@ class MeetingPlannerRuntime {
 
   List<Place> computeFilteredPlaces({
     required List<Place> places,
-    required latlong.LatLng? point1,
-    required latlong.LatLng? point2,
+    required GeoCoordinate? point1,
+    required GeoCoordinate? point2,
     required String? selectedType,
-    required latlong.LatLng? centerPoint,
+    required GeoCoordinate? centerPoint,
     required double searchRadius,
     MeetingFormat? meetingFormat,
   }) {
@@ -168,8 +167,8 @@ class MeetingPlannerRuntime {
 
   double scorePlace(
     Place place, {
-    required latlong.LatLng? point1,
-    required latlong.LatLng? point2,
+    required GeoCoordinate? point1,
+    required GeoCoordinate? point2,
     MeetingFormat? meetingFormat,
   }) {
     if (point1 == null || point2 == null) return 0.0;

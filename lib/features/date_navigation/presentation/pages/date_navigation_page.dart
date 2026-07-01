@@ -11,8 +11,9 @@ import '../../../../core/services/navigation_service.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../../../core/utils/place_type_localizer.dart';
 import '../../../../core/utils/show_notification.dart';
-import '../../../user_profile/user_profile.dart';
-import '../../domain/entities/place.dart';
+import '../mappers/geo_map_mapper.dart';
+import '../mappers/place_view_mapper.dart';
+import '../view_data/place_view_data.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../widgets/date_navigation_account_menu.dart';
 import '../widgets/confirm_dialog.dart';
@@ -25,7 +26,9 @@ import '../widgets/place_actions_sheet.dart';
 import '../widgets/ui_copy.dart';
 import '../controllers/date_navigation_controller.dart';
 import '../providers/date_navigation_provider.dart';
-import '../state/date_navigation_state.dart';
+import '../providers/meeting_favorites_provider.dart';
+import '../../application/state/date_navigation_state.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 
 part 'date_navigation_page_dialogs.dart';
 part 'date_navigation_page_map.dart';
@@ -198,7 +201,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
             prevFinalChoicePlace.lat != nextFinalChoicePlace.lat ||
             prevFinalChoicePlace.lon != nextFinalChoicePlace.lon ||
             prevChoice != nextChoice)) {
-      _focusOnChosenVenue(nextFinalChoicePlace);
+      _focusOnChosenVenue(PlaceViewMapper.fromPlace(nextFinalChoicePlace));
     }
   }
 
@@ -288,7 +291,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     );
   }
 
-  void _showPlaceDetails(Place place) {
+  void _showPlaceDetails(PlaceViewData place) {
     final state = ref.read(dateNavigationControllerProvider);
     final myPoint = state.myPoint(state.room.isCreator);
     final partnerPoint = state.partnerPoint(state.room.isCreator);
@@ -296,7 +299,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
         state.meeting.finalChoiceName != null &&
         state.meeting.finalChoiceName!.isNotEmpty;
     final isFavorite = ref.read(
-      favoritesControllerProvider.select(
+      meetingFavoritesControllerProvider.select(
         (state) => state.containsPlace(
           placeName: place.name,
           lat: place.lat,
@@ -315,7 +318,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       canProposePlace: !venueLocked,
       onToggleFavorite: () async {
         await ref
-            .read(favoritesControllerProvider.notifier)
+            .read(meetingFavoritesControllerProvider.notifier)
             .toggleFavorite(
               placeName: place.name,
               placeAddress: place.address,
@@ -327,7 +330,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       onProposePlace: () async {
         await ref
             .read(dateNavigationControllerProvider.notifier)
-            .proposePlace(place);
+            .proposePlace(PlaceViewMapper.toPlace(place));
       },
     );
   }

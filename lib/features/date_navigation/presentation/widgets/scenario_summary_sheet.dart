@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/ui_tokens.dart';
-import '../../domain/entities/date_scenario.dart';
+import '../view_data/place_view_data.dart';
 
 class ScenarioSummarySheet extends StatelessWidget {
   const ScenarioSummarySheet({
@@ -12,7 +12,7 @@ class ScenarioSummarySheet extends StatelessWidget {
   });
 
   final String roomId;
-  final DateScenario scenario;
+  final ScenarioViewData scenario;
   final VoidCallback onSharePressed;
 
   @override

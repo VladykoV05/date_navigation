@@ -1,11 +1,11 @@
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../domain/usecases/save_search_radius.dart';
-import '../actions/meeting_collaboration_actions.dart';
-import '../flows/search_radius_persistence_builder.dart';
-import '../policies/recalculate_policy.dart';
-import '../runtime/meeting_planner_runtime.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/actions/meeting_collaboration_actions.dart';
+import '../../application/flows/search_radius_persistence_builder.dart';
+import '../../application/policies/recalculate_policy.dart';
+import '../../application/runtime/meeting_planner_runtime.dart';
+import '../../application/state/date_navigation_state.dart';
 
 typedef SearchRadiusStateReader = DateNavigationState Function();
 typedef SearchRadiusStateWriter = void Function(DateNavigationState state);
@@ -72,7 +72,13 @@ class SearchRadiusController {
     if (!_ensureMeetingFormatMatched('meeting')) return;
     await _persistMySearchRadius();
     var state = _readState();
-    if (!_recalculatePolicy.canRecalculate(state)) return;
+    if (!_recalculatePolicy.canRecalculate(
+      hasPoint1: state.room.point1 != null,
+      hasPoint2: state.room.point2 != null,
+      isLoading: state.ui.isLoading,
+    )) {
+      return;
+    }
     final meeting = state.meeting;
     final center = meeting.centerPoint;
     final hasCenterAndPlaces = center != null && meeting.foundPlaces.isNotEmpty;
@@ -95,7 +101,7 @@ class SearchRadiusController {
       _clearFailure();
       state = _readState();
       final shouldStop = _recalculatePolicy.shouldStopAfterLocalFilter(
-        state: state,
+        isCreator: state.room.isCreator,
         hasCenterAndPlaces: hasCenterAndPlaces,
         shouldSkipRadiusFetch: _meetingPlanner.shouldSkipRadiusFetch(
           state.meeting.searchRadius,

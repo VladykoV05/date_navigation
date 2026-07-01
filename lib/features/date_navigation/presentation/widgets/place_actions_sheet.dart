@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart' as latlong;
-
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../../../../core/services/navigation_service.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../../../core/utils/show_notification.dart';
-import '../../domain/entities/place.dart';
+import '../view_data/place_view_data.dart';
 import './place_details_sheet.dart';
 
 Future<void> showPlaceActionsSheet({
   required BuildContext context,
-  required Place place,
-  required latlong.LatLng? myPoint,
-  required latlong.LatLng? partnerPoint,
+  required PlaceViewData place,
+  required GeoCoordinate? myPoint,
+  required GeoCoordinate? partnerPoint,
   required bool isFavorite,
   required NavigationService navigationService,
   required Future<void> Function() onToggleFavorite,

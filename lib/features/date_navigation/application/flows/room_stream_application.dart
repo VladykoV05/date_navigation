@@ -1,5 +1,4 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../state/date_navigation_state.dart';
 import '../reducers/room_stream_reducer.dart';
 import '../sync/room_sync_reaction_policy.dart';
@@ -31,8 +30,8 @@ class RoomStreamApplicationResult {
   final bool shouldStopCalculating;
   final bool shouldCalculateAsCreator;
   final bool shouldCalculateWithPartnerFallback;
-  final latlong.LatLng? fallbackPoint1;
-  final latlong.LatLng? fallbackPoint2;
+  final GeoCoordinate? fallbackPoint1;
+  final GeoCoordinate? fallbackPoint2;
 }
 
 class RoomStreamApplication {

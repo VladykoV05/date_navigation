@@ -1,6 +1,6 @@
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state_transitions/meeting_interaction_transitions.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:date_navigation/features/date_navigation/application/state_transitions/meeting_interaction_transitions.dart';
+import 'package:date_navigation/features/date_navigation/application/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

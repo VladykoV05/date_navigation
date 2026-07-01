@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import '../../domain/usecases/watch_room.dart';
-import '../state/date_navigation_state.dart';
-import '../flows/room_stream_application.dart';
-import '../flows/room_stream_effects.dart';
-import '../runtime/meeting_planner_runtime.dart';
-import '../reducers/room_stream_reducer.dart';
-import '../sync/room_snapshot_reducer.dart';
-import '../sync/room_sync_orchestrator.dart';
-import '../sync/room_sync_reaction_policy.dart';
+import '../../application/state/date_navigation_state.dart';
+import '../../application/flows/room_stream_application.dart';
+import '../../application/flows/room_stream_effects.dart';
+import '../../application/runtime/meeting_planner_runtime.dart';
+import '../../application/reducers/room_stream_reducer.dart';
+import '../../application/sync/room_snapshot_reducer.dart';
+import '../../application/sync/room_sync_orchestrator.dart';
+import '../../application/sync/room_sync_reaction_policy.dart';
 
 class RoomStreamSubscription {
   RoomStreamSubscription({

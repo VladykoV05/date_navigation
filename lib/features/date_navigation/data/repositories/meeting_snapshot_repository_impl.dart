@@ -1,9 +1,9 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/result.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/repositories/meeting_snapshot_repository.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../datasources/remote/room_remote_data_source.dart';
+import '../mappers/geo_coordinate_mapper.dart';
 
 class MeetingSnapshotRepositoryImpl implements MeetingSnapshotRepository {
   final RoomRemoteDataSource _remote;
@@ -12,16 +12,16 @@ class MeetingSnapshotRepositoryImpl implements MeetingSnapshotRepository {
   @override
   Future<Result<void>> saveMeetingSnapshot({
     required String roomId,
-    required latlong.LatLng centerPoint,
-    required List<latlong.LatLng> routePoints,
+    required GeoCoordinate centerPoint,
+    required List<GeoCoordinate> routePoints,
     required List<Map<String, dynamic>> places,
     required int searchRadius,
     required MeetingFormat meetingFormat,
   }) {
     return _remote.saveMeetingSnapshot(
       roomId: roomId,
-      centerPoint: centerPoint,
-      routePoints: routePoints,
+      centerPoint: GeoCoordinateMapper.toLatLng(centerPoint),
+      routePoints: GeoCoordinateMapper.toLatLngList(routePoints),
       places: places,
       searchRadius: searchRadius,
       meetingFormat: meetingFormat.wireValue,

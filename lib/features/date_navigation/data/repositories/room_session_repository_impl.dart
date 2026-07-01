@@ -1,9 +1,9 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/result.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/repositories/room_session_repository.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../datasources/remote/room_remote_data_source.dart';
+import '../mappers/geo_coordinate_mapper.dart';
 import '../mappers/room_snapshot_mapper.dart';
 
 class RoomSessionRepositoryImpl implements RoomSessionRepository {
@@ -31,12 +31,12 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   Future<Result<void>> updateLocation({
     required String roomId,
     required String userId,
-    required latlong.LatLng coords,
+    required GeoCoordinate coords,
   }) {
     return _remote.updateLocation(
       roomId: roomId,
       userId: userId,
-      coords: coords,
+      coords: GeoCoordinateMapper.toLatLng(coords),
     );
   }
 

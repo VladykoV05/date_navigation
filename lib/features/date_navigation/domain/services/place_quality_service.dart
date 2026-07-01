@@ -1,5 +1,5 @@
-import '../../config/date_navigation_config.dart';
 import '../entities/place.dart';
+import '../policies/place_quality_policy.dart';
 
 class PlaceQualityService {
   const PlaceQualityService();
@@ -20,9 +20,9 @@ class PlaceQualityService {
     final type = (place.type ?? '').toLowerCase();
     const blocked = {'заведение', 'кафе', 'ресторан', 'бар', 'fast_food'};
     if (blocked.contains(lower)) return false;
-    const blockedTypes = DateNavigationConfig.blockedPlaceTypes;
+    const blockedTypes = PlaceQualityPolicy.blockedPlaceTypes;
     if (blockedTypes.contains(type)) return false;
-    const blockedNameParts = DateNavigationConfig.blockedPlaceNameParts;
+    const blockedNameParts = PlaceQualityPolicy.blockedPlaceNameParts;
     if (blockedNameParts.any(lower.contains)) return false;
     if (_isGenericGreenArea(type: type, normalizedName: lower)) return false;
     return true;
@@ -77,7 +77,7 @@ class PlaceQualityService {
             _normalizeText(place.address ?? '');
         final isNearby =
             existing.distanceTo(place.lat, place.lon) <=
-            DateNavigationConfig.placesDedupeRadiusMeters;
+            PlaceQualityPolicy.dedupeRadiusMeters;
         if (!sameType) return false;
         if (sameName && isNearby) return true;
         return sameAddress && isNearby;

@@ -1,7 +1,6 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/result.dart';
 import '../entities/room_snapshot.dart';
+import '../value_objects/geo_coordinate.dart';
 
 abstract interface class RoomSessionRepository {
   Future<Result<String>> createRoom(String code, {String? createdBy});
@@ -13,7 +12,7 @@ abstract interface class RoomSessionRepository {
   Future<Result<void>> updateLocation({
     required String roomId,
     required String userId,
-    required latlong.LatLng coords,
+    required GeoCoordinate coords,
   });
 
   Future<Result<void>> completeSession({

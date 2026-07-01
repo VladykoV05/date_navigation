@@ -3,12 +3,12 @@ import 'dart:async';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/voting_decisions.dart';
-import '../actions/meeting_collaboration_actions.dart';
-import '../actions/meeting_format_actions.dart';
-import '../services/date_assistant_service.dart';
-import '../state_transitions/meeting_interaction_transitions.dart';
-import '../runtime/meeting_planner_runtime.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/actions/meeting_collaboration_actions.dart';
+import '../../application/actions/meeting_format_actions.dart';
+import '../../application/services/date_assistant_service.dart';
+import '../../application/state_transitions/meeting_interaction_transitions.dart';
+import '../../application/runtime/meeting_planner_runtime.dart';
+import '../../application/state/date_navigation_state.dart';
 
 typedef MeetingFormatStateReader = DateNavigationState Function();
 typedef MeetingFormatStateWriter = void Function(DateNavigationState state);

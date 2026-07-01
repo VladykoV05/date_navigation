@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/result.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../domain/entities/date_vibe.dart';
@@ -9,6 +7,7 @@ import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/usecases/find_meeting_point.dart';
 import '../../domain/usecases/save_meeting_snapshot.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 
 class MeetingExecutionService {
   const MeetingExecutionService({
@@ -24,8 +23,8 @@ class MeetingExecutionService {
   final AnalyticsService _analytics;
 
   Future<Result<MeetingPoint>> calculateMeeting({
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
     required int searchRadius,
     required MeetingFormat format,
     required bool trackAnalytics,
@@ -61,8 +60,8 @@ class MeetingExecutionService {
 
   Future<void> saveSnapshot({
     required String roomId,
-    required latlong.LatLng centerPoint,
-    required List<latlong.LatLng> routePoints,
+    required GeoCoordinate centerPoint,
+    required List<GeoCoordinate> routePoints,
     required List<Place> places,
     required int searchRadius,
     required MeetingFormat meetingFormat,

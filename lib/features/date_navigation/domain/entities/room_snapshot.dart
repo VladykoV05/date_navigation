@@ -1,9 +1,8 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import 'date_scenario.dart';
 import 'date_vibe.dart';
 import 'place.dart';
 import 'room_status.dart';
+import '../value_objects/geo_coordinate.dart';
 
 class RoomProposalSnapshot {
   const RoomProposalSnapshot({
@@ -31,9 +30,9 @@ class RoomMeetingSnapshot {
     this.meetingFormat,
   });
 
-  final latlong.LatLng? center;
+  final GeoCoordinate? center;
   final List<Place> places;
-  final List<latlong.LatLng> routePoints;
+  final List<GeoCoordinate> routePoints;
   final DateTime? updatedAt;
   final int? searchRadius;
   final MeetingFormat? meetingFormat;
@@ -112,8 +111,8 @@ class RoomSnapshot {
   final String id;
   final String creatorUid;
   final String? partnerUid;
-  final latlong.LatLng? point1;
-  final latlong.LatLng? point2;
+  final GeoCoordinate? point1;
+  final GeoCoordinate? point2;
   final RoomProposalSnapshot proposal;
   final Map<String, String> votes;
   final RoomMeetingSnapshot meetingSnapshot;

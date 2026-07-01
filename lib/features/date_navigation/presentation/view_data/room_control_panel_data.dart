@@ -1,8 +1,5 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
-import '../../domain/entities/date_vibe.dart';
-import '../../domain/entities/place.dart';
-import '../../domain/entities/room_status.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
+import 'place_view_data.dart';
 
 class RoomControlPanelData {
   const RoomControlPanelData({
@@ -38,24 +35,24 @@ class RoomControlPanelData {
   final bool isGeocoding;
   final bool isCalculatingMeeting;
   final bool isLoadingRoomAction;
-  final List<Place> places;
+  final List<PlaceViewData> places;
   final String? selectedType;
-  final latlong.LatLng? myLocation;
+  final GeoCoordinate? myLocation;
   final bool hasPartner;
   final double searchRadius;
   final List<String> recentAddresses;
   final bool isCreator;
-  final List<MeetingFormat> creatorMeetingFormats;
-  final List<MeetingFormat> partnerMeetingFormats;
-  final List<MeetingFormat> commonMeetingFormats;
-  final MeetingFormat? mySelectedMeetingFormat;
-  final MeetingFormat? partnerSelectedMeetingFormat;
-  final MeetingFormat? selectedMeetingFormat;
-  final MeetingFormat? lastAgreedMeetingFormat;
+  final List<MeetingFormatView> creatorMeetingFormats;
+  final List<MeetingFormatView> partnerMeetingFormats;
+  final List<MeetingFormatView> commonMeetingFormats;
+  final MeetingFormatView? mySelectedMeetingFormat;
+  final MeetingFormatView? partnerSelectedMeetingFormat;
+  final MeetingFormatView? selectedMeetingFormat;
+  final MeetingFormatView? lastAgreedMeetingFormat;
   final String? meetingRevoteRequestByRole;
-  final RevoteRequestStatus? meetingRevoteRequestStatus;
+  final RevoteRequestStatusView? meetingRevoteRequestStatus;
   final Map<String, int> voteCounts;
   final String? myVotePlaceName;
   final bool isSessionClosed;
-  final SessionStatus sessionStatus;
+  final SessionStatusView sessionStatus;
 }

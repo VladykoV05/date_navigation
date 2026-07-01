@@ -1,11 +1,11 @@
 import 'package:date_navigation/features/date_navigation/domain/entities/room_snapshot.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/room_status.dart';
-import 'package:date_navigation/features/date_navigation/presentation/runtime/meeting_planner_runtime.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_snapshot_reducer.dart';
+import 'package:date_navigation/features/date_navigation/application/runtime/meeting_planner_runtime.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_snapshot_reducer.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:date_navigation/features/date_navigation/application/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart' as latlong;
+import 'package:date_navigation/features/date_navigation/domain/value_objects/geo_coordinate.dart';
 
 void main() {
   const coordinator = RoomSnapshotReducer();
@@ -13,8 +13,8 @@ void main() {
 
   RoomSnapshot snapshot({
     String creatorUid = 'creator-1',
-    latlong.LatLng? point1,
-    latlong.LatLng? point2,
+    GeoCoordinate? point1,
+    GeoCoordinate? point2,
     RoomFinalChoiceSnapshot finalChoice = const RoomFinalChoiceSnapshot(),
     RoomProposalSnapshot proposal = const RoomProposalSnapshot(),
     Map<String, String> votes = const {},
@@ -50,7 +50,7 @@ void main() {
     final currentState = DateNavigationState(
       meeting: MeetingPlanningState(
         foundPlaces: const [],
-        centerPoint: latlong.LatLng(53.9, 27.56),
+        centerPoint: GeoCoordinate(latitude: 53.9, longitude: 27.56),
       ),
     );
 
@@ -59,8 +59,8 @@ void main() {
       userId: 'creator-1',
       meetingPlanner: planner,
       roomSnapshot: snapshot(
-        point1: const latlong.LatLng(53.9, 27.56),
-        point2: const latlong.LatLng(53.91, 27.57),
+        point1: const GeoCoordinate(latitude: 53.9, longitude: 27.56),
+        point2: const GeoCoordinate(latitude: 53.91, longitude: 27.57),
         finalChoice: const RoomFinalChoiceSnapshot(
           name: 'Cafe X',
           lat: 53.905,
@@ -86,8 +86,8 @@ void main() {
   test('buildOutcome detects pointsChanged', () {
     final currentState = DateNavigationState(
       room: RoomSessionState(
-        point1: latlong.LatLng(1, 1),
-        point2: latlong.LatLng(2, 2),
+        point1: GeoCoordinate(latitude: 1, longitude: 1),
+        point2: GeoCoordinate(latitude: 2, longitude: 2),
       ),
     );
 
@@ -97,8 +97,8 @@ void main() {
       meetingPlanner: planner,
       roomSnapshot: snapshot(
         creatorUid: 'x',
-        point1: const latlong.LatLng(1.0, 1.5),
-        point2: const latlong.LatLng(2.0, 2.0),
+        point1: const GeoCoordinate(latitude: 1.0, longitude: 1.5),
+        point2: const GeoCoordinate(latitude: 2.0, longitude: 2.0),
       ),
     );
 

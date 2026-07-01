@@ -1,4 +1,4 @@
-import 'package:date_navigation/features/date_navigation/presentation/runtime/meeting_planner_runtime.dart';
+import 'package:date_navigation/features/date_navigation/application/runtime/meeting_planner_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

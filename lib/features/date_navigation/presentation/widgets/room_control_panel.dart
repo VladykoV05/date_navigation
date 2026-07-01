@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../core/theme/ui_tokens.dart';
 import '../../config/format_chip_config.dart';
-import '../../domain/entities/date_vibe.dart';
-import '../../domain/entities/place.dart';
-import '../../domain/entities/room_status.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
+import '../view_data/place_view_data.dart';
 import './confirm_dialog.dart';
 import './place_card.dart';
 import './room_control_panel_header.dart';
@@ -38,35 +36,35 @@ class RoomControlPanel extends StatelessWidget {
   final Future<void> Function(String address) onAddressSuggestionDeleted;
   final Future<void> Function(Iterable<String> addresses)
   onAddressSuggestionsDeleted;
-  final List<Place> places;
+  final List<PlaceViewData> places;
   final String? selectedType;
   final void Function(String?) onTypeChanged;
-  final void Function(Place) onPlaceTap;
-  final latlong.LatLng? myLocation;
+  final void Function(PlaceViewData) onPlaceTap;
+  final GeoCoordinate? myLocation;
   final bool hasPartner;
   final bool isSliverMode;
   final double searchRadius;
   final ValueChanged<double> onSearchRadiusChanged;
   final VoidCallback onSearchRadiusChangeEnd;
   final VoidCallback onRetryPlaces;
-  final void Function(Place) onVotePlace;
+  final void Function(PlaceViewData) onVotePlace;
   final Map<String, int> voteCounts;
   final String? myVotePlaceName;
-  final double Function(Place) scoreForPlace;
-  final bool Function(Place place) isFavoritePlace;
-  final List<MeetingFormat> creatorMeetingFormats;
-  final List<MeetingFormat> partnerMeetingFormats;
-  final List<MeetingFormat> commonMeetingFormats;
-  final MeetingFormat? mySelectedMeetingFormat;
-  final MeetingFormat? partnerSelectedMeetingFormat;
-  final MeetingFormat? selectedMeetingFormat;
-  final MeetingFormat? lastAgreedMeetingFormat;
+  final double Function(PlaceViewData) scoreForPlace;
+  final bool Function(PlaceViewData place) isFavoritePlace;
+  final List<MeetingFormatView> creatorMeetingFormats;
+  final List<MeetingFormatView> partnerMeetingFormats;
+  final List<MeetingFormatView> commonMeetingFormats;
+  final MeetingFormatView? mySelectedMeetingFormat;
+  final MeetingFormatView? partnerSelectedMeetingFormat;
+  final MeetingFormatView? selectedMeetingFormat;
+  final MeetingFormatView? lastAgreedMeetingFormat;
   final String? meetingRevoteRequestByRole;
-  final RevoteRequestStatus? meetingRevoteRequestStatus;
-  final ValueChanged<Set<MeetingFormat>> onMeetingFormatsChanged;
-  final ValueChanged<MeetingFormat> onMeetingFormatConfirmed;
+  final RevoteRequestStatusView? meetingRevoteRequestStatus;
+  final ValueChanged<Set<MeetingFormatView>> onMeetingFormatsChanged;
+  final ValueChanged<MeetingFormatView> onMeetingFormatConfirmed;
   final bool isSessionClosed;
-  final SessionStatus sessionStatus;
+  final SessionStatusView sessionStatus;
   final bool isCreator;
   final VoidCallback onLeaveRoom;
 
@@ -440,9 +438,9 @@ class RoomControlPanel extends StatelessWidget {
     );
   }
 
-  void _toggleMeetingFormat(MeetingFormat format) {
+  void _toggleMeetingFormat(MeetingFormatView format) {
     final current = isCreator ? creatorMeetingFormats : partnerMeetingFormats;
-    final next = <MeetingFormat>{...current};
+    final next = <MeetingFormatView>{...current};
     if (next.contains(format)) {
       next.remove(format);
     } else {
@@ -532,12 +530,12 @@ class RoomControlPanel extends StatelessWidget {
   }
 
   String _formatStatusText({
-    required List<MeetingFormat> myFormats,
-    required List<MeetingFormat> partnerFormats,
-    required MeetingFormat? myConfirmedFormat,
-    required MeetingFormat? lastAgreedFormat,
+    required List<MeetingFormatView> myFormats,
+    required List<MeetingFormatView> partnerFormats,
+    required MeetingFormatView? myConfirmedFormat,
+    required MeetingFormatView? lastAgreedFormat,
     required String? meetingRevoteRequestByRole,
-    required RevoteRequestStatus? meetingRevoteRequestStatus,
+    required RevoteRequestStatusView? meetingRevoteRequestStatus,
   }) {
     if (meetingRevoteRequestStatus?.isPending ?? false) {
       final requestedByMe =
@@ -553,13 +551,13 @@ class RoomControlPanel extends StatelessWidget {
     if (selectedMeetingFormat != null) {
       return UiCopy.formatStatusAgreed.replaceAll(
         '{format}',
-        FormatChipConfig.formatLabel(selectedMeetingFormat!),
+        selectedMeetingFormat!.label,
       );
     }
     if (myConfirmedFormat != null) {
       return UiCopy.formatStatusConfirmedByMe.replaceAll(
         '{format}',
-        FormatChipConfig.formatLabel(myConfirmedFormat),
+        myConfirmedFormat.label,
       );
     }
     if (commonMeetingFormats.isEmpty) {
@@ -568,22 +566,22 @@ class RoomControlPanel extends StatelessWidget {
     if (selectedMeetingFormat == null && lastAgreedFormat != null) {
       return UiCopy.formatStatusRevotingNow.replaceAll(
         '{format}',
-        FormatChipConfig.formatLabel(lastAgreedFormat),
+        lastAgreedFormat.label,
       );
     }
     return UiCopy.formatStatusReadyToConfirm;
   }
 
   String _compactConfirmationLine({
-    required MeetingFormat? myConfirmed,
-    required MeetingFormat? partnerConfirmed,
+    required MeetingFormatView? myConfirmed,
+    required MeetingFormatView? partnerConfirmed,
   }) {
     final myText = myConfirmed == null
         ? UiCopy.formatConfirmationMissing
-        : FormatChipConfig.formatLabel(myConfirmed);
+        : myConfirmed.label;
     final partnerText = partnerConfirmed == null
         ? UiCopy.formatConfirmationMissing
-        : FormatChipConfig.formatLabel(partnerConfirmed);
+        : partnerConfirmed.label;
     return UiCopy.formatConfirmationLine
         .replaceAll('{my}', myText)
         .replaceAll('{partner}', partnerText);

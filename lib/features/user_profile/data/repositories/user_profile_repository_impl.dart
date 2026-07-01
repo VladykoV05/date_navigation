@@ -1,40 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../domain/entities/meeting_history_item.dart';
 import '../../domain/entities/remembered_address.dart';
 import '../../domain/entities/user_favorite.dart';
+import '../../domain/repositories/address_memory_repository.dart';
+import '../../domain/repositories/favorites_repository.dart';
+import '../../domain/repositories/meeting_history_repository.dart';
 import '../../domain/repositories/user_profile_repository.dart';
-import '../datasources/remote/user_profile_remote_data_source.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
-  const UserProfileRepositoryImpl(this._remote);
+  const UserProfileRepositoryImpl({
+    required FavoritesRepository favorites,
+    required MeetingHistoryRepository meetingHistory,
+    required AddressMemoryRepository addressMemory,
+  }) : _favorites = favorites,
+       _meetingHistory = meetingHistory,
+       _addressMemory = addressMemory;
 
-  final UserProfileRemoteDataSource _remote;
+  final FavoritesRepository _favorites;
+  final MeetingHistoryRepository _meetingHistory;
+  final AddressMemoryRepository _addressMemory;
 
   @override
   Stream<List<UserFavorite>> watchFavorites({
     required String userId,
     int limit = 100,
   }) {
-    return _remote.watchFavorites(userId: userId, limit: limit);
-  }
-
-  @override
-  Stream<List<MeetingHistoryItem>> watchRecentHistory({
-    required String userId,
-    int limit = 10,
-  }) {
-    return _remote.watchRecentHistory(userId: userId, limit: limit);
-  }
-
-  @override
-  Stream<List<RememberedAddress>> watchFrequentAddresses({
-    required String userId,
-    int limit = 6,
-  }) {
-    return _remote.watchFrequentAddresses(userId: userId, limit: limit);
+    return _favorites.watchFavorites(userId: userId, limit: limit);
   }
 
   @override
@@ -46,16 +37,13 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     double? lat,
     double? lon,
   }) {
-    return _runVoid(
-      () => _remote.upsertFavorite(
-        userId: userId,
-        placeName: placeName,
-        placeAddress: placeAddress,
-        placeType: placeType,
-        lat: lat,
-        lon: lon,
-      ),
-      fallback: 'Не удалось сохранить в избранное',
+    return _favorites.upsertFavorite(
+      userId: userId,
+      placeName: placeName,
+      placeAddress: placeAddress,
+      placeType: placeType,
+      lat: lat,
+      lon: lon,
     );
   }
 
@@ -64,10 +52,7 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     required String userId,
     required String favoriteId,
   }) {
-    return _runVoid(
-      () => _remote.removeFavorite(userId: userId, favoriteId: favoriteId),
-      fallback: 'Не удалось удалить из избранного',
-    );
+    return _favorites.removeFavorite(userId: userId, favoriteId: favoriteId);
   }
 
   @override
@@ -77,37 +62,20 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     double? lat,
     double? lon,
   }) {
-    return _runVoid(
-      () => _remote.removeFavoriteByPlace(
-        userId: userId,
-        placeName: placeName,
-        lat: lat,
-        lon: lon,
-      ),
-      fallback: 'Не удалось удалить из избранного',
+    return _favorites.removeFavoriteByPlace(
+      userId: userId,
+      placeName: placeName,
+      lat: lat,
+      lon: lon,
     );
   }
 
   @override
-  Future<Result<void>> rememberAddress({
+  Stream<List<MeetingHistoryItem>> watchRecentHistory({
     required String userId,
-    required String address,
+    int limit = 10,
   }) {
-    return _runVoid(
-      () => _remote.rememberAddress(userId: userId, address: address),
-      fallback: 'Не удалось сохранить адрес',
-    );
-  }
-
-  @override
-  Future<Result<void>> removeRememberedAddress({
-    required String userId,
-    required String address,
-  }) {
-    return _runVoid(
-      () => _remote.removeRememberedAddress(userId: userId, address: address),
-      fallback: 'Не удалось удалить адрес',
-    );
+    return _meetingHistory.watchRecentHistory(userId: userId, limit: limit);
   }
 
   @override
@@ -120,42 +88,41 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     double? lat,
     double? lon,
   }) {
-    return _runVoid(
-      () => _remote.recordMeetingHistory(
-        roomId: roomId,
-        placeName: placeName,
-        participantIds: participantIds,
-        placeAddress: placeAddress,
-        placeType: placeType,
-        lat: lat,
-        lon: lon,
-      ),
-      fallback: 'Не удалось сохранить историю встречи',
+    return _meetingHistory.recordMeetingHistory(
+      roomId: roomId,
+      placeName: placeName,
+      participantIds: participantIds,
+      placeAddress: placeAddress,
+      placeType: placeType,
+      lat: lat,
+      lon: lon,
     );
   }
 
-  Future<Result<void>> _runVoid(
-    Future<void> Function() action, {
-    required String fallback,
-  }) async {
-    try {
-      await action();
-      return const Ok(null);
-    } on FirebaseException catch (e) {
-      return Err(_mapFirestoreFailure(e, fallback: fallback));
-    } catch (_) {
-      return Err(UnknownFailure(fallback));
-    }
+  @override
+  Stream<List<RememberedAddress>> watchFrequentAddresses({
+    required String userId,
+    int limit = 6,
+  }) {
+    return _addressMemory.watchFrequentAddresses(userId: userId, limit: limit);
   }
 
-  Failure _mapFirestoreFailure(
-    FirebaseException e, {
-    required String fallback,
+  @override
+  Future<Result<void>> rememberAddress({
+    required String userId,
+    required String address,
   }) {
-    return switch (e.code) {
-      'unavailable' => const NetworkFailure('Сервис временно недоступен'),
-      'permission-denied' => const UnknownFailure('Нет прав для операции'),
-      _ => UnknownFailure(fallback),
-    };
+    return _addressMemory.rememberAddress(userId: userId, address: address);
+  }
+
+  @override
+  Future<Result<void>> removeRememberedAddress({
+    required String userId,
+    required String address,
+  }) {
+    return _addressMemory.removeRememberedAddress(
+      userId: userId,
+      address: address,
+    );
   }
 }

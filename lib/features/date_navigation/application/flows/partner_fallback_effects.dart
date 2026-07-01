@@ -1,6 +1,5 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../domain/entities/meeting_point.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../state/date_navigation_state.dart';
 import '../runtime/meeting_planner_runtime.dart';
 import './partner_fallback_result_resolver.dart';
@@ -23,8 +22,8 @@ class PartnerFallbackEffects {
   PartnerFallbackEffectsResult buildSuccess({
     required DateNavigationState state,
     required MeetingPoint meeting,
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
     required MeetingPlannerRuntime meetingPlanner,
     required PartnerFallbackResultResolver resultResolver,
   }) {

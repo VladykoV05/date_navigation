@@ -20,5 +20,7 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib test
       - name: Static analyze
         run: flutter analyze
+      - name: Architecture dependency tests
+        run: flutter test test/architecture_dependency_test.dart
       - name: Run tests
         run: flutter test

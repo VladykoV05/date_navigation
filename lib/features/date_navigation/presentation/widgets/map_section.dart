@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
-import '../../domain/entities/place.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
+import '../mappers/geo_map_mapper.dart';
+import '../view_data/place_view_data.dart';
 import './place_visuals.dart';
 
 class MapSection extends StatefulWidget {
   final MapController mapController;
   final bool isCreator;
-  final latlong.LatLng? centerPoint;
-  final latlong.LatLng? point1;
-  final latlong.LatLng? point2;
-  final List<Place> foundPlaces;
-  final void Function(Place) onPlaceTap;
+  final GeoCoordinate? centerPoint;
+  final GeoCoordinate? point1;
+  final GeoCoordinate? point2;
+  final List<PlaceViewData> foundPlaces;
+  final void Function(PlaceViewData) onPlaceTap;
   final bool isSearching;
   final String? loadingMessage;
   final double searchRadius;
-  final List<latlong.LatLng> routePoints;
+  final List<GeoCoordinate> routePoints;
   final bool showMeetingRouteAndRadius;
 
   const MapSection({
@@ -40,6 +42,8 @@ class MapSection extends StatefulWidget {
 }
 
 class _MapSectionState extends State<MapSection> {
+  static const _defaultCenter = latlong.LatLng(53.9, 27.5667);
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -47,13 +51,14 @@ class _MapSectionState extends State<MapSection> {
     final tileUrl = isDark
         ? 'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
         : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+    final centerPoint = GeoMapMapper.toLatLngOrNull(widget.centerPoint);
+    final routePoints = GeoMapMapper.toLatLngList(widget.routePoints);
     return Stack(
       children: [
         FlutterMap(
           mapController: widget.mapController,
           options: MapOptions(
-            initialCenter:
-                widget.centerPoint ?? const latlong.LatLng(53.9, 27.5667),
+            initialCenter: centerPoint ?? _defaultCenter,
             initialZoom: 13.0,
           ),
           children: [
@@ -61,12 +66,11 @@ class _MapSectionState extends State<MapSection> {
               urlTemplate: tileUrl,
               userAgentPackageName: 'com.example.date_navigation',
             ),
-            if (widget.showMeetingRouteAndRadius &&
-                widget.routePoints.isNotEmpty)
+            if (widget.showMeetingRouteAndRadius && routePoints.isNotEmpty)
               PolylineLayer(
                 polylines: [
                   Polyline(
-                    points: widget.routePoints,
+                    points: routePoints,
                     strokeWidth: 4.0,
                     color: colorScheme.primary.withValues(alpha: 0.8),
                     borderStrokeWidth: 2.0,
@@ -74,11 +78,11 @@ class _MapSectionState extends State<MapSection> {
                   ),
                 ],
               ),
-            if (widget.showMeetingRouteAndRadius && widget.centerPoint != null)
+            if (widget.showMeetingRouteAndRadius && centerPoint != null)
               CircleLayer(
                 circles: [
                   CircleMarker(
-                    point: widget.centerPoint!,
+                    point: centerPoint,
                     radius: widget.searchRadius,
                     useRadiusInMeter: true,
                     color: colorScheme.primary.withValues(alpha: 0.12),
@@ -87,7 +91,7 @@ class _MapSectionState extends State<MapSection> {
                   ),
                 ],
               ),
-            MarkerLayer(markers: _buildMarkers(context)),
+            MarkerLayer(markers: _buildMarkers(context, centerPoint)),
           ],
         ),
         if (widget.isSearching) _buildLoadingOverlay(context),
@@ -95,19 +99,23 @@ class _MapSectionState extends State<MapSection> {
     );
   }
 
-  List<Marker> _buildMarkers(BuildContext context) {
+  List<Marker> _buildMarkers(BuildContext context, latlong.LatLng? centerPoint) {
     final colorScheme = Theme.of(context).colorScheme;
     final markers = <Marker>[];
-    final myPoint = widget.isCreator ? widget.point1 : widget.point2;
-    final partnerPoint = widget.isCreator ? widget.point2 : widget.point1;
+    final myPoint = GeoMapMapper.toLatLngOrNull(
+      widget.isCreator ? widget.point1 : widget.point2,
+    );
+    final partnerPoint = GeoMapMapper.toLatLngOrNull(
+      widget.isCreator ? widget.point2 : widget.point1,
+    );
     if (myPoint != null) {
       markers.add(_marker(myPoint, Icons.my_location, colorScheme.primary));
     }
     if (partnerPoint != null) {
       markers.add(_marker(partnerPoint, Icons.location_on, colorScheme.error));
     }
-    if (widget.showMeetingRouteAndRadius && widget.centerPoint != null) {
-      markers.add(_buildCenterMarker(context, widget.centerPoint!));
+    if (widget.showMeetingRouteAndRadius && centerPoint != null) {
+      markers.add(_buildCenterMarker(context, centerPoint));
     }
     for (final place in widget.foundPlaces) {
       markers.add(_buildPlaceMarker(place));
@@ -124,7 +132,7 @@ class _MapSectionState extends State<MapSection> {
     );
   }
 
-  Marker _buildPlaceMarker(Place place) {
+  Marker _buildPlaceMarker(PlaceViewData place) {
     final visual = PlaceVisuals.fromType(place.type);
     return Marker(
       point: latlong.LatLng(place.lat, place.lon),

@@ -1,21 +1,19 @@
-import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
-import 'package:date_navigation/features/date_navigation/domain/entities/place.dart';
-import 'package:date_navigation/features/date_navigation/domain/entities/room_status.dart';
+import 'package:date_navigation/features/date_navigation/presentation/view_data/place_view_data.dart';
 import 'package:date_navigation/features/date_navigation/presentation/widgets/room_control_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Widget buildPanel({
-    required ValueChanged<Set<MeetingFormat>> onMeetingFormatsChanged,
-    required ValueChanged<MeetingFormat> onMeetingFormatConfirmed,
-    List<MeetingFormat> creatorMeetingFormats = const [],
-    List<MeetingFormat> partnerMeetingFormats = const [],
-    List<MeetingFormat> commonMeetingFormats = const [],
-    MeetingFormat? mySelectedMeetingFormat,
-    MeetingFormat? partnerSelectedMeetingFormat,
-    MeetingFormat? selectedMeetingFormat,
-    MeetingFormat? lastAgreedMeetingFormat,
+    required ValueChanged<Set<MeetingFormatView>> onMeetingFormatsChanged,
+    required ValueChanged<MeetingFormatView> onMeetingFormatConfirmed,
+    List<MeetingFormatView> creatorMeetingFormats = const [],
+    List<MeetingFormatView> partnerMeetingFormats = const [],
+    List<MeetingFormatView> commonMeetingFormats = const [],
+    MeetingFormatView? mySelectedMeetingFormat,
+    MeetingFormatView? partnerSelectedMeetingFormat,
+    MeetingFormatView? selectedMeetingFormat,
+    MeetingFormatView? lastAgreedMeetingFormat,
   }) {
     return MaterialApp(
       home: Scaffold(
@@ -32,7 +30,7 @@ void main() {
             onAddressSuggestionSelected: (_) {},
             onAddressSuggestionDeleted: (_) async {},
             onAddressSuggestionsDeleted: (_) async {},
-            places: const <Place>[],
+            places: const <PlaceViewData>[],
             selectedType: null,
             onTypeChanged: (_) {},
             onPlaceTap: (_) {},
@@ -59,7 +57,7 @@ void main() {
             onMeetingFormatsChanged: onMeetingFormatsChanged,
             onMeetingFormatConfirmed: onMeetingFormatConfirmed,
             isSessionClosed: false,
-            sessionStatus: SessionStatus.active,
+            sessionStatus: SessionStatusView.active,
             isCreator: true,
             onLeaveRoom: () {},
           ),
@@ -71,18 +69,18 @@ void main() {
   testWidgets('shows common formats section and confirms selected format', (
     tester,
   ) async {
-    MeetingFormat? confirmed;
+    MeetingFormatView? confirmed;
     await tester.pumpWidget(
       buildPanel(
         creatorMeetingFormats: const [
-          MeetingFormat.food,
-          MeetingFormat.culture,
+          MeetingFormatView.food,
+          MeetingFormatView.culture,
         ],
         partnerMeetingFormats: const [
-          MeetingFormat.walkOnly,
-          MeetingFormat.culture,
+          MeetingFormatView.walkOnly,
+          MeetingFormatView.culture,
         ],
-        commonMeetingFormats: const [MeetingFormat.culture],
+        commonMeetingFormats: const [MeetingFormatView.culture],
         mySelectedMeetingFormat: null,
         onMeetingFormatsChanged: (_) {},
         onMeetingFormatConfirmed: (format) => confirmed = format,
@@ -99,16 +97,16 @@ void main() {
     await tester.tap(find.text('Подтвердить мой выбор'));
     await tester.pumpAndSettle();
 
-    expect(confirmed, MeetingFormat.culture);
+    expect(confirmed, MeetingFormatView.culture);
   });
 
   testWidgets('tapping own format chip updates selected formats', (
     tester,
   ) async {
-    Set<MeetingFormat>? last;
+    Set<MeetingFormatView>? last;
     await tester.pumpWidget(
       buildPanel(
-        creatorMeetingFormats: const [MeetingFormat.food],
+        creatorMeetingFormats: const [MeetingFormatView.food],
         onMeetingFormatsChanged: (formats) => last = formats,
         onMeetingFormatConfirmed: (_) {},
       ),
@@ -120,7 +118,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(last, isNotNull);
-    expect(last!.contains(MeetingFormat.food), isTrue);
-    expect(last!.contains(MeetingFormat.culture), isTrue);
+    expect(last!.contains(MeetingFormatView.food), isTrue);
+    expect(last!.contains(MeetingFormatView.culture), isTrue);
   });
 }

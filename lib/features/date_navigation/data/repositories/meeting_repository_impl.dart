@@ -1,5 +1,3 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/utils/app_logger.dart';
@@ -8,8 +6,10 @@ import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/route_info.dart';
 import '../../domain/repositories/meeting_repository.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../datasources/remote/osrm_remote_data_source.dart';
 import '../datasources/remote/places_remote_data_source.dart';
+import '../mappers/geo_coordinate_mapper.dart';
 
 class MeetingRepositoryImpl implements MeetingRepository {
   final OsrmRemoteDataSource _osrm;
@@ -18,8 +18,8 @@ class MeetingRepositoryImpl implements MeetingRepository {
 
   @override
   Future<Result<MeetingPoint>> findMeetingPoint({
-    required latlong.LatLng userLocation,
-    required latlong.LatLng partnerLocation,
+    required GeoCoordinate userLocation,
+    required GeoCoordinate partnerLocation,
     required int searchRadius,
     required MeetingFormat format,
   }) {
@@ -32,19 +32,23 @@ class MeetingRepositoryImpl implements MeetingRepository {
   }
 
   Future<Result<MeetingPoint>> _findMeetingPoint({
-    required latlong.LatLng userLocation,
-    required latlong.LatLng partnerLocation,
+    required GeoCoordinate userLocation,
+    required GeoCoordinate partnerLocation,
     required int searchRadius,
     required MeetingFormat format,
   }) async {
     try {
       final osrmResult = await _osrm.getMeetingData(
-        from: userLocation,
-        to: partnerLocation,
+        from: GeoCoordinateMapper.toLatLng(userLocation),
+        to: GeoCoordinateMapper.toLatLng(partnerLocation),
         fraction: 0.5,
       );
-      final routeGeometry = osrmResult.fullPolyline;
-      final meetingLocation = osrmResult.meetingPoint;
+      final routeGeometry = GeoCoordinateMapper.fromLatLngList(
+        osrmResult.fullPolyline,
+      );
+      final meetingLocation = GeoCoordinateMapper.fromLatLng(
+        osrmResult.meetingPoint,
+      );
 
       List<Place> places = [];
       try {

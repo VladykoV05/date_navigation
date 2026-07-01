@@ -5,14 +5,15 @@ import '../../../../core/di/analytics_di.dart';
 import '../../../../core/di/auth_di.dart';
 import '../../../user_profile/user_profile.dart';
 import '../../di/date_navigation_di.dart';
-import '../state/date_navigation_state.dart';
+import '../../application/state/date_navigation_state.dart';
+import '../mappers/place_view_mapper.dart';
 import '../view_data/room_control_panel_data.dart';
-import '../services/address_submission_service.dart';
-import '../services/date_assistant_service.dart';
+import '../../application/services/address_submission_service.dart';
+import '../../application/services/date_assistant_service.dart';
 import '../controllers/date_navigation_controller.dart';
-import '../services/meeting_execution_service.dart';
-import '../services/room_interaction_service.dart';
-import '../services/room_lifecycle_service.dart';
+import '../../application/services/meeting_execution_service.dart';
+import '../../application/services/room_interaction_service.dart';
+import '../../application/services/room_lifecycle_service.dart';
 
 final addressSubmissionServiceProvider = Provider<AddressSubmissionService>(
   (ref) => AddressSubmissionService(
@@ -221,25 +222,41 @@ final roomControlPanelViewProvider = Provider.autoDispose((ref) {
     isGeocoding: stateSlice.isGeocoding,
     isCalculatingMeeting: stateSlice.isCalculatingMeeting,
     isLoadingRoomAction: stateSlice.isLoadingRoomAction,
-    places: stateSlice.filteredPlaces,
+    places: PlaceViewMapper.fromPlaces(stateSlice.filteredPlaces),
     selectedType: stateSlice.selectedType,
     myLocation: myLocation,
     hasPartner: partnerPoint != null,
     searchRadius: stateSlice.searchRadius,
     recentAddresses: stateSlice.recentAddresses,
     isCreator: stateSlice.isCreator,
-    creatorMeetingFormats: stateSlice.creatorMeetingFormats,
-    partnerMeetingFormats: stateSlice.partnerMeetingFormats,
-    commonMeetingFormats: stateSlice.commonMeetingFormats,
-    mySelectedMeetingFormat: mySelectedMeetingFormat,
-    partnerSelectedMeetingFormat: partnerSelectedMeetingFormat,
-    selectedMeetingFormat: stateSlice.selectedMeetingFormat,
-    lastAgreedMeetingFormat: stateSlice.lastAgreedMeetingFormat,
+    creatorMeetingFormats: PlaceViewMapper.fromMeetingFormats(
+      stateSlice.creatorMeetingFormats,
+    ),
+    partnerMeetingFormats: PlaceViewMapper.fromMeetingFormats(
+      stateSlice.partnerMeetingFormats,
+    ),
+    commonMeetingFormats: PlaceViewMapper.fromMeetingFormats(
+      stateSlice.commonMeetingFormats,
+    ),
+    mySelectedMeetingFormat: mySelectedMeetingFormat == null
+        ? null
+        : PlaceViewMapper.fromMeetingFormat(mySelectedMeetingFormat),
+    partnerSelectedMeetingFormat: partnerSelectedMeetingFormat == null
+        ? null
+        : PlaceViewMapper.fromMeetingFormat(partnerSelectedMeetingFormat),
+    selectedMeetingFormat: stateSlice.selectedMeetingFormat == null
+        ? null
+        : PlaceViewMapper.fromMeetingFormat(stateSlice.selectedMeetingFormat!),
+    lastAgreedMeetingFormat: stateSlice.lastAgreedMeetingFormat == null
+        ? null
+        : PlaceViewMapper.fromMeetingFormat(stateSlice.lastAgreedMeetingFormat!),
     meetingRevoteRequestByRole: stateSlice.meetingRevoteRequestByRole,
-    meetingRevoteRequestStatus: stateSlice.meetingRevoteRequestStatus,
+    meetingRevoteRequestStatus: PlaceViewMapper.fromRevoteRequestStatus(
+      stateSlice.meetingRevoteRequestStatus,
+    ),
     voteCounts: stateSlice.voteCounts,
     myVotePlaceName: stateSlice.votesByUser[currentUserId],
     isSessionClosed: stateSlice.isSessionClosed,
-    sessionStatus: stateSlice.sessionStatus,
+    sessionStatus: PlaceViewMapper.fromSessionStatus(stateSlice.sessionStatus),
   );
 });

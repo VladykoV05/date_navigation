@@ -1,17 +1,16 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/result.dart';
 import '../entities/date_vibe.dart';
 import '../entities/meeting_point.dart';
 import '../repositories/meeting_repository.dart';
+import '../value_objects/geo_coordinate.dart';
 
 class FindMeetingPoint {
   final MeetingRepository _repo;
   const FindMeetingPoint(this._repo);
 
   Future<Result<MeetingPoint>> call({
-    required latlong.LatLng userLocation,
-    required latlong.LatLng partnerLocation,
+    required GeoCoordinate userLocation,
+    required GeoCoordinate partnerLocation,
     required int searchRadius,
     required MeetingFormat format,
   }) {

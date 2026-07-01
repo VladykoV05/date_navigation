@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/services/analytics_service.dart';
@@ -9,6 +7,7 @@ import '../../../../core/utils/app_logger.dart';
 import '../../../user_profile/user_profile.dart';
 import '../../domain/usecases/geocode_address.dart';
 import '../../domain/usecases/update_location.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 
 class AddressSubmissionService {
   const AddressSubmissionService({
@@ -48,7 +47,7 @@ class AddressSubmissionService {
         final updateResult = await _updateLocation(
           roomId: roomId,
           userId: userId,
-          coords: latlong.LatLng(coords.lat, coords.lon),
+          coords: GeoCoordinate(latitude: coords.lat, longitude: coords.lon),
         );
         switch (updateResult) {
           case Err(:final failure):

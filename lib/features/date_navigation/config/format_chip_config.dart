@@ -291,6 +291,11 @@ class FormatChipConfig {
     return 0.0;
   }
 
+  static List<FormatChipOption> optionsForWire(String? wireValue) {
+    if (wireValue == null) return const [];
+    return optionsFor(MeetingFormat.fromWireValue(wireValue));
+  }
+
   static String formatLabel(MeetingFormat format) {
     return switch (format) {
       MeetingFormat.food => 'Кофе или ужин',

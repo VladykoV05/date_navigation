@@ -1,6 +1,5 @@
-import 'package:latlong2/latlong.dart' as latlong;
-
 import '../../domain/entities/date_vibe.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../state/date_navigation_state.dart';
 
 class PartnerFallbackRequest {
@@ -12,8 +11,8 @@ class PartnerFallbackRequest {
   });
 
   final int searchRadius;
-  final latlong.LatLng point1;
-  final latlong.LatLng point2;
+  final GeoCoordinate point1;
+  final GeoCoordinate point2;
   final MeetingFormat format;
 }
 
@@ -22,8 +21,8 @@ class PartnerFallbackRequestBuilder {
 
   PartnerFallbackRequest? build({
     required DateNavigationState state,
-    required latlong.LatLng point1,
-    required latlong.LatLng point2,
+    required GeoCoordinate point1,
+    required GeoCoordinate point2,
   }) {
     final format = state.meeting.selectedMeetingFormat;
     if (format == null) return null;

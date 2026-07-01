@@ -79,8 +79,99 @@ void main() {
         return importPath.contains('/data/') ||
             importPath.contains('/di/') ||
             importPath.contains('/presentation/') ||
+            importPath.contains('/application/') ||
             importPath.contains('/domain/usecases/');
       },
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('domain layer does not import feature config', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/domain/')),
+      RegExp(r"import '.*(/config/|\.\./\.\./config/)"),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('domain layer does not import map coordinate packages', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/domain/')),
+      RegExp(r"import 'package:latlong2/"),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('domain facade barrels do not export presentation layer', () {
+    final barrelFiles = featureFiles.where((file) {
+      final normalized = file.path.replaceAll('\\', '/');
+      if (!RegExp(r'lib/features/[^/]+/[^/]+\.dart$').hasMatch(normalized)) {
+        return false;
+      }
+      final content = file.readAsStringSync();
+      return content.contains("export 'domain/") || content.contains("export 'di/");
+    });
+
+    final offenders = _filesContaining(
+      barrelFiles,
+      RegExp(r"export '.*presentation/"),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('date_navigation presentation does not import user_profile presentation', () {
+    final offenders = _featureImportOffenders(
+      featureFiles.where(
+        (file) =>
+            file.path.contains('/date_navigation/') &&
+            file.path.contains('/presentation/'),
+      ),
+      (currentFeature, importPath) {
+        return _targetFeature(importPath) == 'user_profile' &&
+            importPath.contains('/presentation/');
+      },
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('application layer does not import presentation layer', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/application/')),
+      RegExp(r"import '.*presentation/"),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('application layer does not import feature data layers', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/application/')),
+      RegExp(
+        r"import '.*features/.*/data/|import '../data/|import '../../data/",
+      ),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('data layer does not import application layer', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/data/')),
+      RegExp(r"import '.*application/"),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('presentation widgets do not import domain entities', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/presentation/widgets/')),
+      RegExp(r"import '.*domain/entities/"),
     );
 
     expect(offenders, isEmpty);

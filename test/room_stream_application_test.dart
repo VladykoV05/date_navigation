@@ -1,20 +1,20 @@
-import 'package:date_navigation/features/date_navigation/presentation/flows/room_stream_application.dart';
-import 'package:date_navigation/features/date_navigation/presentation/flows/room_stream_effects.dart';
-import 'package:date_navigation/features/date_navigation/presentation/reducers/room_stream_reducer.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_snapshot_reducer.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_orchestrator.dart';
-import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_reaction_policy.dart';
-import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
+import 'package:date_navigation/features/date_navigation/application/flows/room_stream_application.dart';
+import 'package:date_navigation/features/date_navigation/application/flows/room_stream_effects.dart';
+import 'package:date_navigation/features/date_navigation/application/reducers/room_stream_reducer.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_snapshot_reducer.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_sync_orchestrator.dart';
+import 'package:date_navigation/features/date_navigation/application/sync/room_sync_reaction_policy.dart';
+import 'package:date_navigation/features/date_navigation/application/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:latlong2/latlong.dart' as latlong;
+import 'package:date_navigation/features/date_navigation/domain/value_objects/geo_coordinate.dart';
 
 void main() {
   const coordinator = RoomStreamApplication(RoomStreamEffects());
 
   RoomStreamUpdate update({
     required RoomSyncAction reactionAction,
-    required latlong.LatLng? point1,
-    required latlong.LatLng? point2,
+    required GeoCoordinate? point1,
+    required GeoCoordinate? point2,
     String? matchedFormat,
     int? snapshotRadius,
   }) {
@@ -52,14 +52,14 @@ void main() {
     final withPoints = coordinator.build(
       update(
         reactionAction: RoomSyncAction.calculateWithPartnerFallback,
-        point1: const latlong.LatLng(1, 1),
-        point2: const latlong.LatLng(2, 2),
+        point1: const GeoCoordinate(latitude: 1, longitude: 1),
+        point2: const GeoCoordinate(latitude: 2, longitude: 2),
       ),
     );
     final withoutPoint2 = coordinator.build(
       update(
         reactionAction: RoomSyncAction.calculateWithPartnerFallback,
-        point1: const latlong.LatLng(1, 1),
+        point1: const GeoCoordinate(latitude: 1, longitude: 1),
         point2: null,
       ),
     );
@@ -74,8 +74,8 @@ void main() {
     final result = coordinator.build(
       update(
         reactionAction: RoomSyncAction.none,
-        point1: const latlong.LatLng(1, 1),
-        point2: const latlong.LatLng(2, 2),
+        point1: const GeoCoordinate(latitude: 1, longitude: 1),
+        point2: const GeoCoordinate(latitude: 2, longitude: 2),
         matchedFormat: 'food',
         snapshotRadius: 1200,
       ),

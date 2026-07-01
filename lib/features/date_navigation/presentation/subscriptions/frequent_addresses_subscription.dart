@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import '../../../user_profile/user_profile.dart';
-import '../reducers/frequent_addresses_reducer.dart';
+import '../../application/reducers/frequent_addresses_reducer.dart';
 
 class FrequentAddressesSubscription {
   FrequentAddressesSubscription({
