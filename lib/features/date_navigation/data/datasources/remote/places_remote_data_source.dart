@@ -11,7 +11,7 @@ import '../../../config/date_navigation_config.dart';
 import '../../mappers/overpass_place_mapper.dart';
 import 'nominatim_places_client.dart';
 import 'place_discovery_pipeline.dart';
-import 'place_quality_service.dart';
+import '../../../domain/services/place_quality_service.dart';
 
 class PlacesRemoteDataSource {
   static const List<String> _overpassUrls = [

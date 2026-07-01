@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../domain/entities/place.dart';
-import 'place_visuals.dart';
+import './place_visuals.dart';
 
 class PlaceCard extends StatelessWidget {
   final Place place;

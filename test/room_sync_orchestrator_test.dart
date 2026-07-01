@@ -1,13 +1,13 @@
-import 'package:date_navigation/features/date_navigation/presentation/controller/room_sync_orchestrator.dart';
-import 'package:date_navigation/features/date_navigation/presentation/controller/room_sync_reaction_coordinator.dart';
-import 'package:date_navigation/features/date_navigation/presentation/controller/room_sync_coordinator.dart';
+import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_orchestrator.dart';
+import 'package:date_navigation/features/date_navigation/presentation/sync/room_sync_reaction_policy.dart';
+import 'package:date_navigation/features/date_navigation/presentation/sync/room_snapshot_reducer.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
 import 'package:date_navigation/features/date_navigation/presentation/state/date_navigation_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 void main() {
-  const orchestrator = RoomSyncOrchestrator(RoomSyncReactionCoordinator());
+  const orchestrator = RoomSyncOrchestrator(RoomSyncReactionPolicy());
 
   RoomSyncOutcome outcome({
     required DateNavigationState nextState,
@@ -32,9 +32,13 @@ void main() {
     () {
       final previous = const DateNavigationState();
       final nextState = const DateNavigationState(
-        selectedMeetingFormat: MeetingFormat.food,
-        point1: latlong.LatLng(53.9, 27.56),
-        point2: latlong.LatLng(53.91, 27.57),
+        room: RoomSessionState(
+          point1: latlong.LatLng(53.9, 27.56),
+          point2: latlong.LatLng(53.91, 27.57),
+        ),
+        meeting: MeetingPlanningState(
+          selectedMeetingFormat: MeetingFormat.food,
+        ),
       );
 
       final plan = orchestrator.buildPlan(

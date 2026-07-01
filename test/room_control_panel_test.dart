@@ -46,7 +46,7 @@ void main() {
             voteCounts: const {},
             myVotePlaceName: null,
             scoreForPlace: (_) => 0,
-            favoritePlaceNames: const <String>{},
+            isFavoritePlace: (_) => false,
             creatorMeetingFormats: creatorMeetingFormats,
             partnerMeetingFormats: partnerMeetingFormats,
             commonMeetingFormats: commonMeetingFormats,

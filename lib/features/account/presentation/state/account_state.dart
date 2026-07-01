@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/entities/account_favorite.dart';
-import '../../domain/entities/account_history_item.dart';
+import '../../../user_profile/user_profile.dart';
 
 part 'account_state.freezed.dart';
 
@@ -9,8 +8,8 @@ part 'account_state.freezed.dart';
 abstract class AccountState with _$AccountState {
   const factory AccountState({
     @Default(true) bool isLoading,
-    @Default(<AccountFavorite>[]) List<AccountFavorite> favorites,
-    @Default(<AccountHistoryItem>[]) List<AccountHistoryItem> history,
+    @Default(<UserFavorite>[]) List<UserFavorite> favorites,
+    @Default(<MeetingHistoryItem>[]) List<MeetingHistoryItem> history,
     String? error,
   }) = _AccountState;
 }

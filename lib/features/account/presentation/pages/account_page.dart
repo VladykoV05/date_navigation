@@ -4,8 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/di/auth_di.dart';
 import '../../../../core/utils/place_type_localizer.dart';
-import '../../domain/entities/account_favorite.dart';
-import '../../domain/entities/account_history_item.dart';
+import '../../../user_profile/user_profile.dart';
 import '../../di/account_di.dart';
 import '../widgets/account_empty_state.dart';
 
@@ -106,10 +105,19 @@ class AccountPage extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final item = state.history[index];
                         final date = item.createdAt;
+                        final historyKey = FavoritePlaceKey.fromPlace(
+                          placeName: item.placeName,
+                          lat: item.lat,
+                          lon: item.lon,
+                        );
                         final isAlreadyFavorite = state.favorites.any(
                           (favorite) =>
-                              favorite.name.trim().toLowerCase() ==
-                              item.placeName.trim().toLowerCase(),
+                              FavoritePlaceKey.fromPlace(
+                                placeName: favorite.name,
+                                lat: favorite.lat,
+                                lon: favorite.lon,
+                              ) ==
+                              historyKey,
                         );
                         return ListTile(
                           leading: const Icon(Icons.history),
@@ -144,7 +152,7 @@ class AccountPage extends ConsumerWidget {
 
   Future<void> _showFavoriteInfoSheet(
     BuildContext context,
-    AccountFavorite favorite,
+    UserFavorite favorite,
   ) async {
     final type = localizePlaceType(favorite.type);
     final address = favorite.address?.trim();
@@ -244,7 +252,7 @@ class AccountPage extends ConsumerWidget {
   Future<void> _showHistoryInfoSheet(
     BuildContext context,
     WidgetRef ref,
-    AccountHistoryItem item, {
+    MeetingHistoryItem item, {
     required bool isAlreadyFavorite,
   }) async {
     final date = item.createdAt;

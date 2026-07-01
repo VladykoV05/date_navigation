@@ -1,4 +1,5 @@
 import '../../../../core/error/result.dart';
+import '../entities/accepted_proposal_history_draft.dart';
 import '../entities/voting_decisions.dart';
 
 abstract interface class RoomVotingRepository {
@@ -18,7 +19,7 @@ abstract interface class RoomVotingRepository {
     String? placeType,
   });
 
-  Future<Result<void>> respondToProposal({
+  Future<Result<AcceptedProposalHistoryDraft?>> respondToProposal({
     required String roomId,
     required ProposalResponseDecision decision,
     required String actedByUserId,

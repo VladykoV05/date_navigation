@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../user_profile/presentation/controller/favorites_controller.dart';
+import '../../../user_profile/user_profile.dart';
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/place.dart';
-import '../controller/date_navigation_controller.dart';
-import '../controller/providers/date_navigation_provider.dart';
-import 'confirm_dialog.dart';
-import 'place_card.dart';
-import 'room_control_panel.dart';
-import 'scenario_summary_sheet.dart';
-import 'ui_copy.dart';
-import 'welcome_view.dart';
+import '../controllers/date_navigation_controller.dart';
+import '../providers/date_navigation_provider.dart';
+import './confirm_dialog.dart';
+import './place_card.dart';
+import './room_control_panel.dart';
+import './scenario_summary_sheet.dart';
+import './ui_copy.dart';
+import './welcome_view.dart';
 
 class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
   const DateNavigationRoomBodyConsumerSection({
@@ -38,7 +38,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final view = ref.watch(dateNavigationRoomBodyViewProvider);
-    final favoriteNames = ref.watch(favoritesControllerProvider).toSet();
+    final favoriteState = ref.watch(favoritesControllerProvider);
     final roomId = view.roomId;
     if (roomId == null) {
       return WelcomeView(
@@ -89,7 +89,11 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
               onVote: null,
               voteCount: 0,
               isVotedByMe: false,
-              isFavorite: favoriteNames.contains(place.name),
+              isFavorite: favoriteState.containsPlace(
+                placeName: place.name,
+                lat: place.lat,
+                lon: place.lon,
+              ),
             )
           else
             Card(
@@ -204,7 +208,11 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       voteCounts: panelView.voteCounts,
       myVotePlaceName: panelView.myVotePlaceName,
       scoreForPlace: controller.scorePlace,
-      favoritePlaceNames: favoriteNames,
+      isFavoritePlace: (place) => favoriteState.containsPlace(
+        placeName: place.name,
+        lat: place.lat,
+        lon: place.lon,
+      ),
       isCreator: panelView.isCreator,
       creatorMeetingFormats: panelView.creatorMeetingFormats,
       partnerMeetingFormats: panelView.partnerMeetingFormats,

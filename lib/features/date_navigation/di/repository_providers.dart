@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../user_profile/di/user_profile_providers.dart';
 import '../data/repositories/geocoding_repository_impl.dart';
 import '../data/repositories/meeting_repository_impl.dart';
 import '../data/repositories/meeting_snapshot_repository_impl.dart';
@@ -22,10 +21,7 @@ RoomSessionRepository roomSessionRepository(Ref ref) {
 
 @Riverpod(keepAlive: true)
 RoomVotingRepository roomVotingRepository(Ref ref) {
-  return RoomVotingRepositoryImpl(
-    ref.watch(roomRemoteDataSourceProvider),
-    ref.watch(profileRecordMeetingHistoryProvider),
-  );
+  return RoomVotingRepositoryImpl(ref.watch(roomRemoteDataSourceProvider));
 }
 
 @Riverpod(keepAlive: true)

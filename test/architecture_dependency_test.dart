@@ -39,6 +39,52 @@ void main() {
 
     expect(offenders, isEmpty);
   });
+
+  test('presentation layer does not import other feature presentation', () {
+    final offenders = _featureImportOffenders(
+      featureFiles.where((file) => file.path.contains('/presentation/')),
+      (currentFeature, importPath) {
+        final targetFeature = _targetFeature(importPath);
+        return targetFeature != null &&
+            targetFeature != currentFeature &&
+            importPath.contains('/presentation/');
+      },
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('features do not import other feature di internals directly', () {
+    final offenders = _featureImportOffenders(featureFiles, (
+      currentFeature,
+      importPath,
+    ) {
+      final targetFeature = _targetFeature(importPath);
+      return targetFeature != null &&
+          targetFeature != currentFeature &&
+          importPath.contains('/di/');
+    });
+
+    expect(offenders, isEmpty);
+  });
+
+  test('data layer does not import other feature application internals', () {
+    final offenders = _featureImportOffenders(
+      featureFiles.where((file) => file.path.contains('/data/')),
+      (currentFeature, importPath) {
+        final targetFeature = _targetFeature(importPath);
+        if (targetFeature == null || targetFeature == currentFeature) {
+          return false;
+        }
+        return importPath.contains('/data/') ||
+            importPath.contains('/di/') ||
+            importPath.contains('/presentation/') ||
+            importPath.contains('/domain/usecases/');
+      },
+    );
+
+    expect(offenders, isEmpty);
+  });
 }
 
 List<String> _filesContaining(Iterable<File> files, Pattern pattern) {
@@ -46,4 +92,43 @@ List<String> _filesContaining(Iterable<File> files, Pattern pattern) {
       .where((file) => file.readAsStringSync().contains(pattern))
       .map((file) => file.path)
       .toList(growable: false);
+}
+
+List<String> _featureImportOffenders(
+  Iterable<File> files,
+  bool Function(String currentFeature, String importPath) violates,
+) {
+  return [
+    for (final file in files)
+      for (final importPath in _importPaths(file))
+        if (violates(_currentFeature(file), importPath))
+          '${file.path} imports $importPath',
+  ];
+}
+
+Iterable<String> _importPaths(File file) {
+  final content = file.readAsStringSync();
+  return RegExp(
+    r"import '([^']+)';",
+  ).allMatches(content).map((match) => match.group(1)!);
+}
+
+String _currentFeature(File file) {
+  final parts = file.path.split(Platform.pathSeparator);
+  final featuresIndex = parts.indexOf('features');
+  return parts[featuresIndex + 1];
+}
+
+String? _targetFeature(String importPath) {
+  if (importPath.contains('/core/') || importPath.endsWith('/core')) {
+    return null;
+  }
+  final packageMatch = RegExp(r'features/([^/]+)/').firstMatch(importPath);
+  if (packageMatch != null) return packageMatch.group(1);
+
+  final relativeMatch = RegExp(
+    r'^\.\./\.\./\.\./([^/]+)/',
+  ).firstMatch(importPath);
+  final feature = relativeMatch?.group(1);
+  return feature == 'core' ? null : feature;
 }

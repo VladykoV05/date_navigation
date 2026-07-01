@@ -3,8 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/place.dart';
-import '../controller/providers/date_navigation_provider.dart';
-import 'map_section.dart';
+import '../providers/date_navigation_provider.dart';
+import './map_section.dart';
 
 typedef LoadingMessageBuilder =
     String Function({

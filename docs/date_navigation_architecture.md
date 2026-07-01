@@ -1,40 +1,42 @@
 # Date Navigation Architecture (Ownership)
 
-This document defines clear ownership boundaries for the presentation orchestration
-layer to keep `DateNavigationController` thin and predictable.
+This document defines clear ownership boundaries for the presentation layer to
+keep `DateNavigationController` thin and predictable.
 
 ## Controller Role
 
 `DateNavigationController` is responsible for:
 
-- wiring user intents to usecases/coordinators,
+- wiring user intents to use cases and focused presentation helpers,
 - sequencing async operations,
 - writing final state updates,
 - handling high-level retry/error flow.
 
 It should not own feature-specific business rules if those rules can be isolated.
 
-## Coordinator Ownership
+## Presentation Ownership
 
-- `MeetingGuardCoordinator`
+- `MeetingGuardPolicy`
   - session/format preconditions.
-- `RoomActionsCoordinator`
+- `RoomSessionStateTransitions`
   - room lifecycle state transitions (`create/join/leave/complete`).
-- `MeetingInteractionCoordinator`
+- `MeetingInteractionTransitions`
   - interaction result mapping (`vote/propose/respond/format/scenario`).
-- `MeetingStateCoordinator`
+- `MeetingStateTransitions`
   - applying meeting success and scenario synchronization.
-- `PartnerFallbackCoordinator`
-  - partner-side fallback recalculation policy and state application.
-- `RoomSyncCoordinator`
+- `PartnerFallbackFlow`
+  - partner-side fallback eligibility.
+- `PartnerFallbackResultResolver`
+  - partner-side fallback result decisions.
+- `RoomSnapshotReducer`
   - mapping room document snapshot to local state.
-- `RoomSyncReactionCoordinator`
+- `RoomSyncReactionPolicy`
   - decision matrix for post-sync actions.
 - `RoomSyncOrchestrator`
   - sync plan assembly from sync outcome + reaction action.
-- `MeetingPlannerCoordinator`
+- `MeetingPlannerRuntime`
   - request sequencing, cache keys, filtered/ranked places.
-- `RecalculatePolicyCoordinator`
+- `RecalculatePolicy`
   - recalc throttling and early-stop policy.
 
 ## Data Layer Contracts
@@ -48,6 +50,6 @@ It should not own feature-specific business rules if those rules can be isolated
 
 When adding a new product behavior:
 
-1. Put reusable rule/policy into a dedicated coordinator/service.
+1. Put reusable rule/policy into a dedicated policy, flow, transition, or service.
 2. Keep controller methods as orchestration scripts.
 3. Add/extend unit tests around the extracted component first.

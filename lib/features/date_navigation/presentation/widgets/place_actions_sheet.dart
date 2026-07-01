@@ -6,7 +6,7 @@ import '../../../../core/services/navigation_service.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../../../core/utils/show_notification.dart';
 import '../../domain/entities/place.dart';
-import 'place_details_sheet.dart';
+import './place_details_sheet.dart';
 
 Future<void> showPlaceActionsSheet({
   required BuildContext context,

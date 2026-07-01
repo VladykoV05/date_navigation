@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:date_navigation/features/date_navigation/data/datasources/remote/place_quality_service.dart';
+import 'package:date_navigation/features/date_navigation/domain/services/place_quality_service.dart';
 import 'package:date_navigation/features/date_navigation/data/datasources/remote/places_remote_data_source.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/place.dart';

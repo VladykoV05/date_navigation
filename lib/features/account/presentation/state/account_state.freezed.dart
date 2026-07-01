@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AccountState {
 
- bool get isLoading; List<AccountFavorite> get favorites; List<AccountHistoryItem> get history; String? get error;
+ bool get isLoading; List<UserFavorite> get favorites; List<MeetingHistoryItem> get history; String? get error;
 /// Create a copy of AccountState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $AccountStateCopyWith<$Res>  {
   factory $AccountStateCopyWith(AccountState value, $Res Function(AccountState) _then) = _$AccountStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, List<AccountFavorite> favorites, List<AccountHistoryItem> history, String? error
+ bool isLoading, List<UserFavorite> favorites, List<MeetingHistoryItem> history, String? error
 });
 
 
@@ -66,8 +66,8 @@ class _$AccountStateCopyWithImpl<$Res>
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,favorites: null == favorites ? _self.favorites : favorites // ignore: cast_nullable_to_non_nullable
-as List<AccountFavorite>,history: null == history ? _self.history : history // ignore: cast_nullable_to_non_nullable
-as List<AccountHistoryItem>,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as List<UserFavorite>,history: null == history ? _self.history : history // ignore: cast_nullable_to_non_nullable
+as List<MeetingHistoryItem>,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -153,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<AccountFavorite> favorites,  List<AccountHistoryItem> history,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  List<UserFavorite> favorites,  List<MeetingHistoryItem> history,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AccountState() when $default != null:
 return $default(_that.isLoading,_that.favorites,_that.history,_that.error);case _:
@@ -174,7 +174,7 @@ return $default(_that.isLoading,_that.favorites,_that.history,_that.error);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<AccountFavorite> favorites,  List<AccountHistoryItem> history,  String? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  List<UserFavorite> favorites,  List<MeetingHistoryItem> history,  String? error)  $default,) {final _that = this;
 switch (_that) {
 case _AccountState():
 return $default(_that.isLoading,_that.favorites,_that.history,_that.error);case _:
@@ -194,7 +194,7 @@ return $default(_that.isLoading,_that.favorites,_that.history,_that.error);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<AccountFavorite> favorites,  List<AccountHistoryItem> history,  String? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  List<UserFavorite> favorites,  List<MeetingHistoryItem> history,  String? error)?  $default,) {final _that = this;
 switch (_that) {
 case _AccountState() when $default != null:
 return $default(_that.isLoading,_that.favorites,_that.history,_that.error);case _:
@@ -209,19 +209,19 @@ return $default(_that.isLoading,_that.favorites,_that.history,_that.error);case 
 
 
 class _AccountState implements AccountState {
-  const _AccountState({this.isLoading = true, final  List<AccountFavorite> favorites = const <AccountFavorite>[], final  List<AccountHistoryItem> history = const <AccountHistoryItem>[], this.error}): _favorites = favorites,_history = history;
+  const _AccountState({this.isLoading = true, final  List<UserFavorite> favorites = const <UserFavorite>[], final  List<MeetingHistoryItem> history = const <MeetingHistoryItem>[], this.error}): _favorites = favorites,_history = history;
   
 
 @override@JsonKey() final  bool isLoading;
- final  List<AccountFavorite> _favorites;
-@override@JsonKey() List<AccountFavorite> get favorites {
+ final  List<UserFavorite> _favorites;
+@override@JsonKey() List<UserFavorite> get favorites {
   if (_favorites is EqualUnmodifiableListView) return _favorites;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_favorites);
 }
 
- final  List<AccountHistoryItem> _history;
-@override@JsonKey() List<AccountHistoryItem> get history {
+ final  List<MeetingHistoryItem> _history;
+@override@JsonKey() List<MeetingHistoryItem> get history {
   if (_history is EqualUnmodifiableListView) return _history;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_history);
@@ -259,7 +259,7 @@ abstract mixin class _$AccountStateCopyWith<$Res> implements $AccountStateCopyWi
   factory _$AccountStateCopyWith(_AccountState value, $Res Function(_AccountState) _then) = __$AccountStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, List<AccountFavorite> favorites, List<AccountHistoryItem> history, String? error
+ bool isLoading, List<UserFavorite> favorites, List<MeetingHistoryItem> history, String? error
 });
 
 
@@ -280,8 +280,8 @@ class __$AccountStateCopyWithImpl<$Res>
   return _then(_AccountState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,favorites: null == favorites ? _self._favorites : favorites // ignore: cast_nullable_to_non_nullable
-as List<AccountFavorite>,history: null == history ? _self._history : history // ignore: cast_nullable_to_non_nullable
-as List<AccountHistoryItem>,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as List<UserFavorite>,history: null == history ? _self._history : history // ignore: cast_nullable_to_non_nullable
+as List<MeetingHistoryItem>,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

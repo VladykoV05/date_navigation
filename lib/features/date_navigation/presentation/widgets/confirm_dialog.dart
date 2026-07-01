@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'ui_copy.dart';
+import './ui_copy.dart';
 
 class ConfirmDialog {
   const ConfirmDialog._();

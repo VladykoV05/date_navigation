@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../domain/entities/place.dart';
-import 'place_visuals.dart';
+import './place_visuals.dart';
 
 class MapSection extends StatefulWidget {
   final MapController mapController;

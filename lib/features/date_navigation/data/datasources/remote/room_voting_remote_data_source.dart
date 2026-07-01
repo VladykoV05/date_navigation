@@ -3,29 +3,10 @@ import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/error/result.dart';
+import '../../../domain/entities/accepted_proposal_history_draft.dart';
 import '../../../domain/entities/room_status.dart';
 import '../../../domain/entities/voting_decisions.dart';
 import 'firestore_error_guard.dart';
-
-class AcceptedProposalHistoryDraft {
-  const AcceptedProposalHistoryDraft({
-    required this.roomId,
-    required this.placeName,
-    required this.participantIds,
-    this.placeAddress,
-    this.placeType,
-    this.lat,
-    this.lon,
-  });
-
-  final String roomId;
-  final String placeName;
-  final List<String> participantIds;
-  final String? placeAddress;
-  final String? placeType;
-  final double? lat;
-  final double? lon;
-}
 
 class RoomVotingRemoteDataSource {
   const RoomVotingRemoteDataSource(

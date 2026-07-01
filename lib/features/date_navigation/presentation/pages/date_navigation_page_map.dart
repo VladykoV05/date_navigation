@@ -32,7 +32,7 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
 
   void _focusOnMyPoint() {
     final state = ref.read(dateNavigationControllerProvider);
-    final myPoint = state.myPoint(state.roomSession.isCreator);
+    final myPoint = state.myPoint(state.room.isCreator);
     if (myPoint == null) {
       _showInfoSnackBar(UiCopy.focusPointMissing);
       return;
@@ -55,8 +55,8 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
 
   List<latlong.LatLng> _collectPointsForFit(DateNavigationState state) {
     final points = <latlong.LatLng>[];
-    if (state.roomSession.point1 != null) points.add(state.roomSession.point1!);
-    if (state.roomSession.point2 != null) points.add(state.roomSession.point2!);
+    if (state.room.point1 != null) points.add(state.room.point1!);
+    if (state.room.point2 != null) points.add(state.room.point2!);
     final hasLockedFinalChoice =
         state.meeting.finalChoiceName != null &&
         state.meeting.finalChoiceName!.isNotEmpty;

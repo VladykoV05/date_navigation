@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/error/result.dart';
+import '../../../domain/entities/accepted_proposal_history_draft.dart';
 import '../../../domain/entities/voting_decisions.dart';
 import 'room_session_remote_data_source.dart';
 import 'room_voting_remote_data_source.dart';

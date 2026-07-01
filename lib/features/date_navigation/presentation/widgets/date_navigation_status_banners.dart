@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/error/failure.dart';
-import '../controller/providers/date_navigation_provider.dart';
-import 'ui_copy.dart';
+import '../providers/date_navigation_provider.dart';
+import './ui_copy.dart';
 
 class DateNavigationStatusBanners extends StatelessWidget {
   const DateNavigationStatusBanners({super.key});
@@ -52,7 +52,7 @@ class _SyncSuggestionsBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(
       dateNavigationControllerProvider.select(
-        (s) => (isSessionClosed: s.roomSession.isClosed),
+        (s) => (isSessionClosed: s.room.isClosed),
       ),
     );
     if (view.isSessionClosed) return const SizedBox.shrink();
@@ -67,8 +67,8 @@ class _SessionStatusBanner extends ConsumerWidget {
     final view = ref.watch(
       dateNavigationControllerProvider.select(
         (s) => (
-          sessionStatus: s.roomSession.sessionStatus,
-          isLoadingRoomAction: s.loading.isLoadingRoomAction,
+          sessionStatus: s.room.sessionStatus,
+          isLoadingRoomAction: s.ui.isLoadingRoomAction,
         ),
       ),
     );
@@ -115,10 +115,10 @@ class _ErrorBanner extends ConsumerWidget {
     final state = ref.watch(
       dateNavigationControllerProvider.select(
         (s) => (
-          lastFailure: s.failure.lastFailure,
-          failureOperation: s.failure.failureOperation,
-          point1: s.roomSession.point1,
-          point2: s.roomSession.point2,
+          lastFailure: s.ui.lastFailure,
+          failureOperation: s.ui.failureOperation,
+          point1: s.room.point1,
+          point2: s.room.point2,
         ),
       ),
     );
@@ -192,7 +192,7 @@ class _CachedDataBanner extends ConsumerWidget {
     final state = ref.watch(
       dateNavigationControllerProvider.select(
         (s) => (
-          lastFailure: s.failure.lastFailure,
+          lastFailure: s.ui.lastFailure,
           filteredPlaces: s.meeting.filteredPlaces,
         ),
       ),

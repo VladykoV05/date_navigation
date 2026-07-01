@@ -7,10 +7,10 @@ import '../../config/format_chip_config.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/room_status.dart';
-import 'confirm_dialog.dart';
-import 'place_card.dart';
-import 'room_control_panel_header.dart';
-import 'ui_copy.dart';
+import './confirm_dialog.dart';
+import './place_card.dart';
+import './room_control_panel_header.dart';
+import './ui_copy.dart';
 
 part 'room_control_panel_parts.dart';
 
@@ -53,7 +53,7 @@ class RoomControlPanel extends StatelessWidget {
   final Map<String, int> voteCounts;
   final String? myVotePlaceName;
   final double Function(Place) scoreForPlace;
-  final Set<String> favoritePlaceNames;
+  final bool Function(Place place) isFavoritePlace;
   final List<MeetingFormat> creatorMeetingFormats;
   final List<MeetingFormat> partnerMeetingFormats;
   final List<MeetingFormat> commonMeetingFormats;
@@ -97,7 +97,7 @@ class RoomControlPanel extends StatelessWidget {
     required this.voteCounts,
     required this.myVotePlaceName,
     required this.scoreForPlace,
-    required this.favoritePlaceNames,
+    required this.isFavoritePlace,
     required this.creatorMeetingFormats,
     required this.partnerMeetingFormats,
     required this.commonMeetingFormats,
@@ -298,7 +298,7 @@ class RoomControlPanel extends StatelessWidget {
             onVote: canInteractMeeting ? () => onVotePlace(place) : null,
             voteCount: voteCounts[place.name] ?? 0,
             isVotedByMe: myVotePlaceName == place.name,
-            isFavorite: favoritePlaceNames.contains(place.name),
+            isFavorite: isFavoritePlace(place),
             selectedTypeContext: selectedType,
           );
         },

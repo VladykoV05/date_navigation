@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../controller/providers/date_navigation_provider.dart';
+import '../providers/date_navigation_provider.dart';
 
 class DateNavigationMapOverlay extends ConsumerWidget {
   const DateNavigationMapOverlay({

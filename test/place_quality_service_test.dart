@@ -1,4 +1,4 @@
-import 'package:date_navigation/features/date_navigation/data/datasources/remote/place_quality_service.dart';
+import 'package:date_navigation/features/date_navigation/domain/services/place_quality_service.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/place.dart';
 import 'package:flutter_test/flutter_test.dart';
 

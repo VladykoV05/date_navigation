@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/ui_tokens.dart';
-import 'confirm_dialog.dart';
-import 'ui_copy.dart';
+import './confirm_dialog.dart';
+import './ui_copy.dart';
 
 class RoomControlPanelHeader extends StatelessWidget {
   const RoomControlPanelHeader({

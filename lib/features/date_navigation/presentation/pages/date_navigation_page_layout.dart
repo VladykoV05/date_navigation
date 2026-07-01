@@ -101,7 +101,7 @@ extension _DateNavigationPageLayout on _DateNavigationPageState {
 
   Future<void> _handleBackNavigation() async {
     final roomId = ref.read(
-      dateNavigationControllerProvider.select((s) => s.roomSession.roomId),
+      dateNavigationControllerProvider.select((s) => s.room.roomId),
     );
     if (roomId == null) {
       if (mounted) Navigator.of(context).maybePop();

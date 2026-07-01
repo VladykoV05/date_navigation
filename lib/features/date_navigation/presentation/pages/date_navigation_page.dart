@@ -11,7 +11,7 @@ import '../../../../core/services/navigation_service.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../../../core/utils/place_type_localizer.dart';
 import '../../../../core/utils/show_notification.dart';
-import '../../../user_profile/presentation/controller/favorites_controller.dart';
+import '../../../user_profile/user_profile.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../widgets/date_navigation_account_menu.dart';
@@ -23,8 +23,8 @@ import '../widgets/date_navigation_status_banners.dart';
 import '../widgets/join_room_dialog.dart';
 import '../widgets/place_actions_sheet.dart';
 import '../widgets/ui_copy.dart';
-import '../controller/date_navigation_controller.dart';
-import '../controller/providers/date_navigation_provider.dart';
+import '../controllers/date_navigation_controller.dart';
+import '../providers/date_navigation_provider.dart';
 import '../state/date_navigation_state.dart';
 
 part 'date_navigation_page_dialogs.dart';
@@ -103,14 +103,14 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     DateNavigationState? previous,
     DateNavigationState next,
   ) {
-    if (next.failure.lastFailure != null &&
-        next.failure.lastFailure != previous?.failure.lastFailure) {
-      _showInfoSnackBar(_humanizeFailure(next.failure.lastFailure!));
+    if (next.ui.lastFailure != null &&
+        next.ui.lastFailure != previous?.ui.lastFailure) {
+      _showInfoSnackBar(_humanizeFailure(next.ui.lastFailure!));
     }
     if (next.meeting.creatorChangedRadiusTo != null &&
         next.meeting.creatorChangedRadiusTo !=
             previous?.meeting.creatorChangedRadiusTo &&
-        !next.roomSession.isCreator) {
+        !next.room.isCreator) {
       _showInfoSnackBar(
         UiCopy.creatorChangedRadius.replaceAll(
           '{radius}',
@@ -133,7 +133,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       unawaited(_showPeerRadiusSuggestionDialog(nextPeerSuggestedRadius));
     }
 
-    final myRole = next.roomSession.isCreator ? 'creator' : 'partner';
+    final myRole = next.room.isCreator ? 'creator' : 'partner';
     final isPendingPartnerProposal =
         next.voting.proposalPlaceName != null &&
         (next.voting.proposalStatus?.isPending ?? false) &&
@@ -172,11 +172,11 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     DateNavigationState next,
   ) {
     final hasAllPoints =
-        next.roomSession.point1 != null &&
-        next.roomSession.point2 != null &&
+        next.room.point1 != null &&
+        next.room.point2 != null &&
         next.meeting.centerPoint != null;
-    final myPrevPoint = previous?.myPoint(previous.roomSession.isCreator);
-    final myNextPoint = next.myPoint(next.roomSession.isCreator);
+    final myPrevPoint = previous?.myPoint(previous.room.isCreator);
+    final myNextPoint = next.myPoint(next.room.isCreator);
     final myPointChanged =
         myNextPoint != null &&
         (myPrevPoint == null ||
@@ -218,7 +218,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     final controller = ref.read(dateNavigationControllerProvider.notifier);
     final rawSheetMaxChildSize = ref.watch(
       dateNavigationControllerProvider.select((s) {
-        final hasRoom = s.roomSession.roomId != null;
+        final hasRoom = s.room.roomId != null;
         if (!hasRoom) return _sheetMaxNoRoom;
 
         final venueLocked = s.meeting.finalChoiceName?.isNotEmpty ?? false;
@@ -290,13 +290,19 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
 
   void _showPlaceDetails(Place place) {
     final state = ref.read(dateNavigationControllerProvider);
-    final myPoint = state.myPoint(state.roomSession.isCreator);
-    final partnerPoint = state.partnerPoint(state.roomSession.isCreator);
+    final myPoint = state.myPoint(state.room.isCreator);
+    final partnerPoint = state.partnerPoint(state.room.isCreator);
     final venueLocked =
         state.meeting.finalChoiceName != null &&
         state.meeting.finalChoiceName!.isNotEmpty;
     final isFavorite = ref.read(
-      favoritesControllerProvider.select((names) => names.contains(place.name)),
+      favoritesControllerProvider.select(
+        (state) => state.containsPlace(
+          placeName: place.name,
+          lat: place.lat,
+          lon: place.lon,
+        ),
+      ),
     );
 
     showPlaceActionsSheet(

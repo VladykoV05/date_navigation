@@ -103,7 +103,7 @@ final class RoomVotingRepositoryProvider
 }
 
 String _$roomVotingRepositoryHash() =>
-    r'38ffde1a28092cdb3ac8722b3952f6b5c84004a5';
+    r'41067f2acdc86c1e9fe1c5b4ce3b55c503d3ac69';
 
 @ProviderFor(meetingSnapshotRepository)
 final meetingSnapshotRepositoryProvider = MeetingSnapshotRepositoryProvider._();

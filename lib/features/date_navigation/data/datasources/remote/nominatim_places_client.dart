@@ -7,7 +7,7 @@ import '../../../config/date_navigation_config.dart';
 import '../../../config/format_chip_config.dart';
 import '../../../domain/entities/date_vibe.dart';
 import '../../../domain/entities/place.dart';
-import 'place_quality_service.dart';
+import '../../../domain/services/place_quality_service.dart';
 
 class NominatimPlacesClient {
   const NominatimPlacesClient({
