@@ -28,6 +28,44 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   }
 
   @override
+  Future<Result<String>> createOpenRoom({
+    required String hostUid,
+    required int capacity,
+    RoomEventSnapshot? event,
+  }) {
+    return _remote.createOpenRoom(
+      hostUid: hostUid,
+      capacity: capacity,
+      event: event == null ? null : RoomSnapshotMapper.eventToWire(event),
+    );
+  }
+
+  @override
+  Future<Result<void>> joinOpenRoom({
+    required String roomId,
+    required String userId,
+  }) {
+    return _remote.joinOpenRoom(roomId: roomId, userId: userId);
+  }
+
+  @override
+  Future<Result<List<RoomSnapshot>>> listOpenRooms({int limit = 20}) async {
+    final result = await _remote.listOpenRooms(limit: limit);
+    final now = DateTime.now();
+    return switch (result) {
+      Err(:final failure) => Err(failure),
+      Ok(:final value) => Ok(
+        value
+            .map((doc) => _roomSnapshotMapper.fromMap(doc.id, doc.data()))
+            .where(
+              (room) => room.expiresAt == null || room.expiresAt!.isAfter(now),
+            )
+            .toList(growable: false),
+      ),
+    };
+  }
+
+  @override
   Future<Result<void>> updateLocation({
     required String roomId,
     required String userId,

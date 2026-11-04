@@ -9,6 +9,19 @@ abstract interface class RoomSessionRepository {
     required String userId,
   });
 
+  Future<Result<String>> createOpenRoom({
+    required String hostUid,
+    required int capacity,
+    RoomEventSnapshot? event,
+  });
+
+  Future<Result<void>> joinOpenRoom({
+    required String roomId,
+    required String userId,
+  });
+
+  Future<Result<List<RoomSnapshot>>> listOpenRooms({int limit = 20});
+
   Future<Result<void>> updateLocation({
     required String roomId,
     required String userId,

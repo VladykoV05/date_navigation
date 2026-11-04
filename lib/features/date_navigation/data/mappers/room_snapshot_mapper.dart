@@ -205,6 +205,21 @@ class RoomSnapshotMapper {
     );
   }
 
+  static Map<String, dynamic> eventToWire(RoomEventSnapshot event) => {
+    'id': event.id,
+    'title': event.title,
+    if (event.startsAt != null) 'startsAt': Timestamp.fromDate(event.startsAt!),
+    if (event.venueName != null) 'venueName': event.venueName,
+    if (event.address != null) 'address': event.address,
+    if (event.lat != null) 'lat': event.lat,
+    if (event.lon != null) 'lon': event.lon,
+    if (event.imageUrl != null) 'imageUrl': event.imageUrl,
+    if (event.sourceUrl != null) 'sourceUrl': event.sourceUrl,
+    if (event.price != null) 'price': event.price,
+    if (event.category != null) 'category': event.category,
+    if (event.source != null) 'source': event.source,
+  };
+
   static GeoCoordinate? _parseLatLng(dynamic raw) {
     return GeoCoordinateMapper.fromWireMap(raw);
   }

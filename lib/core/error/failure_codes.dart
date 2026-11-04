@@ -18,6 +18,8 @@ abstract final class FailureCodes {
   static const joinRoomFailed = 'join_room_failed';
   static const roomFull = 'room_full';
   static const roomCorrupt = 'room_corrupt';
+  static const roomNotOpen = 'room_not_open';
+  static const roomCapacityInvalid = 'room_capacity_invalid';
   static const creatorUnresolved = 'creator_unresolved';
   static const notRoomMember = 'not_room_member';
   static const updateLocationFailed = 'update_location_failed';

@@ -56,6 +56,38 @@ class RoomRemoteDataSource {
     );
   }
 
+  Future<Result<String>> createOpenRoom({
+    required String hostUid,
+    required int capacity,
+    Map<String, dynamic>? event,
+  }) {
+    return _sessionDataSource.createOpenRoom(
+      roomsCollection: roomsCollection,
+      hostUid: hostUid,
+      capacity: capacity,
+      event: event,
+    );
+  }
+
+  Future<Result<void>> joinOpenRoom({
+    required String roomId,
+    required String userId,
+  }) {
+    return _sessionDataSource.joinOpenRoom(
+      roomsCollection: roomsCollection,
+      roomId: roomId,
+      userId: userId,
+    );
+  }
+
+  Future<Result<List<QueryDocumentSnapshot<Map<String, dynamic>>>>>
+  listOpenRooms({int limit = 20}) {
+    return _sessionDataSource.listOpenRooms(
+      roomsCollection: roomsCollection,
+      limit: limit,
+    );
+  }
+
   Future<Result<void>> updateLocation({
     required String roomId,
     required String userId,

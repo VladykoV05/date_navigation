@@ -48,6 +48,28 @@ class _FakeRoomSessionRepository implements RoomSessionRepository {
   }
 
   @override
+  Future<Result<String>> createOpenRoom({
+    required String hostUid,
+    required int capacity,
+    RoomEventSnapshot? event,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<void>> joinOpenRoom({
+    required String roomId,
+    required String userId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<List<RoomSnapshot>>> listOpenRooms({int limit = 20}) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Result<String>> createRoom(String code, {String? createdBy}) {
     throw UnimplementedError();
   }
