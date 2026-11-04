@@ -106,7 +106,23 @@ class RoomSnapshotMapper {
     final raw = data['participants'];
     if (raw is List) {
       final parsed = <RoomParticipant>[];
+      final hostUid =
+          _nonEmptyTrimmed(data['hostUid']) ??
+          (data['creatorUid'] ?? '').toString();
       for (final item in raw) {
+        if (item is String) {
+          final uid = _nonEmptyTrimmed(item);
+          if (uid == null) continue;
+          parsed.add(
+            RoomParticipant(
+              uid: uid,
+              role: uid == hostUid
+                  ? RoomParticipantRole.host
+                  : RoomParticipantRole.member,
+            ),
+          );
+          continue;
+        }
         if (item is! Map) continue;
         final map = Map<String, dynamic>.from(item);
         final uid = _nonEmptyTrimmed(map['uid']);

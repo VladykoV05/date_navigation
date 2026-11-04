@@ -98,4 +98,21 @@ void main() {
     expect(snapshot.event?.lat, 53.912589);
     expect(snapshot.event?.category, 'Концерты');
   });
+
+  test('open room participants stored as uid list keep host role', () {
+    final snapshot = mapper.fromMap('room-5', {
+      'schemaVersion': 2,
+      'type': 'open',
+      'visibility': 'public',
+      'capacity': 3,
+      'creatorUid': 'host-1',
+      'hostUid': 'host-1',
+      'participants': ['host-1', 'guest-2'],
+    });
+
+    expect(snapshot.participants.map((p) => p.uid), ['host-1', 'guest-2']);
+    expect(snapshot.participants.first.role, RoomParticipantRole.host);
+    expect(snapshot.participants.last.role, RoomParticipantRole.member);
+    expect(snapshot.participantUids, ['host-1', 'guest-2']);
+  });
 }
