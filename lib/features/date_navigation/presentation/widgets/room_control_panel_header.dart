@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../../../../core/deep_links/invite_link.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/ui_tokens.dart';
-import './confirm_dialog.dart';
-import './ui_copy.dart';
+import '../../../../core_ui/core_ui.dart';
 
 class RoomControlPanelHeader extends StatelessWidget {
   const RoomControlPanelHeader({
@@ -33,6 +35,7 @@ class RoomControlPanelHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Column(
@@ -42,7 +45,7 @@ class RoomControlPanelHeader extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                'КОД: $roomId',
+                l10n.roomCodeLabel(roomId),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: textTheme.titleMedium?.copyWith(
@@ -78,21 +81,34 @@ class RoomControlPanelHeader extends StatelessWidget {
           ),
         ] else ...[
           const SizedBox(height: UiSpace.sm),
-          Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton.icon(
-              onPressed: isLoadingRoomAction
-                  ? null
-                  : () => _confirmLeave(context),
-              icon: const Icon(Icons.logout, size: _actionIconSize),
-              label: const Text('Покинуть комнату'),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isLoadingRoomAction
+                      ? null
+                      : () => _shareInvite(context),
+                  icon: const Icon(Icons.ios_share, size: _actionIconSize),
+                  label: Text(l10n.shareInviteLabel),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isLoadingRoomAction
+                      ? null
+                      : () => _confirmLeave(context),
+                  icon: const Icon(Icons.logout, size: _actionIconSize),
+                  label: Text(l10n.leaveRoomButton),
+                ),
+              ),
+            ],
           ),
         ],
         if (isGeocoding || isCalculatingMeeting || isLoadingRoomAction) ...[
           const SizedBox(height: 8),
           Text(
-            _statusText(),
+            _statusText(context),
             style: textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
@@ -102,13 +118,22 @@ class RoomControlPanelHeader extends StatelessWidget {
     );
   }
 
+  Future<void> _shareInvite(BuildContext context) async {
+    final l10n = context.l10n;
+    final link = InviteLink.shareUrl(roomId);
+    await SharePlus.instance.share(
+      ShareParams(text: l10n.shareInviteMessage(roomId, link)),
+    );
+  }
+
   Future<void> _confirmLeave(BuildContext context) async {
+    final l10n = context.l10n;
     final shouldLeave = await ConfirmDialog.showBinary(
       context,
-      title: UiCopy.leaveRoomTitle,
-      message: UiCopy.leaveRoomMessage,
-      cancelLabel: UiCopy.noLabel,
-      confirmLabel: UiCopy.leaveRoomConfirm,
+      title: l10n.leaveRoomTitle,
+      message: l10n.leaveRoomMessage,
+      cancelLabel: l10n.noLabel,
+      confirmLabel: l10n.leaveRoomConfirm,
     );
     if (shouldLeave == true) {
       HapticFeedback.mediumImpact();
@@ -116,10 +141,11 @@ class RoomControlPanelHeader extends StatelessWidget {
     }
   }
 
-  String _statusText() {
-    if (isGeocoding) return UiCopy.loadingGeocoding;
-    if (isCalculatingMeeting) return UiCopy.loadingMeeting;
-    if (isLoadingRoomAction) return UiCopy.loadingRoomSync;
-    return UiCopy.loadingGeneric;
+  String _statusText(BuildContext context) {
+    final l10n = context.l10n;
+    if (isGeocoding) return l10n.loadingGeocoding;
+    if (isCalculatingMeeting) return l10n.loadingMeeting;
+    if (isLoadingRoomAction) return l10n.loadingRoomSync;
+    return l10n.loadingGeneric;
   }
 }

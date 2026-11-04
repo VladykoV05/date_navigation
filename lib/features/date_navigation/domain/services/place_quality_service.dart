@@ -1,4 +1,5 @@
 import '../entities/place.dart';
+import '../entities/place_type.dart';
 import '../policies/place_quality_policy.dart';
 
 class PlaceQualityService {
@@ -7,10 +8,12 @@ class PlaceQualityService {
   bool isUsablePlace(Place place) {
     final name = place.name.trim();
     if (name.isEmpty || name.length < 2) return false;
+    final primaryType = place.primaryType;
     final isNatureWalkPlace =
-        place.matchesType('park') ||
-        place.matchesType('garden') ||
-        place.matchesType('viewpoint');
+        primaryType != null && primaryType.isNatureWalk ||
+        place.types.any(
+          (wireType) => PlaceType.tryParse(wireType)?.isNatureWalk ?? false,
+        );
     final hasAddressOrRating =
         (place.address?.trim().isNotEmpty ?? false) ||
         (place.rating != null && place.rating! > 0);
@@ -18,7 +21,13 @@ class PlaceQualityService {
     if (!hasAddressOrRating && !isNatureWalkPlace) return false;
     final lower = name.toLowerCase();
     final type = (place.type ?? '').toLowerCase();
-    const blocked = {'заведение', 'кафе', 'ресторан', 'бар', 'fast_food'};
+    final blocked = {
+      'заведение',
+      'кафе',
+      'ресторан',
+      'бар',
+      PlaceType.fastFood.wireValue,
+    };
     if (blocked.contains(lower)) return false;
     const blockedTypes = PlaceQualityPolicy.blockedPlaceTypes;
     if (blockedTypes.contains(type)) return false;
@@ -32,7 +41,8 @@ class PlaceQualityService {
     required String type,
     required String normalizedName,
   }) {
-    if (type != 'park' && type != 'garden') return false;
+    final placeType = PlaceType.tryParse(type);
+    if (placeType == null || !placeType.isGreenArea) return false;
     // OSM/Nominatim sometimes returns generic polygons named only "Парк"/"Park".
     const genericNames = {
       'park',
@@ -108,12 +118,14 @@ class PlaceQualityService {
 
   void stableSortPlaces(List<Place> places) {
     places.sort((a, b) {
-      final ta = (a.type ?? '').compareTo(b.type ?? '');
-      if (ta != 0) return ta;
-      final na = a.name.toLowerCase().compareTo(b.name.toLowerCase());
-      if (na != 0) return na;
-      final la = a.lat.compareTo(b.lat);
-      if (la != 0) return la;
+      final typeComparison = (a.type ?? '').compareTo(b.type ?? '');
+      if (typeComparison != 0) return typeComparison;
+      final nameComparison = a.name.toLowerCase().compareTo(
+        b.name.toLowerCase(),
+      );
+      if (nameComparison != 0) return nameComparison;
+      final latitudeComparison = a.lat.compareTo(b.lat);
+      if (latitudeComparison != 0) return latitudeComparison;
       return a.lon.compareTo(b.lon);
     });
   }
@@ -127,20 +139,7 @@ class PlaceQualityService {
     final distanceScore = 1 - (d / 3000).clamp(0, 1);
     final hasAddress = (place.address?.trim().isNotEmpty ?? false) ? 0.2 : 0.0;
     final isGenericName = place.name.toLowerCase().contains(' на ') ? 0.0 : 0.1;
-    final typeBonus = switch (place.type) {
-      'restaurant' => 0.08,
-      'cafe' => 0.07,
-      'bar' => 0.05,
-      'fast_food' => 0.03,
-      'park' => 0.06,
-      'garden' => 0.05,
-      'viewpoint' => 0.06,
-      'fitness_centre' => 0.05,
-      'sports_centre' => 0.05,
-      'swimming_pool' => 0.05,
-      'sport' => 0.04,
-      _ => 0.0,
-    };
+    final typeBonus = place.primaryType?.relevanceBonus ?? 0.0;
     return distanceScore + hasAddress + isGenericName + typeBonus;
   }
 }

@@ -13,10 +13,6 @@ service cloud.firestore {
       return resource.data.participants;
     }
 
-    function roomParticipantIds() {
-      return request.resource.data.participants;
-    }
-
     function roomDoc(roomId) {
       return get(/databases/$(database)/documents/rooms/$(roomId));
     }
@@ -27,6 +23,15 @@ service cloud.firestore {
 
     function userInRoom(roomId, uid) {
       return roomExists(roomId) && uid in roomDoc(roomId).data.participants;
+    }
+
+    function isCreator() {
+      return request.auth.uid == resource.data.creatorUid;
+    }
+
+    function isPartner() {
+      return resource.data.partnerUid != null
+             && request.auth.uid == resource.data.partnerUid;
     }
 
     function isValidSessionStatus(value) {
@@ -80,6 +85,78 @@ service cloud.firestore {
              );
     }
 
+    function unchanged(field) {
+      return !(field in request.resource.data)
+             || request.resource.data[field] == resource.data[field];
+    }
+
+    function creatorIdentityUnchanged() {
+      return request.resource.data.creatorUid == resource.data.creatorUid
+             && unchanged('createdBy');
+    }
+
+    // Participants may only mutate their own address / format / radius fields.
+    function roleScopedRoomFieldsOk() {
+      return creatorIdentityUnchanged()
+             && (
+               isCreator()
+                 ? unchanged('point2')
+                   && unchanged('partnerMeetingFormats')
+                   && unchanged('partnerMeetingFormat')
+                   && unchanged('partnerSelectedMeetingFormat')
+                   && unchanged('partnerSearchRadius')
+                   && unchanged('partnerSearchRadiusUpdatedAt')
+                   && unchanged('partnerUid')
+                 : unchanged('point1')
+                   && unchanged('creatorMeetingFormats')
+                   && unchanged('creatorMeetingFormat')
+                   && unchanged('creatorSelectedMeetingFormat')
+                   && unchanged('creatorSearchRadius')
+                   && unchanged('creatorSearchRadiusUpdatedAt')
+             )
+             && (
+               !('creatorMeetingFormats' in request.resource.data)
+               || isValidMeetingFormatList(request.resource.data.creatorMeetingFormats)
+             )
+             && (
+               !('partnerMeetingFormats' in request.resource.data)
+               || isValidMeetingFormatList(request.resource.data.partnerMeetingFormats)
+             )
+             && (
+               !('creatorSelectedMeetingFormat' in request.resource.data)
+               || isValidMeetingFormat(request.resource.data.creatorSelectedMeetingFormat)
+             )
+             && (
+               !('partnerSelectedMeetingFormat' in request.resource.data)
+               || isValidMeetingFormat(request.resource.data.partnerSelectedMeetingFormat)
+             )
+             && (
+               !('selectedMeetingFormat' in request.resource.data)
+               || isValidMeetingFormat(request.resource.data.selectedMeetingFormat)
+             )
+             && (
+               !('meetingSnapshot' in request.resource.data)
+               || isValidMeetingSnapshot(request.resource.data.meetingSnapshot)
+             )
+             && (
+               !('sessionStatus' in request.resource.data)
+               || isValidSessionStatus(request.resource.data.sessionStatus)
+             );
+    }
+
+    function isJoinUpdate() {
+      return resource.data.partnerUid == null
+             && request.resource.data.partnerUid == request.auth.uid
+             && request.resource.data.creatorUid == resource.data.creatorUid
+             && request.resource.data.participants.size() == 2
+             && request.auth.uid in request.resource.data.participants
+             && resource.data.creatorUid in request.resource.data.participants
+             && unchanged('point1')
+             && unchanged('creatorMeetingFormats')
+             && unchanged('creatorSelectedMeetingFormat')
+             && unchanged('creatorSearchRadius');
+    }
+
     // Legacy root-level history is not used by the app.
     // Keep a single source of truth: /users/{uid}/meeting_history.
     match /meeting_history/{docId} {
@@ -95,20 +172,11 @@ service cloud.firestore {
 
       allow update: if isSignedIn()
                     && (
-                      // Regular updates by existing participants
                       (
                         request.auth.uid in roomParticipants()
-                        && request.resource.data.creatorUid == resource.data.creatorUid
+                        && roleScopedRoomFieldsOk()
                       )
-                      // Join flow for second participant
-                      || (
-                        resource.data.partnerUid == null
-                        && request.resource.data.partnerUid == request.auth.uid
-                        && request.resource.data.creatorUid == resource.data.creatorUid
-                        && request.resource.data.participants.size() == 2
-                        && request.auth.uid in request.resource.data.participants
-                        && resource.data.creatorUid in request.resource.data.participants
-                      )
+                      || isJoinUpdate()
                     );
 
       allow delete: if false;
@@ -116,7 +184,15 @@ service cloud.firestore {
 
     match /roomInvites/{inviteCode} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn();
+      // Creator may mint/refresh invites that point at their room.
+      allow create: if isSignedIn()
+                    && request.resource.data.createdBy == request.auth.uid
+                    && request.resource.data.roomId is string
+                    && request.resource.data.expiresAt is timestamp;
+      allow update: if isSignedIn()
+                    && resource.data.createdBy == request.auth.uid
+                    && request.resource.data.createdBy == resource.data.createdBy
+                    && request.resource.data.roomId == resource.data.roomId;
       allow delete: if false;
     }
 

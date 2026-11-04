@@ -12,7 +12,7 @@ import '../../domain/usecases/save_selected_scenario.dart';
 
 class DateAssistantService {
   const DateAssistantService({
-    required BuildDateScenarios buildDateScenarios,
+    required BuildDateScenarios Function() buildDateScenarios,
     required SaveMeetingFormat saveMeetingFormat,
     required ConfirmMeetingFormat confirmMeetingFormat,
     required RequestMeetingRevote requestMeetingRevote,
@@ -27,7 +27,7 @@ class DateAssistantService {
        _saveSelectedScenario = saveSelectedScenario,
        _analytics = analytics;
 
-  final BuildDateScenarios _buildDateScenarios;
+  final BuildDateScenarios Function() _buildDateScenarios;
   final SaveMeetingFormat _saveMeetingFormat;
   final ConfirmMeetingFormat _confirmMeetingFormat;
   final RequestMeetingRevote _requestMeetingRevote;
@@ -39,7 +39,7 @@ class DateAssistantService {
     required MeetingFormat format,
     required List<Place> places,
   }) {
-    return _buildDateScenarios(format: format, places: places);
+    return _buildDateScenarios()(format: format, places: places);
   }
 
   Future<Result<void>> selectMeetingFormats({

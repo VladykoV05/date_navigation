@@ -1,4 +1,5 @@
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/date_vibe.dart';
@@ -43,37 +44,65 @@ class MeetingRepositoryImpl implements MeetingRepository {
         to: GeoCoordinateMapper.toLatLng(partnerLocation),
         fraction: 0.5,
       );
-      final routeGeometry = GeoCoordinateMapper.fromLatLngList(
-        osrmResult.fullPolyline,
-      );
-      final meetingLocation = GeoCoordinateMapper.fromLatLng(
-        osrmResult.meetingPoint,
-      );
-
-      List<Place> places = [];
-      try {
-        places = await _places.findPlacesNearby(
-          lat: meetingLocation.latitude,
-          lon: meetingLocation.longitude,
-          radius: searchRadius,
-          format: format,
-        );
-      } catch (e) {
-        AppLogger.e('⚠️ Ошибка PlacesRemoteDataSource: $e');
+      switch (osrmResult) {
+        case Err():
+          AppLogger.w('OSRM unavailable — using geometric midpoint (degraded)');
+          return await _buildMeetingAround(
+            meetingLocation: GeoCoordinate(
+              latitude: (userLocation.latitude + partnerLocation.latitude) / 2,
+              longitude:
+                  (userLocation.longitude + partnerLocation.longitude) / 2,
+            ),
+            routeGeometry: const [],
+            searchRadius: searchRadius,
+            format: format,
+            isRoutingDegraded: true,
+          );
+        case Ok(:final value):
+          return await _buildMeetingAround(
+            meetingLocation: GeoCoordinateMapper.fromLatLng(value.meetingPoint),
+            routeGeometry: GeoCoordinateMapper.fromLatLngList(
+              value.fullPolyline,
+            ),
+            searchRadius: searchRadius,
+            format: format,
+            isRoutingDegraded: false,
+          );
       }
-
-      return Ok(
-        MeetingPoint(
-          location: meetingLocation,
-          userRoute: const RouteInfo(duration: Duration.zero, distance: 0),
-          partnerRoute: const RouteInfo(duration: Duration.zero, distance: 0),
-          nearbyPlaces: places,
-          fullRouteGeometry: routeGeometry,
-        ),
-      );
     } catch (e, stack) {
       AppLogger.e('MeetingRepositoryImpl failed', e, stack);
-      return const Err(UnknownFailure('Не удалось рассчитать точку встречи'));
+      return const Err(UnknownFailure(FailureCodes.meetingPointCalcFailed));
     }
+  }
+
+  Future<Result<MeetingPoint>> _buildMeetingAround({
+    required GeoCoordinate meetingLocation,
+    required List<GeoCoordinate> routeGeometry,
+    required int searchRadius,
+    required MeetingFormat format,
+    required bool isRoutingDegraded,
+  }) async {
+    List<Place> places = [];
+    try {
+      places = await _places.findPlacesNearby(
+        lat: meetingLocation.latitude,
+        lon: meetingLocation.longitude,
+        radius: searchRadius,
+        format: format,
+      );
+    } catch (e) {
+      AppLogger.e('⚠️ Ошибка PlacesRemoteDataSource: $e');
+    }
+
+    return Ok(
+      MeetingPoint(
+        location: meetingLocation,
+        userRoute: const RouteInfo(duration: Duration.zero, distance: 0),
+        partnerRoute: const RouteInfo(duration: Duration.zero, distance: 0),
+        nearbyPlaces: places,
+        fullRouteGeometry: routeGeometry,
+        isRoutingDegraded: isRoutingDegraded,
+      ),
+    );
   }
 }

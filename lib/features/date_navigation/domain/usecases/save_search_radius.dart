@@ -1,10 +1,10 @@
 import '../../../../core/error/result.dart';
-import '../repositories/room_voting_repository.dart';
+import '../repositories/room_meeting_format_repository.dart';
 
 class SaveSearchRadius {
   const SaveSearchRadius(this._repository);
 
-  final RoomVotingRepository _repository;
+  final RoomMeetingFormatRepository _repository;
 
   Future<Result<void>> call({
     required String roomId,

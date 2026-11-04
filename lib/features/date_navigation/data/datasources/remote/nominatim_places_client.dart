@@ -13,11 +13,14 @@ class NominatimPlacesClient {
   const NominatimPlacesClient({
     required http.Client client,
     required PlaceQualityService qualityService,
+    required String Function() acceptLanguage,
   }) : _client = client,
-       _qualityService = qualityService;
+       _qualityService = qualityService,
+       _acceptLanguage = acceptLanguage;
 
   final http.Client _client;
   final PlaceQualityService _qualityService;
+  final String Function() _acceptLanguage;
 
   Future<List<Place>> fetchFallback({
     required double lat,
@@ -54,7 +57,7 @@ class NominatimPlacesClient {
           url,
           headers: {
             'User-Agent': DateNavigationConfig.appUserAgent,
-            'Accept-Language': 'ru-RU,ru;q=0.9,en;q=0.8',
+            'Accept-Language': _acceptLanguage(),
           },
         )
         .timeout(
@@ -75,7 +78,7 @@ class NominatimPlacesClient {
 
       final displayName = item['display_name']?.toString();
       final fallbackName =
-          (item['name'] ?? displayName?.split(',').first.trim() ?? 'Заведение')
+          (item['name'] ?? displayName?.split(',').first.trim() ?? 'Venue')
               .toString();
       places.add(
         Place(

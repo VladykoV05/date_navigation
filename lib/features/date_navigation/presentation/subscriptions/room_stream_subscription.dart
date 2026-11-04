@@ -38,19 +38,24 @@ class RoomStreamSubscription {
     required Duration snapshotFreshFor,
     required void Function(RoomStreamApplicationResult application)
     onApplication,
+    required void Function(Object error, StackTrace stackTrace) onError,
   }) {
     _subscription?.cancel();
-    _subscription = _watchRoom(roomId).listen((roomSnapshot) {
-      final update = _reducer.reduce(
-        currentState: currentState(),
-        roomSnapshot: roomSnapshot,
-        userId: userId,
-        meetingPlanner: meetingPlanner,
-        snapshotFreshFor: snapshotFreshFor,
-        now: DateTime.now(),
-      );
-      onApplication(_application.build(update));
-    });
+    _subscription = _watchRoom(roomId).listen(
+      (roomSnapshot) {
+        final update = _reducer.reduce(
+          currentState: currentState(),
+          roomSnapshot: roomSnapshot,
+          userId: userId,
+          meetingPlanner: meetingPlanner,
+          snapshotFreshFor: snapshotFreshFor,
+          now: DateTime.now(),
+        );
+        onApplication(_application.build(update));
+      },
+      onError: onError,
+      cancelOnError: false,
+    );
   }
 
   Future<void> cancel() async {

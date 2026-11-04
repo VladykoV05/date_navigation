@@ -8,6 +8,9 @@ import '../data/repositories/room_voting_repository_impl.dart';
 import '../domain/repositories/geocoding_repository.dart';
 import '../domain/repositories/meeting_repository.dart';
 import '../domain/repositories/meeting_snapshot_repository.dart';
+import '../domain/repositories/room_meeting_format_repository.dart';
+import '../domain/repositories/room_place_voting_repository.dart';
+import '../domain/repositories/room_scenario_repository.dart';
 import '../domain/repositories/room_session_repository.dart';
 import '../domain/repositories/room_voting_repository.dart';
 import 'data_providers.dart';
@@ -22,6 +25,21 @@ RoomSessionRepository roomSessionRepository(Ref ref) {
 @Riverpod(keepAlive: true)
 RoomVotingRepository roomVotingRepository(Ref ref) {
   return RoomVotingRepositoryImpl(ref.watch(roomRemoteDataSourceProvider));
+}
+
+@Riverpod(keepAlive: true)
+RoomPlaceVotingRepository roomPlaceVotingRepository(Ref ref) {
+  return ref.watch(roomVotingRepositoryProvider);
+}
+
+@Riverpod(keepAlive: true)
+RoomMeetingFormatRepository roomMeetingFormatRepository(Ref ref) {
+  return ref.watch(roomVotingRepositoryProvider);
+}
+
+@Riverpod(keepAlive: true)
+RoomScenarioRepository roomScenarioRepository(Ref ref) {
+  return ref.watch(roomVotingRepositoryProvider);
 }
 
 @Riverpod(keepAlive: true)

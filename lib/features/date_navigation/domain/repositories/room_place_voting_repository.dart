@@ -1,0 +1,27 @@
+import '../../../../core/error/result.dart';
+import '../entities/accepted_proposal_history_draft.dart';
+import '../entities/voting_decisions.dart';
+
+abstract interface class RoomPlaceVotingRepository {
+  Future<Result<void>> voteForPlace({
+    required String roomId,
+    required String userId,
+    required String placeName,
+  });
+
+  Future<Result<void>> proposePlace({
+    required String roomId,
+    required String placeName,
+    required ProposalAuthorRole authorRole,
+    required double lat,
+    required double lon,
+    String? placeAddress,
+    String? placeType,
+  });
+
+  Future<Result<AcceptedProposalHistoryDraft?>> respondToProposal({
+    required String roomId,
+    required ProposalResponseDecision decision,
+    required String actedByUserId,
+  });
+}

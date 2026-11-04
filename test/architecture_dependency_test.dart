@@ -112,7 +112,8 @@ void main() {
         return false;
       }
       final content = file.readAsStringSync();
-      return content.contains("export 'domain/") || content.contains("export 'di/");
+      return content.contains("export 'domain/") ||
+          content.contains("export 'di/");
     });
 
     final offenders = _filesContaining(
@@ -123,21 +124,24 @@ void main() {
     expect(offenders, isEmpty);
   });
 
-  test('date_navigation presentation does not import user_profile presentation', () {
-    final offenders = _featureImportOffenders(
-      featureFiles.where(
-        (file) =>
-            file.path.contains('/date_navigation/') &&
-            file.path.contains('/presentation/'),
-      ),
-      (currentFeature, importPath) {
-        return _targetFeature(importPath) == 'user_profile' &&
-            importPath.contains('/presentation/');
-      },
-    );
+  test(
+    'date_navigation presentation does not import user_profile presentation',
+    () {
+      final offenders = _featureImportOffenders(
+        featureFiles.where(
+          (file) =>
+              file.path.contains('/date_navigation/') &&
+              file.path.contains('/presentation/'),
+        ),
+        (currentFeature, importPath) {
+          return _targetFeature(importPath) == 'user_profile' &&
+              importPath.contains('/presentation/');
+        },
+      );
 
-    expect(offenders, isEmpty);
-  });
+      expect(offenders, isEmpty);
+    },
+  );
 
   test('application layer does not import presentation layer', () {
     final offenders = _filesContaining(
@@ -170,9 +174,35 @@ void main() {
 
   test('presentation widgets do not import domain entities', () {
     final offenders = _filesContaining(
-      featureFiles.where((file) => file.path.contains('/presentation/widgets/')),
+      featureFiles.where(
+        (file) => file.path.contains('/presentation/widgets/'),
+      ),
       RegExp(r"import '.*domain/entities/"),
     );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('di layer does not import presentation layer', () {
+    final offenders = _filesContaining(
+      featureFiles.where((file) => file.path.contains('/di/')),
+      RegExp(r"import '.*presentation/"),
+    );
+
+    expect(offenders, isEmpty);
+  });
+
+  test('domain repositories do not expose Map persistence DTOs', () {
+    final offenders = Directory('lib/features')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((file) => file.path.contains('/domain/repositories/'))
+        .where((file) => file.path.endsWith('.dart'))
+        .where(
+          (file) => file.readAsStringSync().contains('Map<String, dynamic>'),
+        )
+        .map((file) => file.path)
+        .toList(growable: false);
 
     expect(offenders, isEmpty);
   });

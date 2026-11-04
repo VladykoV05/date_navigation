@@ -6,6 +6,7 @@ import '../../domain/entities/place.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/entities/room_status.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
+import 'date_scenario_mapper.dart';
 import 'geo_coordinate_mapper.dart';
 
 class RoomSnapshotMapper {
@@ -130,7 +131,9 @@ class RoomSnapshotMapper {
 
   static DateScenario? _parseSelectedScenario(dynamic raw) {
     if (raw is! Map) return null;
-    final parsed = DateScenario.fromMap(Map<String, dynamic>.from(raw));
+    final parsed = DateScenarioMapper.fromFirestore(
+      Map<String, dynamic>.from(raw),
+    );
     return parsed.id.isEmpty ? null : parsed;
   }
 

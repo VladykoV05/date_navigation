@@ -3,9 +3,11 @@ import 'dart:async';
 import '../../domain/value_objects/geo_coordinate.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../../../../core/utils/observability.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
@@ -177,6 +179,13 @@ class MeetingPlanningController {
     _clearFailure();
     await meetingPlanner.runMeetingTask(() async {
       try {
+        Observability.breadcrumb(
+          'meeting_calculate_start',
+          data: {
+            'format': format.name,
+            'radius': meetingState.searchRadius.round(),
+          },
+        );
         final currentState = _readState();
         final res = await _meetingExecution.calculateMeeting(
           searchRadius: currentState.meeting.searchRadius.round(),
@@ -210,7 +219,7 @@ class MeetingPlanningController {
         if (meetingPlanner.isStaleRequest(req)) return;
         _setMeetingLoading(false);
         _setFailure(
-          const UnknownFailure('Не удалось рассчитать точку встречи'),
+          const UnknownFailure(FailureCodes.meetingPointCalcFailed),
           'meeting',
         );
       }

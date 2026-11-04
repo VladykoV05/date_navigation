@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../../../core/utils/app_logger.dart';
@@ -42,7 +43,7 @@ class AddressSubmissionService {
         return Err(failure);
       case Ok(value: final coords):
         if (coords == null) {
-          return const Err(UnknownFailure('Адрес не найден'));
+          return const Err(UnknownFailure(FailureCodes.addressNotFound));
         }
         final updateResult = await _updateLocation(
           roomId: roomId,

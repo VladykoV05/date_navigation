@@ -1,4 +1,5 @@
 import '../../domain/entities/user_favorite.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../domain/repositories/favorites_repository.dart';
 import '../datasources/remote/user_favorites_remote_data_source.dart';
@@ -35,7 +36,7 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
         lat: lat,
         lon: lon,
       ),
-      fallback: 'Не удалось сохранить в избранное',
+      fallback: FailureCodes.saveFavoriteFailed,
     );
   }
 
@@ -46,7 +47,7 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
   }) {
     return runUserProfileVoid(
       () => _remote.removeFavorite(userId: userId, favoriteId: favoriteId),
-      fallback: 'Не удалось удалить из избранного',
+      fallback: FailureCodes.deleteFavoriteFailed,
     );
   }
 
@@ -64,7 +65,7 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
         lat: lat,
         lon: lon,
       ),
-      fallback: 'Не удалось удалить из избранного',
+      fallback: FailureCodes.deleteFavoriteFailed,
     );
   }
 }

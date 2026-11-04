@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../domain/value_objects/geo_coordinate.dart';
+
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/services/navigation_service.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../view_data/place_view_data.dart';
 
 class PlaceDetailsSheet extends StatelessWidget {
@@ -17,9 +19,10 @@ class PlaceDetailsSheet extends StatelessWidget {
     this.partnerPoint,
   });
 
-  String _formatDistance(double meters) {
-    if (meters < 1000) return '${meters.toInt()} м';
-    return '${(meters / 1000).toStringAsFixed(1)} км';
+  String _formatDistance(BuildContext context, double meters) {
+    final l10n = context.l10n;
+    if (meters < 1000) return l10n.metersShort(meters.toInt());
+    return l10n.kilometersShort((meters / 1000).toStringAsFixed(1));
   }
 
   @override
@@ -49,7 +52,7 @@ class PlaceDetailsSheet extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            place.address ?? 'Адрес не указан',
+            place.address ?? context.l10n.addressNotSpecified,
             style: TextStyle(color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
@@ -57,8 +60,10 @@ class PlaceDetailsSheet extends StatelessWidget {
             children: [
               if (startPoint != null)
                 _distBox(
-                  'Тебе',
+                  context,
+                  context.l10n.distanceForYou,
                   _formatDistance(
+                    context,
                     place.distanceTo(
                       startPoint!.latitude,
                       startPoint!.longitude,
@@ -70,8 +75,10 @@ class PlaceDetailsSheet extends StatelessWidget {
                 const SizedBox(width: 10),
               if (partnerPoint != null)
                 _distBox(
-                  'Партнеру',
+                  context,
+                  context.l10n.distanceForPartner,
                   _formatDistance(
+                    context,
                     place.distanceTo(
                       partnerPoint!.latitude,
                       partnerPoint!.longitude,
@@ -87,7 +94,7 @@ class PlaceDetailsSheet extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: () => _buildRoute(context),
               icon: const Icon(Icons.navigation_outlined),
-              label: const Text('Маршрут'),
+              label: Text(context.l10n.routeLabel),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 backgroundColor: colorScheme.primary,
@@ -100,10 +107,15 @@ class PlaceDetailsSheet extends StatelessWidget {
     );
   }
 
-  Widget _distBox(String who, String dist, IconData icon) {
+  Widget _distBox(
+    BuildContext context,
+    String who,
+    String dist,
+    IconData icon,
+  ) {
     return Expanded(
       child: Semantics(
-        label: 'Расстояние: $who, $dist',
+        label: context.l10n.distanceLine(who, dist),
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(

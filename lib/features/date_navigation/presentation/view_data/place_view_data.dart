@@ -1,5 +1,8 @@
 import 'dart:math' show pi, sin, cos, sqrt, asin;
 
+import '../../../../core/l10n/app_copy.dart';
+import '../../../../l10n/app_localizations.dart';
+
 class PlaceViewData {
   const PlaceViewData({
     required this.name,
@@ -31,7 +34,7 @@ class PlaceViewData {
     return earthRadius * c;
   }
 
-  bool matchesType(String? wantedType) {
+  bool matchesWireType(String? wantedType) {
     if (wantedType == null || wantedType.isEmpty) return true;
     final wanted = wantedType.trim().toLowerCase();
     if (types.contains(wanted)) return true;
@@ -77,12 +80,8 @@ extension MeetingFormatViewLabels on MeetingFormatView {
     MeetingFormatView.active => 'active',
   };
 
-  String get label => switch (this) {
-    MeetingFormatView.food => 'Кофе или ужин',
-    MeetingFormatView.culture => 'Культура и впечатления',
-    MeetingFormatView.walkOnly => 'Просто прогулка',
-    MeetingFormatView.active => 'Активный формат',
-  };
+  String localizedLabel(AppLocalizations l10n) =>
+      l10n.meetingFormatWireLabel(wireValue);
 }
 
 enum SessionStatusView { active, completed, expired }

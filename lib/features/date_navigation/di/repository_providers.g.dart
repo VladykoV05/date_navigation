@@ -105,6 +105,151 @@ final class RoomVotingRepositoryProvider
 String _$roomVotingRepositoryHash() =>
     r'41067f2acdc86c1e9fe1c5b4ce3b55c503d3ac69';
 
+@ProviderFor(roomPlaceVotingRepository)
+final roomPlaceVotingRepositoryProvider = RoomPlaceVotingRepositoryProvider._();
+
+final class RoomPlaceVotingRepositoryProvider
+    extends
+        $FunctionalProvider<
+          RoomPlaceVotingRepository,
+          RoomPlaceVotingRepository,
+          RoomPlaceVotingRepository
+        >
+    with $Provider<RoomPlaceVotingRepository> {
+  RoomPlaceVotingRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'roomPlaceVotingRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$roomPlaceVotingRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<RoomPlaceVotingRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RoomPlaceVotingRepository create(Ref ref) {
+    return roomPlaceVotingRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RoomPlaceVotingRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RoomPlaceVotingRepository>(value),
+    );
+  }
+}
+
+String _$roomPlaceVotingRepositoryHash() =>
+    r'1c383154524f4667378f6f83de30f358ad709de2';
+
+@ProviderFor(roomMeetingFormatRepository)
+final roomMeetingFormatRepositoryProvider =
+    RoomMeetingFormatRepositoryProvider._();
+
+final class RoomMeetingFormatRepositoryProvider
+    extends
+        $FunctionalProvider<
+          RoomMeetingFormatRepository,
+          RoomMeetingFormatRepository,
+          RoomMeetingFormatRepository
+        >
+    with $Provider<RoomMeetingFormatRepository> {
+  RoomMeetingFormatRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'roomMeetingFormatRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$roomMeetingFormatRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<RoomMeetingFormatRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RoomMeetingFormatRepository create(Ref ref) {
+    return roomMeetingFormatRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RoomMeetingFormatRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RoomMeetingFormatRepository>(value),
+    );
+  }
+}
+
+String _$roomMeetingFormatRepositoryHash() =>
+    r'6c35c47987f9ab9f2238e7cd08d2c599fe66c941';
+
+@ProviderFor(roomScenarioRepository)
+final roomScenarioRepositoryProvider = RoomScenarioRepositoryProvider._();
+
+final class RoomScenarioRepositoryProvider
+    extends
+        $FunctionalProvider<
+          RoomScenarioRepository,
+          RoomScenarioRepository,
+          RoomScenarioRepository
+        >
+    with $Provider<RoomScenarioRepository> {
+  RoomScenarioRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'roomScenarioRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$roomScenarioRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<RoomScenarioRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RoomScenarioRepository create(Ref ref) {
+    return roomScenarioRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RoomScenarioRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RoomScenarioRepository>(value),
+    );
+  }
+}
+
+String _$roomScenarioRepositoryHash() =>
+    r'cdc9d0c5baa24fe383bcbb8e91ae340379911346';
+
 @ProviderFor(meetingSnapshotRepository)
 final meetingSnapshotRepositoryProvider = MeetingSnapshotRepositoryProvider._();
 

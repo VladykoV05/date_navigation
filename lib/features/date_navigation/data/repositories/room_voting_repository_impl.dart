@@ -1,8 +1,10 @@
 import '../../../../core/error/result.dart';
 import '../../domain/entities/accepted_proposal_history_draft.dart';
+import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../domain/repositories/room_voting_repository.dart';
 import '../datasources/remote/room_remote_data_source.dart';
+import '../mappers/date_scenario_mapper.dart';
 
 class RoomVotingRepositoryImpl implements RoomVotingRepository {
   final RoomRemoteDataSource _remote;
@@ -59,12 +61,12 @@ class RoomVotingRepositoryImpl implements RoomVotingRepository {
   @override
   Future<Result<void>> saveSelectedScenario({
     required String roomId,
-    required Map<String, dynamic> scenario,
+    required DateScenario scenario,
     required String selectedByUserId,
   }) {
     return _remote.saveSelectedScenario(
       roomId: roomId,
-      scenario: scenario,
+      scenario: DateScenarioMapper.toFirestore(scenario),
       selectedByUserId: selectedByUserId,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../view_data/place_view_data.dart';
 
@@ -18,6 +19,7 @@ class ScenarioSummarySheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
     final anchor = scenario.anchorPlace;
@@ -41,14 +43,14 @@ class ScenarioSummarySheet extends StatelessWidget {
             ),
             const SizedBox(height: UiSpace.md),
             Text(
-              'Итоговый план встречи',
+              l10n.scenarioPlanTitle,
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: UiSpace.xs),
             Text(
-              'Комната #$roomId',
+              l10n.scenarioRoomLabel(roomId),
               style: textTheme.bodySmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -64,13 +66,13 @@ class ScenarioSummarySheet extends StatelessWidget {
             Text(scenario.description, style: textTheme.bodyMedium),
             const SizedBox(height: UiSpace.xs),
             Text(
-              'Длительность: ${scenario.totalDurationMinutes} мин',
+              l10n.scenarioDuration(scenario.totalDurationMinutes),
               style: textTheme.labelLarge,
             ),
             if (anchor != null) ...[
               const SizedBox(height: UiSpace.sm),
               Text(
-                'Точка встречи: ${anchor.name}',
+                l10n.scenarioAnchor(anchor.name),
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -86,7 +88,7 @@ class ScenarioSummarySheet extends StatelessWidget {
             if (scenario.steps.isNotEmpty) ...[
               const SizedBox(height: UiSpace.md),
               Text(
-                'Шаги',
+                l10n.scenarioSteps,
                 style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -142,7 +144,7 @@ class ScenarioSummarySheet extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(
-                            '${step.title}${step.etaMinutes == null ? '' : ' (${step.etaMinutes} мин)'}',
+                            '${step.title}${step.etaMinutes == null ? '' : ' ${l10n.minutesShort(step.etaMinutes!)}'}',
                             style: textTheme.bodyMedium,
                           ),
                         ),
@@ -158,7 +160,7 @@ class ScenarioSummarySheet extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onSharePressed,
                 icon: const Icon(Icons.share_outlined),
-                label: const Text('Поделиться планом'),
+                label: Text(l10n.sharePlan),
               ),
             ),
           ],
@@ -169,10 +171,26 @@ class ScenarioSummarySheet extends StatelessWidget {
 
   IconData _stepIcon(String title) {
     final normalized = title.toLowerCase();
-    if (normalized.contains('прогул')) return Icons.directions_walk;
-    if (normalized.contains('кофе')) return Icons.local_cafe;
-    if (normalized.contains('ужин')) return Icons.restaurant;
-    if (normalized.contains('встреч')) return Icons.handshake_outlined;
+    if (normalized.contains('прогул') || normalized.contains('walk')) {
+      return Icons.directions_walk;
+    }
+    if (normalized.contains('кофе') ||
+        normalized.contains('coffee') ||
+        normalized.contains('food') ||
+        normalized.contains('еда') ||
+        normalized.contains('ужин') ||
+        normalized.contains('dinner')) {
+      return Icons.local_cafe;
+    }
+    if (normalized.contains('встреч') ||
+        normalized.contains('meet') ||
+        normalized.contains('gather') ||
+        normalized.contains('сбор')) {
+      return Icons.handshake_outlined;
+    }
+    if (normalized.contains('актив') || normalized.contains('active')) {
+      return Icons.sports;
+    }
     return Icons.place_outlined;
   }
 }

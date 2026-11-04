@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './ui_copy.dart';
+import '../core/l10n/l10n_extensions.dart';
 
 class ConfirmDialog {
   const ConfirmDialog._();
@@ -9,9 +9,10 @@ class ConfirmDialog {
     BuildContext context, {
     required String title,
     required String message,
-    String cancelLabel = UiCopy.noLabel,
-    String confirmLabel = UiCopy.yesLabel,
+    String? cancelLabel,
+    String? confirmLabel,
   }) {
+    final l10n = context.l10n;
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -20,11 +21,11 @@ class ConfirmDialog {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(cancelLabel),
+            child: Text(cancelLabel ?? l10n.noLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(confirmLabel),
+            child: Text(confirmLabel ?? l10n.yesLabel),
           ),
         ],
       ),
@@ -35,8 +36,9 @@ class ConfirmDialog {
     BuildContext context, {
     required String title,
     required String message,
-    String actionLabel = UiCopy.okLabel,
+    String? actionLabel,
   }) {
+    final l10n = context.l10n;
     return showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -45,7 +47,7 @@ class ConfirmDialog {
         actions: [
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(actionLabel),
+            child: Text(actionLabel ?? l10n.okLabel),
           ),
         ],
       ),

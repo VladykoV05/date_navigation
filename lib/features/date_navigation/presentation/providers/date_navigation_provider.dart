@@ -1,90 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
-import '../../../../core/di/analytics_di.dart';
 import '../../../../core/di/auth_di.dart';
-import '../../../user_profile/user_profile.dart';
-import '../../di/date_navigation_di.dart';
 import '../../application/state/date_navigation_state.dart';
 import '../mappers/place_view_mapper.dart';
 import '../view_data/room_control_panel_data.dart';
-import '../../application/services/address_submission_service.dart';
-import '../../application/services/date_assistant_service.dart';
 import '../controllers/date_navigation_controller.dart';
-import '../../application/services/meeting_execution_service.dart';
-import '../../application/services/room_interaction_service.dart';
-import '../../application/services/room_lifecycle_service.dart';
 
-final addressSubmissionServiceProvider = Provider<AddressSubmissionService>(
-  (ref) => AddressSubmissionService(
-    geocodeAddress: ref.watch(geocodeAddressProvider),
-    updateLocation: ref.watch(updateLocationProvider),
-    rememberAddress: ref.watch(profileRememberUserAddressProvider),
-    analytics: ref.watch(analyticsServiceProvider),
-  ),
-);
+export 'date_navigation_service_providers.dart';
 
-final roomLifecycleServiceProvider = Provider<RoomLifecycleService>(
-  (ref) => RoomLifecycleService(
-    createRoom: ref.watch(createRoomProvider),
-    completeSession: ref.watch(completeSessionProvider),
-    joinRoom: ref.watch(joinRoomProvider),
-    analytics: ref.watch(analyticsServiceProvider),
-  ),
-);
-
-final roomInteractionServiceProvider = Provider<RoomInteractionService>(
-  (ref) => RoomInteractionService(
-    voteForPlace: ref.watch(voteForPlaceProvider),
-    proposePlace: ref.watch(proposePlaceProvider),
-    respondToProposal: ref.watch(respondToProposalProvider),
-    recordMeetingHistory: ref.watch(profileRecordMeetingHistoryProvider),
-    analytics: ref.watch(analyticsServiceProvider),
-  ),
-);
-
-final meetingExecutionServiceProvider = Provider<MeetingExecutionService>(
-  (ref) => MeetingExecutionService(
-    findMeetingPoint: ref.watch(findMeetingPointProvider),
-    saveMeetingSnapshot: ref.watch(saveMeetingSnapshotProvider),
-    analytics: ref.watch(analyticsServiceProvider),
-  ),
-);
-
-final dateAssistantServiceProvider = Provider<DateAssistantService>(
-  (ref) => DateAssistantService(
-    buildDateScenarios: ref.watch(buildDateScenariosProvider),
-    saveMeetingFormat: ref.watch(saveMeetingFormatProvider),
-    confirmMeetingFormat: ref.watch(confirmMeetingFormatProvider),
-    requestMeetingRevote: ref.watch(requestMeetingRevoteProvider),
-    respondMeetingRevote: ref.watch(respondMeetingRevoteProvider),
-    saveSelectedScenario: ref.watch(saveSelectedScenarioProvider),
-    analytics: ref.watch(analyticsServiceProvider),
-  ),
-);
-
+/// Keeps room session alive across Account navigation and MaterialApp locale rebuilds.
 final dateNavigationControllerProvider =
-    StateNotifierProvider.autoDispose<
-      DateNavigationController,
-      DateNavigationState
-    >(
-      (ref) => DateNavigationController(
-        addressSubmission: ref.watch(addressSubmissionServiceProvider),
-        dateAssistant: ref.watch(dateAssistantServiceProvider),
-        meetingExecution: ref.watch(meetingExecutionServiceProvider),
-        roomInteraction: ref.watch(roomInteractionServiceProvider),
-        roomLifecycle: ref.watch(roomLifecycleServiceProvider),
-        watchRoom: ref.watch(watchRoomProvider),
-        watchFrequentAddresses: ref.watch(
-          profileWatchRememberedAddressesProvider,
-        ),
-        removeRememberedAddress: ref.watch(
-          profileRemoveRememberedUserAddressProvider,
-        ),
-        saveSearchRadius: ref.watch(saveSearchRadiusProvider),
-        authSession: ref.watch(authSessionProvider),
-        analytics: ref.watch(analyticsServiceProvider),
-      ),
+    NotifierProvider<DateNavigationController, DateNavigationState>(
+      DateNavigationController.new,
     );
 
 final dateNavigationMapViewProvider = Provider.autoDispose(
@@ -249,7 +176,9 @@ final roomControlPanelViewProvider = Provider.autoDispose((ref) {
         : PlaceViewMapper.fromMeetingFormat(stateSlice.selectedMeetingFormat!),
     lastAgreedMeetingFormat: stateSlice.lastAgreedMeetingFormat == null
         ? null
-        : PlaceViewMapper.fromMeetingFormat(stateSlice.lastAgreedMeetingFormat!),
+        : PlaceViewMapper.fromMeetingFormat(
+            stateSlice.lastAgreedMeetingFormat!,
+          ),
     meetingRevoteRequestByRole: stateSlice.meetingRevoteRequestByRole,
     meetingRevoteRequestStatus: PlaceViewMapper.fromRevoteRequestStatus(
       stateSlice.meetingRevoteRequestStatus,

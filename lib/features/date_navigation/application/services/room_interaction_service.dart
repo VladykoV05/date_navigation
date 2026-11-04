@@ -123,13 +123,16 @@ class RoomInteractionService {
       unawaited(_recordMeetingHistoryBestEffort(draft));
     }
     unawaited(_analytics.proposalResponded(accepted: isAccepted));
-    if (isAccepted && meetingFormat != null && meetingFormat.isNotEmpty) {
-      unawaited(
-        _analytics.placeSelectedAfterFormat(
-          format: meetingFormat,
-          action: 'accept_proposal',
-        ),
-      );
+    if (isAccepted) {
+      unawaited(_analytics.meetingCompleted(reason: 'proposal_accepted'));
+      if (meetingFormat != null && meetingFormat.isNotEmpty) {
+        unawaited(
+          _analytics.placeSelectedAfterFormat(
+            format: meetingFormat,
+            action: 'accept_proposal',
+          ),
+        );
+      }
     }
     return const Ok(null);
   }

@@ -48,7 +48,7 @@ class OverpassPlaceMapper {
         (brand?.trim().isNotEmpty == true ? brand : null) ??
         (operatorName?.trim().isNotEmpty == true ? operatorName : null) ??
         (street != null && street.trim().isNotEmpty
-            ? '$typeLabel на $street'
+            ? '$typeLabel on $street'
             : typeLabel);
 
     return Place(
@@ -142,26 +142,27 @@ class OverpassPlaceMapper {
     };
   }
 
+  /// Neutral English fallbacks for unnamed OSM nodes (UI labels use l10n).
   static String _typeLabel(String? type) {
     return switch (type) {
-      'bar' => 'Бар',
-      'restaurant' => 'Ресторан',
-      'fast_food' => 'Фастфуд',
-      'park' => 'Парк',
-      'garden' => 'Сад',
-      'viewpoint' => 'Видовая точка',
-      'beach' => 'Пляж',
-      'fitness_centre' => 'Фитнес',
-      'sports_centre' => 'Спорт',
-      'swimming_pool' => 'Бассейн',
-      'ice_rink' => 'Каток',
-      'active_racket' => 'Ракетный спорт',
-      'active_climb' => 'Скалолазание',
-      'active_dance' => 'Танцы',
-      'active_team' => 'Командный спорт',
-      'active_mind_body' => 'Йога/пилатес',
-      'active_sport' => 'Спорт',
-      _ => 'Кафе',
+      'bar' => 'Bar',
+      'restaurant' => 'Restaurant',
+      'fast_food' => 'Fast food',
+      'park' => 'Park',
+      'garden' => 'Garden',
+      'viewpoint' => 'Viewpoint',
+      'beach' => 'Beach',
+      'fitness_centre' => 'Fitness',
+      'sports_centre' => 'Sports centre',
+      'swimming_pool' => 'Pool',
+      'ice_rink' => 'Ice rink',
+      'active_racket' => 'Racket sport',
+      'active_climb' => 'Climbing',
+      'active_dance' => 'Dance',
+      'active_team' => 'Team sport',
+      'active_mind_body' => 'Yoga/pilates',
+      'active_sport' => 'Sport',
+      _ => 'Cafe',
     };
   }
 

@@ -5,12 +5,9 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
     await _runWithDialogLock(_DialogType.peerRadiusSuggestion, () async {
       final controller = ref.read(dateNavigationControllerProvider.notifier);
       final shouldApply = await _showBinaryDecisionDialog(
-        title: UiCopy.partnerRadiusSuggestTitle,
-        message: UiCopy.partnerRadiusSuggestPrompt.replaceAll(
-          '{radius}',
-          '$suggestedRadius',
-        ),
-        confirmLabel: UiCopy.partnerRadiusAcceptLabel,
+        title: context.l10n.partnerRadiusSuggestTitle,
+        message: context.l10n.partnerRadiusSuggestPrompt(suggestedRadius),
+        confirmLabel: context.l10n.partnerRadiusAcceptLabel,
       );
       await _handleBinaryDecision(
         shouldApply,
@@ -40,11 +37,8 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
           return;
         }
         _showActionSnackBar(
-          message: UiCopy.partnerRadiusReminder.replaceAll(
-            '{radius}',
-            '$suggestedRadius',
-          ),
-          actionLabel: UiCopy.openLabel,
+          message: context.l10n.partnerRadiusReminder(suggestedRadius),
+          actionLabel: context.l10n.openLabel,
           onActionPressed: () {
             unawaited(_showPeerRadiusSuggestionDialog(suggestedRadius));
           },
@@ -61,14 +55,14 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
     await _runWithDialogLock(_DialogType.partnerPlaceProposal, () async {
       final controller = ref.read(dateNavigationControllerProvider.notifier);
       final decision = await _showBinaryDecisionDialog(
-        title: UiCopy.partnerPlaceSuggestTitle,
+        title: context.l10n.partnerPlaceSuggestTitle,
         message: _buildProposalDialogText(
           placeName: placeName,
           placeAddress: placeAddress,
           placeType: placeType,
         ),
-        cancelLabel: UiCopy.rejectLabel,
-        confirmLabel: UiCopy.acceptLabel,
+        cancelLabel: context.l10n.rejectLabel,
+        confirmLabel: context.l10n.acceptLabel,
       );
       await _handleBinaryDecision(
         decision,
@@ -87,15 +81,15 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
   }) {
     final address = placeAddress?.trim();
     final hasRawType = placeType?.trim().isNotEmpty ?? false;
-    final type = hasRawType ? localizePlaceType(placeType) : null;
+    final l10n = context.l10n;
+    final type = hasRawType ? l10n.placeTypeLabelFromWire(placeType) : null;
     final lines = <String>[
-      UiCopy.proposalPlaceLabel.replaceAll('{place}', placeName),
-      if (type != null && type.isNotEmpty)
-        UiCopy.proposalTypeLabel.replaceAll('{type}', type),
+      l10n.proposalPlaceLabel(placeName),
+      if (type != null && type.isNotEmpty) l10n.proposalTypeLabel(type),
       if (address != null && address.isNotEmpty)
-        UiCopy.proposalAddressLabel.replaceAll('{address}', address),
+        l10n.proposalAddressLabel(address),
       '',
-      UiCopy.proposalAcceptQuestion,
+      l10n.proposalAcceptQuestion,
     ];
     return lines.join('\n');
   }
@@ -104,9 +98,9 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
     await _runWithDialogLock(_DialogType.meetingRevote, () async {
       final controller = ref.read(dateNavigationControllerProvider.notifier);
       final decision = await _showBinaryDecisionDialog(
-        title: UiCopy.meetingRevoteRequestTitle,
-        message: UiCopy.meetingRevoteRequestPrompt,
-        confirmLabel: UiCopy.yesLabel,
+        title: context.l10n.meetingRevoteRequestTitle,
+        message: context.l10n.meetingRevoteRequestPrompt,
+        confirmLabel: context.l10n.yesLabel,
       );
       await _handleBinaryDecision(
         decision,
@@ -123,8 +117,8 @@ extension _DateNavigationPageDialogs on _DateNavigationPageState {
   Future<bool?> _showBinaryDecisionDialog({
     required String title,
     required String message,
-    String cancelLabel = UiCopy.noLabel,
-    String confirmLabel = UiCopy.yesLabel,
+    String? cancelLabel,
+    String? confirmLabel,
   }) {
     return ConfirmDialog.showBinary(
       context,

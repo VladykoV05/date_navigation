@@ -1,4 +1,5 @@
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../state/date_navigation_state.dart';
 
@@ -72,7 +73,7 @@ class MeetingFormatActions {
   }) {
     if (!state.meeting.commonMeetingFormats.contains(format)) {
       return const MeetingFormatActionDecision.error(
-        UnknownFailure('Выберите формат только из общих вариантов'),
+        UnknownFailure(FailureCodes.formatMustBeCommon),
       );
     }
     final agreedFormat = state.meeting.selectedMeetingFormat;

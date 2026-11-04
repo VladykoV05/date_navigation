@@ -1,5 +1,6 @@
 import '../../../../core/error/result.dart';
 import '../entities/date_vibe.dart';
+import '../entities/place.dart';
 import '../repositories/meeting_snapshot_repository.dart';
 import '../value_objects/geo_coordinate.dart';
 
@@ -11,7 +12,7 @@ class SaveMeetingSnapshot {
     required String roomId,
     required GeoCoordinate centerPoint,
     required List<GeoCoordinate> routePoints,
-    required List<Map<String, dynamic>> places,
+    required List<Place> places,
     required int searchRadius,
     required MeetingFormat meetingFormat,
   }) {

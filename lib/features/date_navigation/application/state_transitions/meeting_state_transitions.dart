@@ -22,6 +22,7 @@ class MeetingStateTransitions {
         foundPlaces: meeting.nearbyPlaces,
         filteredPlaces: filteredPlaces,
         routePoints: meeting.fullRouteGeometry,
+        isRoutingDegraded: meeting.isRoutingDegraded,
       ),
       ui: state.ui.copyWith(isCalculatingMeeting: false),
     );

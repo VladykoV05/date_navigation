@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 import '../mappers/geo_map_mapper.dart';
+import '../mappers/place_visual_mapper.dart';
 import '../view_data/place_view_data.dart';
-import './place_visuals.dart';
 
 class MapSection extends StatefulWidget {
   final MapController mapController;
@@ -99,7 +100,10 @@ class _MapSectionState extends State<MapSection> {
     );
   }
 
-  List<Marker> _buildMarkers(BuildContext context, latlong.LatLng? centerPoint) {
+  List<Marker> _buildMarkers(
+    BuildContext context,
+    latlong.LatLng? centerPoint,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     final markers = <Marker>[];
     final myPoint = GeoMapMapper.toLatLngOrNull(
@@ -133,7 +137,7 @@ class _MapSectionState extends State<MapSection> {
   }
 
   Marker _buildPlaceMarker(PlaceViewData place) {
-    final visual = PlaceVisuals.fromType(place.type);
+    final visual = PlaceVisualMapper.fromWireType(place.type);
     return Marker(
       point: latlong.LatLng(place.lat, place.lon),
       width: 35,
@@ -183,7 +187,7 @@ class _MapSectionState extends State<MapSection> {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 16),
-                Text(widget.loadingMessage ?? 'Ищем лучшие места...'),
+                Text(widget.loadingMessage ?? context.l10n.loadingBestPlaces),
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:date_navigation/features/date_navigation/domain/services/place_quality_service.dart';
+import 'package:date_navigation/features/date_navigation/data/datasources/local/cache_service.dart';
 import 'package:date_navigation/features/date_navigation/data/datasources/remote/places_remote_data_source.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/date_vibe.dart';
 import 'package:date_navigation/features/date_navigation/domain/entities/place.dart';
@@ -30,7 +31,7 @@ void main() {
       return http.Response(jsonEncode(data), 200);
     });
 
-    final ds = PlacesRemoteDataSource(client: mock);
+    final ds = PlacesRemoteDataSource(client: mock, cache: CacheService());
     final places = await ds.findPlacesNearby(
       lat: 53.9,
       lon: 27.5667,

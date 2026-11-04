@@ -86,7 +86,8 @@ class RoomSessionController {
     switch (res) {
       case Err(:final failure):
         _setRoomActionLoading(false);
-        _setFailure(failure, 'room');
+        // Surface expired/invalid invites under a stable join operation tag.
+        _setFailure(failure, 'join');
       case Ok(value: final access):
         _writeState(
           _roomActions.afterJoinSuccess(

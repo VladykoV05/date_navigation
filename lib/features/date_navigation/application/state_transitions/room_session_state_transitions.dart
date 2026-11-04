@@ -1,4 +1,5 @@
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../state/date_navigation_state.dart';
 
 class RoomSessionStateTransitions {
@@ -41,14 +42,13 @@ class RoomSessionStateTransitions {
   Failure? validateCompleteSession(DateNavigationState state) {
     if (state.room.roomId == null || state.room.roomId!.isEmpty) return null;
     if (!state.room.isCreator) {
-      return const UnknownFailure(
-        'Завершить сессию может только создатель комнаты',
-      );
+      return const UnknownFailure(FailureCodes.onlyCreatorCanEnd);
     }
     return null;
   }
 
   DateNavigationState afterLeaveRoom(DateNavigationState state) {
-    return DateNavigationState(addressMemory: state.addressMemory);
+    // Full reset so keepAlive controller cannot leak prior-user address memory.
+    return const DateNavigationState();
   }
 }

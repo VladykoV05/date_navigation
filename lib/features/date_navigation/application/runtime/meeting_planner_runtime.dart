@@ -61,6 +61,7 @@ class MeetingPlannerRuntime {
   }
 
   void resetAll() {
+    _meetingRequestSeq++;
     _meetingInFlight = null;
     _partnerFallbackInFlight = null;
     _meetingRecalculatePending = false;
@@ -143,7 +144,7 @@ class MeetingPlannerRuntime {
               .toList();
     var filtered = selectedType == null
         ? byRadius
-        : byRadius.where((p) => p.matchesType(selectedType)).toList();
+        : byRadius.where((p) => p.matchesWireType(selectedType)).toList();
     filtered.sort(
       (a, b) =>
           scorePlace(
@@ -177,11 +178,7 @@ class MeetingPlannerRuntime {
     final avg = (d1 + d2) / 2.0;
     final balance = 1 - ((d1 - d2).abs() / (d1 + d2 + 1));
     final proximity = 1 - (avg / 3000).clamp(0, 1);
-    final typeBonus = switch (place.type) {
-      'restaurant' => 0.05,
-      'cafe' => 0.03,
-      _ => 0.0,
-    };
+    final typeBonus = place.primaryType?.meetingBalanceBonus ?? 0.0;
     final formatBonus = _formatBonus(place, meetingFormat);
     return (balance * 0.7 + proximity * 0.3 + typeBonus + formatBonus).clamp(
       0.0,

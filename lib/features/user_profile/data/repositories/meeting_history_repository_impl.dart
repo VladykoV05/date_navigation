@@ -1,4 +1,5 @@
 import '../../domain/entities/meeting_history_item.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../domain/repositories/meeting_history_repository.dart';
 import '../datasources/remote/user_meeting_history_remote_data_source.dart';
@@ -37,7 +38,7 @@ class MeetingHistoryRepositoryImpl implements MeetingHistoryRepository {
         lat: lat,
         lon: lon,
       ),
-      fallback: 'Не удалось сохранить историю встречи',
+      fallback: FailureCodes.saveMeetingHistoryFailed,
     );
   }
 }

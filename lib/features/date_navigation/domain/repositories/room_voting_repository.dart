@@ -1,63 +1,10 @@
-import '../../../../core/error/result.dart';
-import '../entities/accepted_proposal_history_draft.dart';
-import '../entities/voting_decisions.dart';
+import 'room_meeting_format_repository.dart';
+import 'room_place_voting_repository.dart';
+import 'room_scenario_repository.dart';
 
-abstract interface class RoomVotingRepository {
-  Future<Result<void>> voteForPlace({
-    required String roomId,
-    required String userId,
-    required String placeName,
-  });
-
-  Future<Result<void>> proposePlace({
-    required String roomId,
-    required String placeName,
-    required ProposalAuthorRole authorRole,
-    required double lat,
-    required double lon,
-    String? placeAddress,
-    String? placeType,
-  });
-
-  Future<Result<AcceptedProposalHistoryDraft?>> respondToProposal({
-    required String roomId,
-    required ProposalResponseDecision decision,
-    required String actedByUserId,
-  });
-
-  Future<Result<void>> saveSelectedScenario({
-    required String roomId,
-    required Map<String, dynamic> scenario,
-    required String selectedByUserId,
-  });
-
-  Future<Result<void>> saveMeetingFormats({
-    required String roomId,
-    required String userId,
-    required List<String> formats,
-  });
-
-  Future<Result<void>> requestMeetingRevote({
-    required String roomId,
-    required String userId,
-    required List<String> formats,
-  });
-
-  Future<Result<void>> respondMeetingRevote({
-    required String roomId,
-    required String userId,
-    required MeetingRevoteResponseDecision decision,
-  });
-
-  Future<Result<void>> saveSelectedMeetingFormat({
-    required String roomId,
-    required String userId,
-    required String format,
-  });
-
-  Future<Result<void>> saveSearchRadius({
-    required String roomId,
-    required String userId,
-    required int radius,
-  });
-}
+/// Facade kept for shared impl wiring; prefer narrow ports in use cases.
+abstract interface class RoomVotingRepository
+    implements
+        RoomPlaceVotingRepository,
+        RoomMeetingFormatRepository,
+        RoomScenarioRepository {}
