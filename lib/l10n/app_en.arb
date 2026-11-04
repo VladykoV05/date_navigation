@@ -1,0 +1,555 @@
+{
+  "@@locale": "en",
+  "appTitle": "Date Navigator",
+  "signInTitle": "Meeting planner",
+  "signInSubtitle": "Sign in with Google to save favorites and continue meetings faster.",
+  "signInButton": "Sign in with Google",
+  "signInLoading": "Signing in...",
+  "welcomeTitle": "Ready to meet?",
+  "welcomeSubtitle": "Create a room, share the code with a friend, and enter your addresses.\nWe will suggest convenient places near the midpoint.",
+  "welcomeCreateMeeting": "Create meeting",
+  "welcomeJoinByCode": "Join with code",
+  "waitSecondParticipant": "Waiting for the second participant...\nAsk your partner to enter the room code and submit an address.",
+  "pickSameFormatFirst": "Agree on the same meeting format first — place discovery unlocks after that.",
+  "formatNotMatchedPlaceDisabled": "Place selection is unavailable until formats match.",
+  "noResultsInCategory": "No results in this subcategory yet.\nPick another chip or reset the filter.",
+  "noResultsInRadius": "No results in the current radius yet.\nIncrease search radius or tap Retry.",
+  "sessionCompletedHint": "Session completed. You can create a new room.",
+  "sessionExpiredHint": "Session expired. Create a new room to continue.",
+  "unstableNetworkShowingCached": "Network is unstable. Showing the latest available results.",
+  "sessionCompletedBanner": "Session completed. You can leave and create a new room.",
+  "sessionExpiredBanner": "Session expired. Create a new room to continue.",
+  "leaveRoomTitle": "Leave the room?",
+  "leaveRoomMessage": "You will leave the room on this device and return to the start screen.",
+  "leaveRoomConfirm": "Yes, leave",
+  "leaveRoomButton": "Leave room",
+  "sessionClosedActionsDisabled": "Session completed. Actions are disabled.",
+  "sessionExpiredActionsDisabled": "Session expired. Actions are disabled.",
+  "loadingGeocoding": "Checking address...",
+  "loadingMeeting": "Finding meeting point and places...",
+  "loadingNearbyPlaces": "Finding places near the meeting point... Usually takes 10-15 seconds.",
+  "loadingRoomSync": "Updating room...",
+  "loadingGeneric": "Loading...",
+  "otherAddressesLabel": "Other addresses",
+  "clearOtherAddressesTitle": "Clear other addresses?",
+  "clearOtherAddressesMessage": "All addresses in this list will be removed.",
+  "clearAllAddressesLabel": "Clear all",
+  "clearLabel": "Clear",
+  "cancelLabel": "Cancel",
+  "deleteAddressTooltip": "Delete address",
+  "confirmMyFormatChoiceLabel": "Confirm my choice",
+  "yesLabel": "Yes",
+  "noLabel": "No",
+  "okLabel": "OK",
+  "openLabel": "Open",
+  "rejectLabel": "Reject",
+  "acceptLabel": "Accept",
+  "focusPointMissing": "Enter your address first",
+  "notEnoughPoints": "Not enough points on the map",
+  "partnerRadiusSuggestTitle": "Partner suggests radius",
+  "partnerRadiusSuggestPrompt": "Change search radius to {radius} m?",
+  "@partnerRadiusSuggestPrompt": {
+    "placeholders": {
+      "radius": {
+        "type": "int"
+      }
+    }
+  },
+  "partnerRadiusAcceptLabel": "Yes, accept",
+  "partnerRadiusReminder": "Partner still suggests {radius} m",
+  "@partnerRadiusReminder": {
+    "placeholders": {
+      "radius": {
+        "type": "int"
+      }
+    }
+  },
+  "creatorChangedRadius": "Creator changed radius to {radius} m",
+  "@creatorChangedRadius": {
+    "placeholders": {
+      "radius": {
+        "type": "int"
+      }
+    }
+  },
+  "partnerPlaceSuggestTitle": "Partner suggested a place",
+  "proposalPlaceLabel": "Place: {place}",
+  "@proposalPlaceLabel": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "proposalTypeLabel": "Type: {type}",
+  "@proposalTypeLabel": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "proposalAddressLabel": "Address: {address}",
+  "@proposalAddressLabel": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "proposalAcceptQuestion": "Accept?",
+  "meetingRevoteRequestTitle": "Revote request",
+  "meetingRevoteRequestPrompt": "Your partner wants to change the meeting format. Allow revote?",
+  "formatStatusSelectBoth": "Pick formats. When they overlap, confirm one.",
+  "formatStatusNoCommon": "No overlap yet. Add a matching format.",
+  "formatStatusReadyToConfirm": "Common formats found. Confirm one.",
+  "formatStatusRevoteRequestedByMe": "Revote request sent. Waiting for partner response.",
+  "formatStatusRevoteRequestedByPartner": "Partner requests a format revote.",
+  "formatStatusAgreed": "Format agreed: {format}",
+  "@formatStatusAgreed": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "formatStatusConfirmedByMe": "You confirmed: {format}. Waiting for partner.",
+  "@formatStatusConfirmedByMe": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "formatStatusRevotingNow": "Revote in progress. Current: {format}.",
+  "@formatStatusRevotingNow": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "formatConfirmationMissing": "not confirmed",
+  "formatConfirmationLine": "You: {my} • Partner: {partner}",
+  "@formatConfirmationLine": {
+    "placeholders": {
+      "my": {
+        "type": "String"
+      },
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "formatDraftResetPrompt": "Your selected format is no longer common. Reset and pick again?",
+  "roomCodeLabel": "CODE: {code}",
+  "@roomCodeLabel": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "venueAgreedTitle": "Venue agreed",
+  "dateAssistantTitle": "Date Assistant",
+  "commonFormatsTitle": "Common formats (pick one)",
+  "formatChangedTitle": "Format selection changed",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingStart": "Get started",
+  "onboardingSlide1Title": "Create a room",
+  "onboardingSlide1Body": "Generate a code and share it with your partner to join the same session.",
+  "onboardingSlide2Title": "Agree on format",
+  "onboardingSlide2Body": "Pick a shared meeting format: food, walk, activity, or culture.",
+  "onboardingSlide3Title": "Find a place",
+  "onboardingSlide3Body": "Enter addresses and the app will suggest a meeting point and nearby places.",
+  "addressDeleteUndoMessage": "Address will be deleted in {seconds} seconds",
+  "@addressDeleteUndoMessage": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "addressesDeleteUndoMessage": "Addresses will be deleted in {seconds} seconds",
+  "@addressesDeleteUndoMessage": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "undoLabel": "Undo",
+  "signInError": "Sign-in error: {message}",
+  "@signInError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "signInGenericError": "Google sign-in failed: {error}",
+  "@signInGenericError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "languageRussian": "Русский",
+  "languageEnglish": "English",
+  "accountMenuTooltip": "Account",
+  "accountMenuCabinet": "Profile",
+  "accountMenuLogout": "Sign out",
+  "accountMenuLanguage": "Language",
+  "accountFallbackTitle": "Account",
+  "accountTitle": "Profile",
+  "accountTabFavorites": "Favorites",
+  "accountTabHistory": "History",
+  "accountUserFallback": "User",
+  "accountFavoritesEmpty": "Favorites are empty",
+  "accountHistoryEmpty": "Meeting history is empty",
+  "addressNotSpecified": "Address not specified",
+  "removeFromFavoritesTooltip": "Remove from favorites",
+  "timeUnknown": "Time unknown",
+  "coordinatesNotSaved": "Coordinates not saved",
+  "openOnMap": "Open on map",
+  "typeNotSpecified": "Type not specified",
+  "addressNotSaved": "Address not saved",
+  "addedToFavorites": "Added to favorites",
+  "alreadyInFavorites": "Already in favorites",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites",
+  "removedFromFavorites": "Removed from favorites",
+  "userNotAuthenticated": "User is not signed in",
+  "favoritesLoadFailed": "Failed to load favorites",
+  "historyLoadFailed": "Failed to load history",
+  "joinRoomTitle": "Enter code",
+  "joinRoomCodeLabel": "Room code",
+  "joinRoomCodeHint": "4 digits, e.g. 1234",
+  "joinRoomCodeHelper": "Enter the code your partner sent",
+  "joinRoomSubmit": "Join",
+  "mapActionsLabel": "Map actions",
+  "mapShowAllTooltip": "Show all",
+  "mapResetBearingTooltip": "Reset rotation",
+  "mapCenterOnMeTooltip": "Center on me",
+  "mapMarkerMe": "Me",
+  "mapMarkerPartner": "Partner",
+  "mapMarkerCenter": "Center",
+  "mapMarkerPlaces": "Places",
+  "searchRadiusLabel": "Search radius",
+  "metersShort": "{meters} m",
+  "@metersShort": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "kilometersShort": "{km} km",
+  "@kilometersShort": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "meetingPlacesTitle": "Meeting places",
+  "retryLabel": "Retry",
+  "dismissLabel": "Dismiss",
+  "createNewRoom": "Create new room",
+  "addressFieldLabel": "Address",
+  "addressFieldHint": "e.g. Minsk, Nezavisimosti 10",
+  "addressFieldHelper": "Enter a precise address. For Belarus, Russian/Belarusian names or transliteration work best (OSM often has no English street names).",
+  "frequentAddressesTitle": "Frequent addresses",
+  "meetingFormatFood": "Coffee or dinner",
+  "meetingFormatCulture": "Culture and experiences",
+  "meetingFormatWalk": "Just a walk",
+  "meetingFormatActive": "Active format",
+  "placeTypeBar": "Bar",
+  "placeTypeRestaurant": "Restaurant",
+  "placeTypeFastFood": "Fast food",
+  "placeTypeCafe": "Cafe",
+  "placeTypeCinema": "Cinema",
+  "placeTypeCulture": "Culture",
+  "placeTypeTheatre": "Theatre",
+  "placeTypePark": "Park",
+  "placeTypeViewpoint": "Viewpoint",
+  "placeTypeSport": "Sport",
+  "placeTypePool": "Pool",
+  "placeTypeIceRink": "Ice rink",
+  "placeTypeActive": "Activity",
+  "placeTypeFallback": "Place",
+  "chipAll": "All",
+  "chipCafe": "Cafe",
+  "chipRestaurants": "Restaurants",
+  "chipCinema": "Cinema",
+  "chipMuseums": "Museums",
+  "chipGalleries": "Galleries",
+  "chipTheatres": "Theatres",
+  "chipParks": "Parks",
+  "chipViewpoints": "Viewpoints",
+  "chipFitness": "Fitness",
+  "chipSportsCentre": "Sports centre",
+  "chipPool": "Pool",
+  "chipIceRink": "Ice rink",
+  "chipRackets": "Rackets",
+  "chipTeamSports": "Team sports",
+  "chipClimbing": "Climbing",
+  "chipDance": "Dance",
+  "chipYoga": "Yoga",
+  "proposePlace": "Propose",
+  "placeProposedToPartner": "Place proposed to partner",
+  "distanceForYou": "You",
+  "distanceForPartner": "Partner",
+  "routeLabel": "Route",
+  "distanceLine": "Distance: {who}, {dist}",
+  "@distanceLine": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "dist": {
+        "type": "String"
+      }
+    }
+  },
+  "placeSemanticsLabel": "Place {name}",
+  "@placeSemanticsLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "placeSemanticsHint": "Opens place details",
+  "removeVote": "Remove vote",
+  "castVote": "Vote",
+  "loadingBestPlaces": "Finding the best places...",
+  "scenarioPlanTitle": "Final meeting plan",
+  "scenarioRoomLabel": "Room #{roomId}",
+  "@scenarioRoomLabel": {
+    "placeholders": {
+      "roomId": {
+        "type": "String"
+      }
+    }
+  },
+  "scenarioDuration": "Duration: {minutes} min",
+  "@scenarioDuration": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "scenarioAnchor": "Meeting point: {name}",
+  "@scenarioAnchor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scenarioSteps": "Steps",
+  "minutesShort": "({minutes} min)",
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sharePlan": "Share plan",
+  "openFinalPlan": "Open final plan",
+  "sharePlanHeader": "Meeting plan in room #{roomId}",
+  "@sharePlanHeader": {
+    "placeholders": {
+      "roomId": {
+        "type": "String"
+      }
+    }
+  },
+  "sharePlanDuration": "Duration: {minutes} min",
+  "@sharePlanDuration": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sharePlanPlace": "Place: {name}",
+  "@sharePlanPlace": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sharePlanAddress": "Address: {address}",
+  "@sharePlanAddress": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "sharePlanSteps": "Steps:",
+  "sharePlanFooter": "Created in Date Navigator",
+  "failureTimeout": "The server is taking too long. Try again in a few seconds.",
+  "failureRateLimit": "Too many requests. Wait a bit and try again.",
+  "failureNetwork": "Network or access problem. Check your internet and try again.",
+  "failureParse": "Unexpected server response. Please try again.",
+  "failureGeneric": "Something went wrong. Please try again.",
+  "failureAddressNotFound": "Address not found",
+  "failureLocationServiceDisabled": "Location services are disabled",
+  "failureLocationPermissionDenied": "Location permission denied",
+  "failureLocationPermissionDeniedForever": "Location permission is blocked in settings",
+  "failureLocationUnavailable": "Could not get your location",
+  "failureLocationTimeout": "Location request timed out",
+  "useCurrentLocationLabel": "Use my location",
+  "useCurrentLocationLoading": "Locating...",
+  "failureRoomNotFound": "Room not found",
+  "failureRoomCodeExists": "A room with this code already exists",
+  "failureRoomFull": "Room is already full",
+  "failureMeetingPointCalc": "Could not calculate the meeting point",
+  "failureFormatMustBeCommon": "Pick a format from the shared options only",
+  "failureSessionAlreadyEnded": "Room session has already ended",
+  "failureOnlyCreatorCanEnd": "Only the room creator can end the session",
+  "scenarioTitleFood": "Coffee or dinner plan #{variant} at {placeName}",
+  "@scenarioTitleFood": {
+    "placeholders": {
+      "variant": {
+        "type": "int"
+      },
+      "placeName": {
+        "type": "String"
+      }
+    }
+  },
+  "scenarioTitleCulture": "Culture evening #{variant}",
+  "@scenarioTitleCulture": {
+    "placeholders": {
+      "variant": {
+        "type": "int"
+      }
+    }
+  },
+  "scenarioTitleWalk": "Walk plan #{variant}",
+  "@scenarioTitleWalk": {
+    "placeholders": {
+      "variant": {
+        "type": "int"
+      }
+    }
+  },
+  "scenarioTitleActive": "Active plan #{variant}",
+  "@scenarioTitleActive": {
+    "placeholders": {
+      "variant": {
+        "type": "int"
+      }
+    }
+  },
+  "scenarioDescFood": "Flexible format: grab coffee or have dinner in one place.",
+  "scenarioDescCulture": "Experience format: cinema, exhibition, or an atmospheric cultural venue.",
+  "scenarioDescWalk": "Calm format without a venue: a walk in a park or along the embankment.",
+  "scenarioDescActive": "Dynamic format: a sporty or active meetup.",
+  "scenarioStepGatherVenue": "Meet at the venue",
+  "scenarioStepGatherVenueDesc": "Meet up and pick a comfortable table.",
+  "scenarioStepFoodTalk": "Food and conversation",
+  "scenarioStepFoodTalkDesc": "Coffee break or a full dinner — whatever fits the mood.",
+  "scenarioStepMeetCulture": "Meet at the location",
+  "scenarioStepMeetCultureDesc": "Meet at the chosen cultural place.",
+  "scenarioStepMainCulture": "Main part",
+  "scenarioStepMainCultureDesc": "Spend time together and share impressions.",
+  "scenarioStepMeetWalk": "Meet at the start point",
+  "scenarioStepMeetWalkDesc": "Gather at a convenient point near the route.",
+  "scenarioStepWalk": "Walk",
+  "scenarioStepWalkDesc": "Walk through the park or embankment and talk.",
+  "scenarioStepGatherActive": "Meet at the location",
+  "scenarioStepGatherActiveDesc": "Meet up and get ready for the activity.",
+  "scenarioStepActive": "Active part",
+  "scenarioStepActiveDesc": "Shared activity at a comfortable pace.",
+  "failureCreateRoomRetry": "Could not create the room. Please try again.",
+  "failureCreateRoomFailed": "Could not create the room",
+  "failureJoinRoom": "Could not join the room",
+  "failureRoomCodeEmpty": "Room code is empty",
+  "failureRoomCorrupt": "Room data is corrupted",
+  "failureCreatorUnresolved": "Could not resolve the room creator",
+  "failureNotRoomMember": "You are not a participant of this room",
+  "failureUpdateLocation": "Could not update location",
+  "failureCompleteSession": "Could not complete the session",
+  "failurePickFormatBeforePlace": "Agree on the final format before choosing a place",
+  "failureFormatNotSelected": "Final meeting format is not selected",
+  "failureVotingClosed": "Voting is closed after the final choice",
+  "failureVote": "Could not submit the vote",
+  "failureFinalPlaceAlreadyChosen": "Final place is already chosen",
+  "failureProposePlace": "Could not propose the place",
+  "failureRespondProposal": "Could not respond to the proposal",
+  "failureSyncResults": "Could not sync results",
+  "failureSaveScenario": "Could not save the meeting scenario",
+  "failureSaveFormat": "Could not save the meeting format",
+  "failureRevoteAlreadyRequested": "A revote request has already been sent",
+  "failureRequestRevote": "Could not request a format revote",
+  "failureCannotConfirmOwnRevote": "You cannot confirm your own revote request",
+  "failureProcessRevote": "Could not process the revote request",
+  "failureConfirmFormat": "Could not confirm the meeting format",
+  "failureSaveRadius": "Could not save the search radius",
+  "failureSaveFavorite": "Could not save favorite",
+  "failureDeleteFavorite": "Could not remove favorite",
+  "failureSaveAddress": "Could not save address",
+  "failureDeleteAddress": "Could not delete address",
+  "failureSaveMeetingHistory": "Could not save meeting history",
+  "failureServiceUnavailable": "Service temporarily unavailable",
+  "failurePermissionDenied": "Permission denied for this operation",
+  "failureGeocodingTimeout": "Geocoding timed out",
+  "failureGeocodingRateLimit": "Too many geocoding requests",
+  "failureGeocodingHttp": "Geocoding request failed",
+  "failureGeocodingUnknown": "Could not geocode the address",
+  "failureRoomStream": "Lost connection to the room. Check your network.",
+  "failureRoutingTimeout": "Route calculation timed out",
+  "failureRoutingFailed": "Could not build a route between the addresses",
+  "presenceWaitingPartnerJoin": "Waiting for your partner to join.\nShare the invite link or room code.",
+  "presenceWaitingPartnerAddress": "Partner joined. Waiting for their address.",
+  "presenceWaitingYourAddress": "Enter your address to continue.",
+  "presenceWaitingYourFormats": "Pick meeting formats you are open to.",
+  "presenceWaitingPartnerFormats": "Waiting for partner to pick meeting formats.",
+  "presenceWaitingYourFormatConfirm": "Confirm a shared meeting format.",
+  "presenceWaitingPartnerFormatConfirm": "Waiting for partner to confirm the format.",
+  "routingDegradedBanner": "Route service is unavailable. Showing a simplified midpoint — tap Retry for a full route.",
+  "failureActionEditAddress": "Edit the address and try again, or tap Retry.",
+  "failureActionResubscribeRoom": "Tap Retry to reconnect to the room.",
+  "failureActionRetryMeeting": "Tap Retry to recalculate the meeting point.",
+  "shareInviteLabel": "Share invite",
+  "shareInviteMessage": "Join my Date Navigation room with code {code}:\n{link}",
+  "@shareInviteMessage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteInvalidTitle": "Invite unavailable",
+  "inviteInvalidMessage": "This invite code is invalid or expired. Ask for a new code.",
+  "searchCityLabel": "Search city",
+  "searchCityMinsk": "Minsk",
+  "searchCityOther": "Other / free-form",
+  "searchRegionLabel": "Search region",
+  "searchRegionGlobal": "Worldwide",
+  "searchRegionMinsk": "Minsk",
+  "noResultsInRadiusHint": "Try increasing the search radius, clearing the category filter, or changing the meeting format.",
+  "showAllCategoriesLabel": "Show all categories",
+  "increaseRadiusHint": "Increase radius and retry",
+  "privacyTitle": "Privacy",
+  "privacyBody": "Date Navigation stores your account profile, room participation, favorites, and meeting history in Firebase to sync collaborative planning.\n\nAddresses and coordinates are written only to rooms you join. You can delete your account and associated personal data from the Profile screen.\n\nLocation services are used only when you submit an address for geocoding. Analytics and crash diagnostics are collected in release builds.",
+  "deleteAccountTitle": "Delete account?",
+  "deleteAccountMessage": "This permanently deletes your Firebase account, favorites, history, and address memory. Rooms you created are not force-deleted for the partner.",
+  "deleteAccountConfirm": "Delete account",
+  "deleteAccountButton": "Delete account",
+  "deleteAccountFailed": "Could not delete the account. Sign in again and retry.",
+  "storeReadyChecklistNote": "Permissions: Internet only. No continuous GPS tracking. Data safety: account + room sync via Firebase."
+}

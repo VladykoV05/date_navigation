@@ -6,25 +6,26 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
-import '../../../../core/error/failure.dart';
-import '../../../../core/services/navigation_service.dart';
+import '../../../../core/deep_links/invite_deep_link_controller.dart';
+import '../../../../core/di/app_services_di.dart';
+import '../../../../core/l10n/app_copy.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/ui_tokens.dart';
-import '../../../../core/utils/place_type_localizer.dart';
 import '../../../../core/utils/show_notification.dart';
+import '../../../../core_ui/core_ui.dart';
 import '../mappers/geo_map_mapper.dart';
 import '../mappers/place_view_mapper.dart';
 import '../view_data/place_view_data.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../widgets/date_navigation_account_menu.dart';
-import '../widgets/confirm_dialog.dart';
 import '../widgets/date_navigation_map_consumer_section.dart';
 import '../widgets/date_navigation_map_overlay.dart';
 import '../widgets/date_navigation_room_body_consumer_section.dart';
 import '../widgets/date_navigation_status_banners.dart';
 import '../widgets/join_room_dialog.dart';
 import '../widgets/place_actions_sheet.dart';
-import '../widgets/ui_copy.dart';
 import '../controllers/date_navigation_controller.dart';
+import '../coordinators/date_navigation_page_side_effects.dart';
 import '../providers/date_navigation_provider.dart';
 import '../providers/meeting_favorites_provider.dart';
 import '../../application/state/date_navigation_state.dart';
@@ -73,7 +74,6 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
   final _addressCtrl = TextEditingController();
   final _mapController = MapController();
   final _sheetController = DraggableScrollableController();
-  final _navigationService = NavigationService();
   ProviderSubscription<DateNavigationState>? _stateSubscription;
   late final AnimationController _mapAnimationController;
   double _lastSheetMaxSize = 0.5;
@@ -90,6 +90,31 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       dateNavigationControllerProvider,
       _onStateChanged,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _consumePendingInviteLink();
+    });
+  }
+
+  void _consumePendingInviteLink() {
+    if (!mounted) return;
+    final code = ref
+        .read(inviteDeepLinkControllerProvider.notifier)
+        .takePendingCode();
+    if (code == null) return;
+    final hasRoom =
+        ref.read(dateNavigationControllerProvider).room.roomId != null;
+    if (hasRoom) return;
+    unawaited(
+      showJoinRoomDialog(
+        context: context,
+        initialCode: code,
+        onJoinCode: (joinCode) {
+          ref
+              .read(dateNavigationControllerProvider.notifier)
+              .joinRoom(joinCode);
+        },
+      ),
+    );
   }
 
   void _onStateChanged(
@@ -97,112 +122,44 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     DateNavigationState next,
   ) {
     if (!mounted) return;
-    _handleFailureNotifications(previous, next);
-    _handlePartnerSuggestions(previous, next);
-    _handleMapFocusReactions(previous, next);
-  }
-
-  void _handleFailureNotifications(
-    DateNavigationState? previous,
-    DateNavigationState next,
-  ) {
-    if (next.ui.lastFailure != null &&
-        next.ui.lastFailure != previous?.ui.lastFailure) {
-      _showInfoSnackBar(_humanizeFailure(next.ui.lastFailure!));
-    }
-    if (next.meeting.creatorChangedRadiusTo != null &&
-        next.meeting.creatorChangedRadiusTo !=
-            previous?.meeting.creatorChangedRadiusTo &&
-        !next.room.isCreator) {
-      _showInfoSnackBar(
-        UiCopy.creatorChangedRadius.replaceAll(
-          '{radius}',
-          '${next.meeting.creatorChangedRadiusTo}',
-        ),
-      );
-    }
-  }
-
-  void _handlePartnerSuggestions(
-    DateNavigationState? previous,
-    DateNavigationState next,
-  ) {
-    final nextPeerSuggestedRadius = next.meeting.peerSuggestedRadius;
-    final prevPeerSuggestedRadius = previous?.meeting.peerSuggestedRadius;
-    if (nextPeerSuggestedRadius != null &&
-        nextPeerSuggestedRadius > 0 &&
-        nextPeerSuggestedRadius != prevPeerSuggestedRadius) {
-      _radiusSuggestionReminderTimer?.cancel();
-      unawaited(_showPeerRadiusSuggestionDialog(nextPeerSuggestedRadius));
-    }
-
-    final myRole = next.room.isCreator ? 'creator' : 'partner';
-    final isPendingPartnerProposal =
-        next.voting.proposalPlaceName != null &&
-        (next.voting.proposalStatus?.isPending ?? false) &&
-        next.meeting.finalChoiceName == null &&
-        next.voting.proposalByRole != myRole;
-    final proposalJustChanged =
-        next.voting.proposalPlaceName != previous?.voting.proposalPlaceName ||
-        next.voting.proposalStatus != previous?.voting.proposalStatus ||
-        next.voting.proposalByRole != previous?.voting.proposalByRole;
-    if (isPendingPartnerProposal && proposalJustChanged) {
-      unawaited(
-        _showProposalDecisionDialog(
-          placeName: next.voting.proposalPlaceName!,
-          placeAddress: next.voting.proposalPlaceAddress,
-          placeType: next.voting.proposalPlaceType,
-        ),
-      );
-    }
-
-    final isPendingPartnerRevoteRequest =
-        (next.meeting.meetingRevoteRequestStatus?.isPending ?? false) &&
-        next.meeting.meetingRevoteRequestByRole != null &&
-        next.meeting.meetingRevoteRequestByRole != myRole;
-    final revoteRequestJustChanged =
-        next.meeting.meetingRevoteRequestStatus !=
-            previous?.meeting.meetingRevoteRequestStatus ||
-        next.meeting.meetingRevoteRequestByRole !=
-            previous?.meeting.meetingRevoteRequestByRole;
-    if (isPendingPartnerRevoteRequest && revoteRequestJustChanged) {
-      unawaited(_showMeetingRevoteDecisionDialog());
-    }
-  }
-
-  void _handleMapFocusReactions(
-    DateNavigationState? previous,
-    DateNavigationState next,
-  ) {
-    final hasAllPoints =
-        next.room.point1 != null &&
-        next.room.point2 != null &&
-        next.meeting.centerPoint != null;
-    final myPrevPoint = previous?.myPoint(previous.room.isCreator);
-    final myNextPoint = next.myPoint(next.room.isCreator);
-    final myPointChanged =
-        myNextPoint != null &&
-        (myPrevPoint == null ||
-            myPrevPoint.latitude != myNextPoint.latitude ||
-            myPrevPoint.longitude != myNextPoint.longitude);
-    if (myPointChanged && next.meeting.centerPoint == null) {
-      _focusOnAddressPoint(myNextPoint);
-    }
-    if (hasAllPoints &&
-        next.meeting.centerPoint != previous?.meeting.centerPoint) {
-      _focusOnCenter(next.meeting.centerPoint!);
-    }
-    final nextFinalChoicePlace = next.meeting.finalChoicePlace;
-    final prevFinalChoicePlace = previous?.meeting.finalChoicePlace;
-    final nextChoice = next.meeting.finalChoiceName;
-    final prevChoice = previous?.meeting.finalChoiceName;
-    if (nextFinalChoicePlace != null &&
-        (prevFinalChoicePlace == null ||
-            prevFinalChoicePlace.lat != nextFinalChoicePlace.lat ||
-            prevFinalChoicePlace.lon != nextFinalChoicePlace.lon ||
-            prevChoice != nextChoice)) {
-      _focusOnChosenVenue(PlaceViewMapper.fromPlace(nextFinalChoicePlace));
-    }
+    DateNavigationPageSideEffects(
+      onFailure: (failure) {
+        _showInfoSnackBar(context.l10n.localizeFailure(failure));
+      },
+      onCreatorChangedRadius: (radius) {
+        _showInfoSnackBar(context.l10n.creatorChangedRadius(radius));
+      },
+      onPeerRadiusSuggestion: (radius) {
+        _radiusSuggestionReminderTimer?.cancel();
+        unawaited(_showPeerRadiusSuggestionDialog(radius));
+      },
+      onPartnerProposal: ({required placeName, placeAddress, placeType}) {
+        unawaited(
+          _showProposalDecisionDialog(
+            placeName: placeName,
+            placeAddress: placeAddress,
+            placeType: placeType,
+          ),
+        );
+      },
+      onPartnerRevoteRequest: () {
+        unawaited(_showMeetingRevoteDecisionDialog());
+      },
+      onFocusMyPoint: (state) {
+        final point = state.myPoint(state.room.isCreator);
+        if (point != null) _focusOnAddressPoint(point);
+      },
+      onFocusCenter: (state) {
+        final center = state.meeting.centerPoint;
+        if (center != null) _focusOnCenter(center);
+      },
+      onFocusFinalVenue: (state) {
+        final place = state.meeting.finalChoicePlace;
+        if (place != null) {
+          _focusOnChosenVenue(PlaceViewMapper.fromPlace(place));
+        }
+      },
+    ).handle(previous, next);
   }
 
   @override
@@ -218,6 +175,13 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<String?>(inviteDeepLinkControllerProvider, (previous, next) {
+      if (next != null && next != previous) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _consumePendingInviteLink();
+        });
+      }
+    });
     final controller = ref.read(dateNavigationControllerProvider.notifier);
     final rawSheetMaxChildSize = ref.watch(
       dateNavigationControllerProvider.select((s) {
@@ -314,7 +278,7 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
       myPoint: myPoint,
       partnerPoint: partnerPoint,
       isFavorite: isFavorite,
-      navigationService: _navigationService,
+      navigationService: ref.read(navigationServiceProvider),
       canProposePlace: !venueLocked,
       onToggleFavorite: () async {
         await ref
@@ -340,24 +304,11 @@ class _DateNavigationPageState extends ConsumerState<DateNavigationPage>
     required bool isCalculatingMeeting,
     required bool isLoadingRoomAction,
   }) {
-    if (isGeocoding) return UiCopy.loadingGeocoding;
-    if (isCalculatingMeeting) return UiCopy.loadingMeeting;
-    if (isLoadingRoomAction) return UiCopy.loadingRoomSync;
-    return UiCopy.loadingGeneric;
-  }
-
-  String _humanizeFailure(Failure failure) {
-    return switch (failure) {
-      TimeoutFailure() =>
-        'Сервер долго отвечает. Попробуй ещё раз через пару секунд.',
-      RateLimitFailure() =>
-        'Слишком много запросов. Подожди немного и повтори.',
-      NetworkFailure() =>
-        'Проблема с сетью или доступом. Проверь интернет и попробуй снова.',
-      ParseFailure() =>
-        'Получили неожиданный ответ сервера. Попробуй повторить.',
-      UnknownFailure() => failure.message,
-    };
+    final l10n = context.l10n;
+    if (isGeocoding) return l10n.loadingGeocoding;
+    if (isCalculatingMeeting) return l10n.loadingMeeting;
+    if (isLoadingRoomAction) return l10n.loadingRoomSync;
+    return l10n.loadingGeneric;
   }
 }
 

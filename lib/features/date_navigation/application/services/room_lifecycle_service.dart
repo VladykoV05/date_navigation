@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../domain/usecases/complete_session.dart';
@@ -37,9 +38,7 @@ class RoomLifecycleService {
       final result = await _createRoom(inviteCode, createdBy: userId);
       switch (result) {
         case Err(:final failure):
-          final collision = failure.message.contains(
-            'Комната с таким кодом уже существует',
-          );
+          final collision = failure.message == FailureCodes.roomCodeExists;
           if (collision && attempt < _maxCreateRoomAttempts - 1) {
             continue;
           }
@@ -55,9 +54,7 @@ class RoomLifecycleService {
           return Ok(_access(roomId: roomId, inviteCode: inviteCode));
       }
     }
-    return const Err(
-      UnknownFailure('Не удалось создать комнату: попробуй еще раз'),
-    );
+    return const Err(UnknownFailure(FailureCodes.createRoomRetry));
   }
 
   Future<Result<RoomAccess>> joinRoom({
@@ -82,6 +79,7 @@ class RoomLifecycleService {
     final result = await _completeSession(roomId: roomId, userId: userId);
     if (result is Ok<void>) {
       unawaited(_analytics.roomClosed(reason: 'manual'));
+      unawaited(_analytics.meetingCompleted(reason: 'session_completed'));
     }
     return result;
   }

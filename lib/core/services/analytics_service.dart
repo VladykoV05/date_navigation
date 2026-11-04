@@ -14,6 +14,9 @@ class AnalyticsService {
   Future<void> addressSubmitted() =>
       _analytics.logEvent(name: 'address_submitted');
 
+  Future<void> locationSubmitted() =>
+      _analytics.logEvent(name: 'location_submitted');
+
   Future<void> meetingCalculated({required int placesCount}) =>
       _analytics.logEvent(
         name: 'meeting_calculated',
@@ -54,6 +57,9 @@ class AnalyticsService {
         name: 'proposal_responded',
         parameters: {'accepted': accepted ? 1 : 0},
       );
+
+  Future<void> meetingCompleted({required String reason}) => _analytics
+      .logEvent(name: 'meeting_completed', parameters: {'reason': reason});
 
   Future<void> operationFailed({
     required String operation,

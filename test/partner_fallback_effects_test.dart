@@ -28,7 +28,9 @@ void main() {
         distance: 1300,
       ),
       nearbyPlaces: [Place(name: placeName, lat: 53.9, lon: 27.56)],
-      fullRouteGeometry: const [GeoCoordinate(latitude: 53.9, longitude: 27.56)],
+      fullRouteGeometry: const [
+        GeoCoordinate(latitude: 53.9, longitude: 27.56),
+      ],
     );
   }
 

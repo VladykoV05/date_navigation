@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 
 Future<Result<void>> runUserProfileVoid(
@@ -17,13 +18,10 @@ Future<Result<void>> runUserProfileVoid(
   }
 }
 
-Failure _mapFirestoreFailure(
-  FirebaseException e, {
-  required String fallback,
-}) {
+Failure _mapFirestoreFailure(FirebaseException e, {required String fallback}) {
   return switch (e.code) {
-    'unavailable' => const NetworkFailure('Сервис временно недоступен'),
-    'permission-denied' => const UnknownFailure('Нет прав для операции'),
+    'unavailable' => const NetworkFailure(FailureCodes.serviceUnavailable),
+    'permission-denied' => const UnknownFailure(FailureCodes.permissionDenied),
     _ => UnknownFailure(fallback),
   };
 }

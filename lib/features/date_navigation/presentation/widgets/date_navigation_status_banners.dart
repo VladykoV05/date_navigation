@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/l10n/app_copy.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
+import '../../application/policies/failure_retry_policy.dart';
 import '../providers/date_navigation_provider.dart';
-import './ui_copy.dart';
 
 class DateNavigationStatusBanners extends StatelessWidget {
   const DateNavigationStatusBanners({super.key});
@@ -13,7 +15,8 @@ class DateNavigationStatusBanners extends StatelessWidget {
     return Column(
       children: [
         _SessionStatusBanner(),
-        _SyncSuggestionsBanner(),
+        _PresenceStatusBanner(),
+        _RoutingDegradedBanner(),
         _ErrorBanner(),
         _CachedDataBanner(),
       ],
@@ -47,16 +50,108 @@ class _StatusBannerContainer extends StatelessWidget {
   }
 }
 
-class _SyncSuggestionsBanner extends ConsumerWidget {
+class _PresenceStatusBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final view = ref.watch(
       dateNavigationControllerProvider.select(
-        (s) => (isSessionClosed: s.room.isClosed),
+        (s) => (
+          roomId: s.room.roomId,
+          isClosed: s.room.isClosed,
+          isCreator: s.room.isCreator,
+          partnerJoined: s.room.partnerJoined,
+          myPoint: s.room.myPoint(),
+          partnerPoint: s.room.partnerPoint(),
+          myFormats: s.room.isCreator
+              ? s.meeting.creatorMeetingFormats
+              : s.meeting.partnerMeetingFormats,
+          partnerFormats: s.room.isCreator
+              ? s.meeting.partnerMeetingFormats
+              : s.meeting.creatorMeetingFormats,
+          mySelected: s.meeting.mySelectedMeetingFormat(s.room.isCreator),
+          partnerSelected: s.room.isCreator
+              ? s.meeting.partnerSelectedMeetingFormat
+              : s.meeting.creatorSelectedMeetingFormat,
+          selectedMeetingFormat: s.meeting.selectedMeetingFormat,
+        ),
       ),
     );
-    if (view.isSessionClosed) return const SizedBox.shrink();
-    return const SizedBox.shrink();
+    if (view.roomId == null || view.isClosed) return const SizedBox.shrink();
+
+    final l10n = context.l10n;
+    String? text;
+    if (!view.partnerJoined && view.isCreator) {
+      text = l10n.presenceWaitingPartnerJoin;
+    } else if (view.partnerJoined && view.partnerPoint == null) {
+      text = l10n.presenceWaitingPartnerAddress;
+    } else if (view.myPoint == null) {
+      text = l10n.presenceWaitingYourAddress;
+    } else if (view.myFormats.isEmpty) {
+      text = l10n.presenceWaitingYourFormats;
+    } else if (view.partnerFormats.isEmpty) {
+      text = l10n.presenceWaitingPartnerFormats;
+    } else if (view.selectedMeetingFormat == null && view.mySelected == null) {
+      text = l10n.presenceWaitingYourFormatConfirm;
+    } else if (view.selectedMeetingFormat == null &&
+        view.partnerSelected == null) {
+      text = l10n.presenceWaitingPartnerFormatConfirm;
+    }
+
+    if (text == null) return const SizedBox.shrink();
+
+    return _StatusBannerContainer(
+      backgroundColor: colorScheme.secondaryContainer.withValues(alpha: 0.55),
+      borderColor: colorScheme.secondary.withValues(alpha: 0.35),
+      child: Row(
+        children: [
+          Icon(Icons.people_outline, size: 18, color: colorScheme.secondary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(color: colorScheme.onSecondaryContainer),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RoutingDegradedBanner extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final degraded = ref.watch(
+      dateNavigationControllerProvider.select(
+        (s) => s.meeting.isRoutingDegraded && s.meeting.centerPoint != null,
+      ),
+    );
+    if (!degraded) return const SizedBox.shrink();
+
+    return _StatusBannerContainer(
+      backgroundColor: colorScheme.tertiaryContainer.withValues(alpha: 0.7),
+      borderColor: colorScheme.tertiary.withValues(alpha: 0.4),
+      child: Row(
+        children: [
+          Icon(Icons.alt_route, size: 18, color: colorScheme.tertiary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              context.l10n.routingDegradedBanner,
+              style: TextStyle(color: colorScheme.onTertiaryContainer),
+            ),
+          ),
+          TextButton(
+            onPressed: () => ref
+                .read(dateNavigationControllerProvider.notifier)
+                .recalculateForRadius(),
+            child: Text(context.l10n.retryLabel),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -75,9 +170,10 @@ class _SessionStatusBanner extends ConsumerWidget {
     final sessionStatus = view.sessionStatus;
     if (sessionStatus.isActive) return const SizedBox.shrink();
     final controller = ref.read(dateNavigationControllerProvider.notifier);
+    final l10n = context.l10n;
     final text = sessionStatus.isCompleted
-        ? UiCopy.sessionCompletedBanner
-        : UiCopy.sessionExpiredBanner;
+        ? l10n.sessionCompletedBanner
+        : l10n.sessionExpiredBanner;
     return _StatusBannerContainer(
       backgroundColor: colorScheme.surfaceContainerHighest,
       borderColor: colorScheme.outlineVariant,
@@ -99,7 +195,7 @@ class _SessionStatusBanner extends ConsumerWidget {
                   ? null
                   : controller.startNewRoom,
               icon: const Icon(Icons.add_circle_outline),
-              label: const Text('Создать новую комнату'),
+              label: Text(l10n.createNewRoom),
             ),
           ),
         ],
@@ -109,6 +205,8 @@ class _SessionStatusBanner extends ConsumerWidget {
 }
 
 class _ErrorBanner extends ConsumerWidget {
+  static const _retryPolicy = FailureRetryPolicy();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -125,12 +223,12 @@ class _ErrorBanner extends ConsumerWidget {
     final failure = state.lastFailure;
     if (failure == null) return const SizedBox.shrink();
 
-    final canRetry = _canRetryFailure(
+    final retryAction = _retryPolicy.actionFor(
       failure: failure,
       failureOperation: state.failureOperation,
-      point1: state.point1,
-      point2: state.point2,
+      hasBothPoints: state.point1 != null && state.point2 != null,
     );
+    final canRetry = retryAction != FailureRetryAction.none;
     final isActionableError = canRetry || failure is ParseFailure;
     final backgroundColor = isActionableError
         ? colorScheme.errorContainer
@@ -138,6 +236,13 @@ class _ErrorBanner extends ConsumerWidget {
     final borderColor = isActionableError
         ? colorScheme.error.withValues(alpha: 0.4)
         : colorScheme.outlineVariant;
+    final hint = switch (state.failureOperation) {
+      'geocode' => context.l10n.failureActionEditAddress,
+      'room_stream' => context.l10n.failureActionResubscribeRoom,
+      'meeting' => context.l10n.failureActionRetryMeeting,
+      'join' => context.l10n.inviteInvalidMessage,
+      _ => null,
+    };
     return _StatusBannerContainer(
       backgroundColor: backgroundColor,
       borderColor: borderColor,
@@ -145,7 +250,7 @@ class _ErrorBanner extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _humanizeFailure(failure),
+            context.l10n.localizeFailure(failure),
             style: TextStyle(
               fontWeight: FontWeight.w600,
               color: isActionableError
@@ -153,19 +258,28 @@ class _ErrorBanner extends ConsumerWidget {
                   : colorScheme.onSurface,
             ),
           ),
+          if (hint != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              hint,
+              style: TextStyle(
+                color: isActionableError
+                    ? colorScheme.onErrorContainer
+                    : colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
           const SizedBox(height: 8),
           Row(
             children: [
               if (canRetry)
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      ref
-                          .read(dateNavigationControllerProvider.notifier)
-                          .recalculateForRadius();
-                    },
+                    onPressed: () => ref
+                        .read(dateNavigationControllerProvider.notifier)
+                        .retryLastFailure(),
                     icon: const Icon(Icons.refresh, size: 18),
-                    label: const Text('Повторить'),
+                    label: Text(context.l10n.retryLabel),
                   ),
                 ),
               if (canRetry) const SizedBox(width: 8),
@@ -174,7 +288,7 @@ class _ErrorBanner extends ConsumerWidget {
                   onPressed: () => ref
                       .read(dateNavigationControllerProvider.notifier)
                       .clearError(),
-                  child: const Text('Скрыть'),
+                  child: Text(context.l10n.dismissLabel),
                 ),
               ),
             ],
@@ -199,10 +313,7 @@ class _CachedDataBanner extends ConsumerWidget {
     );
     final failure = state.lastFailure;
     final hasPlaces = state.filteredPlaces.isNotEmpty;
-    final networkRelated =
-        failure is TimeoutFailure ||
-        failure is RateLimitFailure ||
-        failure is NetworkFailure;
+    final networkRelated = failure?.isRetryable ?? false;
     if (!hasPlaces || !networkRelated) return const SizedBox.shrink();
 
     return _StatusBannerContainer(
@@ -214,7 +325,7 @@ class _CachedDataBanner extends ConsumerWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              UiCopy.unstableNetworkShowingCached,
+              context.l10n.unstableNetworkShowingCached,
               style: TextStyle(color: colorScheme.onSecondaryContainer),
             ),
           ),
@@ -222,34 +333,4 @@ class _CachedDataBanner extends ConsumerWidget {
       ),
     );
   }
-}
-
-String _humanizeFailure(Failure failure) {
-  return switch (failure) {
-    TimeoutFailure() =>
-      'Сервер долго отвечает. Попробуй ещё раз через пару секунд.',
-    RateLimitFailure() => 'Слишком много запросов. Подожди немного и повтори.',
-    NetworkFailure() =>
-      'Проблема с сетью или доступом. Проверь интернет и попробуй снова.',
-    ParseFailure() => 'Получили неожиданный ответ сервера. Попробуй повторить.',
-    UnknownFailure() => failure.message,
-  };
-}
-
-bool _canRetryFailure({
-  required Failure failure,
-  required String? failureOperation,
-  required Object? point1,
-  required Object? point2,
-}) {
-  final retryable =
-      failure is TimeoutFailure ||
-      failure is RateLimitFailure ||
-      failure is NetworkFailure;
-  final hasPoints = point1 != null && point2 != null;
-  final op = failureOperation;
-  if (!retryable) return false;
-  if (op == 'meeting') return hasPoints;
-  if (op == 'geocode') return true;
-  return false;
 }

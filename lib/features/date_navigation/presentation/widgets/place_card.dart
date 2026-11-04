@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/l10n/app_copy.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
+import '../mappers/place_visual_mapper.dart';
 import '../view_data/place_view_data.dart';
 import './place_visuals.dart';
 
@@ -27,17 +31,19 @@ class PlaceCard extends StatelessWidget {
     this.selectedTypeContext,
   });
 
-  String _formatDistance(double meters) {
-    if (meters < 1000) return '${meters.toInt()} м';
-    return '${(meters / 1000).toStringAsFixed(1)} км';
+  String _formatDistance(BuildContext context, double meters) {
+    final l10n = context.l10n;
+    if (meters < 1000) return l10n.metersShort(meters.toInt());
+    return l10n.kilometersShort((meters / 1000).toStringAsFixed(1));
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final visual = PlaceVisuals.fromType(place.type);
+    final visual = PlaceVisualMapper.fromWireType(place.type);
     final typeLabels = _buildTypeLabels(
+      context,
       place,
       selectedTypeContext: selectedTypeContext,
     );
@@ -45,8 +51,8 @@ class PlaceCard extends StatelessWidget {
       margin: const EdgeInsets.only(right: 8),
       child: Semantics(
         button: true,
-        label: 'Место ${place.name}',
-        hint: 'Открывает карточку места с деталями',
+        label: context.l10n.placeSemanticsLabel(place.name),
+        hint: context.l10n.placeSemanticsHint,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
@@ -81,7 +87,7 @@ class PlaceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  place.address ?? 'Адрес не указан',
+                  place.address ?? context.l10n.addressNotSpecified,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.bodySmall?.copyWith(
@@ -96,6 +102,7 @@ class PlaceCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         _formatDistance(
+                          context,
                           place.distanceTo(
                             userLocation!.latitude,
                             userLocation!.longitude,
@@ -130,8 +137,8 @@ class PlaceCard extends StatelessWidget {
                             minHeight: 48,
                           ),
                           tooltip: isVotedByMe
-                              ? 'Убрать голос'
-                              : 'Проголосовать',
+                              ? context.l10n.removeVote
+                              : context.l10n.castVote,
                           icon: Icon(
                             isVotedByMe
                                 ? Icons.thumb_up
@@ -153,7 +160,8 @@ class PlaceCard extends StatelessWidget {
                 ],
                 _buildTypeChip(
                   visual: visual,
-                  labelText: typeLabels.firstOrNull ?? visual.label,
+                  labelText:
+                      typeLabels.firstOrNull ?? context.l10n.placeTypeFallback,
                   secondaryText: null,
                 ),
               ],
@@ -164,19 +172,24 @@ class PlaceCard extends StatelessWidget {
     );
   }
 
-  List<String> _buildTypeLabels(PlaceViewData place, {String? selectedTypeContext}) {
-    if (selectedTypeContext == 'swimming_pool' &&
-        place.types.contains('swimming_pool')) {
+  List<String> _buildTypeLabels(
+    BuildContext context,
+    PlaceViewData place, {
+    String? selectedTypeContext,
+  }) {
+    final l10n = context.l10n;
+    final poolType = PlaceVisualMapper.swimmingPoolWireValue;
+    if (selectedTypeContext == poolType && place.types.contains(poolType)) {
       // In "Pool" filter show only pool label.
-      return const ['Бассейн'];
+      return [l10n.placeTypePool];
     }
     final labels = <String>[];
-    final primary = PlaceVisuals.fromType(place.type).label;
+    final primary = l10n.placeTypeLabelFromWire(place.type);
     if (primary.trim().isNotEmpty) {
       labels.add(primary.trim());
     }
     for (final type in place.types) {
-      final label = PlaceVisuals.fromType(type).label.trim();
+      final label = l10n.placeTypeLabelFromWire(type).trim();
       if (label.isEmpty) continue;
       if (!labels.contains(label)) {
         labels.add(label);

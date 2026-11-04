@@ -19,6 +19,9 @@ abstract class RoomSessionState with _$RoomSessionState {
     @Default(false) bool isCreator,
     GeoCoordinate? point1,
     GeoCoordinate? point2,
+
+    /// True when partnerUid is set on the room document (joined, address optional).
+    @Default(false) bool partnerJoined,
     @Default(SessionStatus.active) SessionStatus sessionStatus,
   }) = _RoomSessionState;
 
@@ -56,6 +59,9 @@ abstract class MeetingPlanningState with _$MeetingPlanningState {
     @Default([]) List<DateScenario> dateScenarios,
     String? meetingRevoteRequestByRole,
     RevoteRequestStatus? meetingRevoteRequestStatus,
+
+    /// True when meeting center used geometric midpoint after OSRM failure.
+    @Default(false) bool isRoutingDegraded,
   }) = _MeetingPlanningState;
 
   MeetingFormat? get creatorMeetingFormat => creatorMeetingFormats.firstOrNull;

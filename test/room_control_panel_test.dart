@@ -1,7 +1,17 @@
+import 'package:date_navigation/core/search/search_region.dart';
+import 'package:date_navigation/core/search/search_region_preferences.dart';
 import 'package:date_navigation/features/date_navigation/presentation/view_data/place_view_data.dart';
 import 'package:date_navigation/features/date_navigation/presentation/widgets/room_control_panel.dart';
+import 'package:date_navigation/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class _FixedSearchRegionController extends SearchRegionController {
+  @override
+  Future<SearchRegion> build() async => SearchRegion.minsk;
+}
 
 void main() {
   Widget buildPanel({
@@ -14,57 +24,94 @@ void main() {
     MeetingFormatView? partnerSelectedMeetingFormat,
     MeetingFormatView? selectedMeetingFormat,
     MeetingFormatView? lastAgreedMeetingFormat,
+    VoidCallback? onUseCurrentLocation,
   }) {
-    return MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: RoomControlPanel(
-            roomId: 'ROOM42',
-            isLoading: false,
-            isGeocoding: false,
-            isCalculatingMeeting: false,
-            isLoadingRoomAction: false,
-            addressController: TextEditingController(),
-            onAddressSubmit: () {},
-            recentAddresses: const [],
-            onAddressSuggestionSelected: (_) {},
-            onAddressSuggestionDeleted: (_) async {},
-            onAddressSuggestionsDeleted: (_) async {},
-            places: const <PlaceViewData>[],
-            selectedType: null,
-            onTypeChanged: (_) {},
-            onPlaceTap: (_) {},
-            myLocation: null,
-            hasPartner: true,
-            searchRadius: 500,
-            onSearchRadiusChanged: (_) {},
-            onSearchRadiusChangeEnd: () {},
-            onRetryPlaces: () {},
-            onVotePlace: (_) {},
-            voteCounts: const {},
-            myVotePlaceName: null,
-            scoreForPlace: (_) => 0,
-            isFavoritePlace: (_) => false,
-            creatorMeetingFormats: creatorMeetingFormats,
-            partnerMeetingFormats: partnerMeetingFormats,
-            commonMeetingFormats: commonMeetingFormats,
-            mySelectedMeetingFormat: mySelectedMeetingFormat,
-            partnerSelectedMeetingFormat: partnerSelectedMeetingFormat,
-            selectedMeetingFormat: selectedMeetingFormat,
-            lastAgreedMeetingFormat: lastAgreedMeetingFormat,
-            meetingRevoteRequestByRole: null,
-            meetingRevoteRequestStatus: null,
-            onMeetingFormatsChanged: onMeetingFormatsChanged,
-            onMeetingFormatConfirmed: onMeetingFormatConfirmed,
-            isSessionClosed: false,
-            sessionStatus: SessionStatusView.active,
-            isCreator: true,
-            onLeaveRoom: () {},
+    return ProviderScope(
+      overrides: [
+        searchRegionControllerProvider.overrideWith(
+          _FixedSearchRegionController.new,
+        ),
+      ],
+      child: MaterialApp(
+        locale: const Locale('ru'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: RoomControlPanel(
+              roomId: 'ROOM42',
+              isLoading: false,
+              isGeocoding: false,
+              isLocating: false,
+              isCalculatingMeeting: false,
+              isLoadingRoomAction: false,
+              addressController: TextEditingController(),
+              onAddressSubmit: () {},
+              onUseCurrentLocation: onUseCurrentLocation ?? () {},
+              recentAddresses: const [],
+              onAddressSuggestionSelected: (_) {},
+              onAddressSuggestionDeleted: (_) async {},
+              onAddressSuggestionsDeleted: (_) async {},
+              places: const <PlaceViewData>[],
+              selectedType: null,
+              onTypeChanged: (_) {},
+              onPlaceTap: (_) {},
+              myLocation: null,
+              hasPartner: true,
+              searchRadius: 500,
+              onSearchRadiusChanged: (_) {},
+              onSearchRadiusChangeEnd: () {},
+              onRetryPlaces: () {},
+              onExpandRadiusAndRetry: () {},
+              onVotePlace: (_) {},
+              voteCounts: const {},
+              myVotePlaceName: null,
+              scoreForPlace: (_) => 0,
+              isFavoritePlace: (_) => false,
+              creatorMeetingFormats: creatorMeetingFormats,
+              partnerMeetingFormats: partnerMeetingFormats,
+              commonMeetingFormats: commonMeetingFormats,
+              mySelectedMeetingFormat: mySelectedMeetingFormat,
+              partnerSelectedMeetingFormat: partnerSelectedMeetingFormat,
+              selectedMeetingFormat: selectedMeetingFormat,
+              lastAgreedMeetingFormat: lastAgreedMeetingFormat,
+              meetingRevoteRequestByRole: null,
+              meetingRevoteRequestStatus: null,
+              onMeetingFormatsChanged: onMeetingFormatsChanged,
+              onMeetingFormatConfirmed: onMeetingFormatConfirmed,
+              isSessionClosed: false,
+              sessionStatus: SessionStatusView.active,
+              isCreator: true,
+              onLeaveRoom: () {},
+            ),
           ),
         ),
       ),
     );
   }
+
+  testWidgets('invokes current location callback', (tester) async {
+    var tapped = false;
+    await tester.pumpWidget(
+      buildPanel(
+        onMeetingFormatsChanged: (_) {},
+        onMeetingFormatConfirmed: (_) {},
+        onUseCurrentLocation: () => tapped = true,
+      ),
+    );
+
+    final button = find.text('Моя точка');
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+
+    expect(tapped, isTrue);
+  });
 
   testWidgets('shows common formats section and confirms selected format', (
     tester,
@@ -87,6 +134,7 @@ void main() {
       ),
     );
 
+    expect(find.text('Моя точка'), findsOneWidget);
     expect(find.text('Общие форматы (выберите один)'), findsOneWidget);
     final commonChip = find.text('Культура и впечатления').last;
     await tester.ensureVisible(commonChip);

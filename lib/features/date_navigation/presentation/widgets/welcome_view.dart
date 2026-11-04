@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
+
 class WelcomeView extends StatelessWidget {
   final VoidCallback onCreateRoom;
   final VoidCallback onJoinRoom;
@@ -12,18 +14,18 @@ class WelcomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
         Text(
-          'Встречаемся?',
+          l10n.welcomeTitle,
           style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
         Text(
-          'Создай комнату, отправь код другу и укажите свои адреса.\n'
-          'Мы подберем удобные места примерно посередине.',
+          l10n.welcomeSubtitle,
           textAlign: TextAlign.center,
           style: textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -38,10 +40,10 @@ class WelcomeView extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
           ),
-          child: const Text('Создать встречу'),
+          child: Text(l10n.welcomeCreateMeeting),
         ),
         const SizedBox(height: 8),
-        TextButton(onPressed: onJoinRoom, child: const Text('Войти по коду')),
+        TextButton(onPressed: onJoinRoom, child: Text(l10n.welcomeJoinByCode)),
       ],
     );
   }

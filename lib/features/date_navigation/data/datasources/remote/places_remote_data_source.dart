@@ -13,6 +13,8 @@ import 'nominatim_places_client.dart';
 import 'place_discovery_pipeline.dart';
 import '../../../domain/services/place_quality_service.dart';
 
+String _defaultAcceptLanguage() => 'ru-RU,ru;q=0.9,en;q=0.8';
+
 class PlacesRemoteDataSource {
   static const List<String> _overpassUrls = [
     'https://overpass-api.de/api/interpreter',
@@ -25,6 +27,7 @@ class PlacesRemoteDataSource {
   final PlaceQualityService _qualityService;
   final NominatimPlacesClient _nominatimClient;
   final OverpassPlaceMapper _overpassPlaceMapper;
+  final String Function() _cacheLocaleTag;
   final Map<String, Future<List<Place>>> _inFlight = {};
 
   final Map<String, String> _headers = {
@@ -34,20 +37,24 @@ class PlacesRemoteDataSource {
 
   PlacesRemoteDataSource({
     required http.Client client,
-    CacheService? cache,
+    required CacheService cache,
     PlaceQualityService? qualityService,
     NominatimPlacesClient? nominatimClient,
     OverpassPlaceMapper? overpassPlaceMapper,
+    String Function()? acceptLanguage,
+    String Function()? cacheLocaleTag,
   }) : _client = client,
-       _cache = cache ?? CacheService(),
+       _cache = cache,
        _qualityService = qualityService ?? const PlaceQualityService(),
        _overpassPlaceMapper =
            overpassPlaceMapper ?? const OverpassPlaceMapper(),
+       _cacheLocaleTag = cacheLocaleTag ?? (() => 'ru'),
        _nominatimClient =
            nominatimClient ??
            NominatimPlacesClient(
              client: client,
              qualityService: qualityService ?? const PlaceQualityService(),
+             acceptLanguage: acceptLanguage ?? _defaultAcceptLanguage,
            );
 
   Future<List<Place>> findPlacesNearby({
@@ -63,6 +70,7 @@ class PlacesRemoteDataSource {
       lon,
       radius,
       format: format.wireValue,
+      localeTag: _cacheLocaleTag(),
     );
     final existing = _inFlight[cacheKey];
     if (existing != null) return existing;
@@ -163,7 +171,7 @@ class PlacesRemoteDataSource {
               DateNavigationConfig.placesMinRadiusMeters,
               DateNavigationConfig.placesMaxRadiusMeters,
             );
-            return findPlacesNearby(
+            return await findPlacesNearby(
               lat: lat,
               lon: lon,
               format: format,
@@ -203,7 +211,7 @@ class PlacesRemoteDataSource {
               DateNavigationConfig.placesMinRadiusMeters,
               DateNavigationConfig.placesMaxRadiusMeters,
             );
-            return findPlacesNearby(
+            return await findPlacesNearby(
               lat: lat,
               lon: lon,
               format: format,

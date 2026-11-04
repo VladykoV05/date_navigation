@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/l10n/locale_provider.dart';
 import '../domain/usecases/usecases.dart';
+import '../application/l10n/app_scenario_copy_catalog.dart';
 import 'repository_providers.dart';
 
 part 'usecase_providers.g.dart';
@@ -32,17 +36,17 @@ UpdateLocation updateLocation(Ref ref) {
 
 @Riverpod(keepAlive: true)
 VoteForPlace voteForPlace(Ref ref) {
-  return VoteForPlace(ref.watch(roomVotingRepositoryProvider));
+  return VoteForPlace(ref.watch(roomPlaceVotingRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 ProposePlace proposePlace(Ref ref) {
-  return ProposePlace(ref.watch(roomVotingRepositoryProvider));
+  return ProposePlace(ref.watch(roomPlaceVotingRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RespondToProposal respondToProposal(Ref ref) {
-  return RespondToProposal(ref.watch(roomVotingRepositoryProvider));
+  return RespondToProposal(ref.watch(roomPlaceVotingRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
@@ -52,37 +56,38 @@ SaveMeetingSnapshot saveMeetingSnapshot(Ref ref) {
 
 @Riverpod(keepAlive: true)
 BuildDateScenarios buildDateScenarios(Ref ref) {
-  return const BuildDateScenarios();
+  final locale = ref.watch(appLocaleProvider).value ?? const Locale('ru');
+  return BuildDateScenarios(AppScenarioCopyCatalog(locale));
 }
 
 @Riverpod(keepAlive: true)
 SaveSelectedScenario saveSelectedScenario(Ref ref) {
-  return SaveSelectedScenario(ref.watch(roomVotingRepositoryProvider));
+  return SaveSelectedScenario(ref.watch(roomScenarioRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 SaveMeetingFormat saveMeetingFormat(Ref ref) {
-  return SaveMeetingFormat(ref.watch(roomVotingRepositoryProvider));
+  return SaveMeetingFormat(ref.watch(roomMeetingFormatRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 ConfirmMeetingFormat confirmMeetingFormat(Ref ref) {
-  return ConfirmMeetingFormat(ref.watch(roomVotingRepositoryProvider));
+  return ConfirmMeetingFormat(ref.watch(roomMeetingFormatRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RequestMeetingRevote requestMeetingRevote(Ref ref) {
-  return RequestMeetingRevote(ref.watch(roomVotingRepositoryProvider));
+  return RequestMeetingRevote(ref.watch(roomMeetingFormatRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 RespondMeetingRevote respondMeetingRevote(Ref ref) {
-  return RespondMeetingRevote(ref.watch(roomVotingRepositoryProvider));
+  return RespondMeetingRevote(ref.watch(roomMeetingFormatRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
 SaveSearchRadius saveSearchRadius(Ref ref) {
-  return SaveSearchRadius(ref.watch(roomVotingRepositoryProvider));
+  return SaveSearchRadius(ref.watch(roomMeetingFormatRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)

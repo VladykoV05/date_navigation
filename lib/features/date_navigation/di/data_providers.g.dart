@@ -9,6 +9,47 @@ part of 'data_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(cacheService)
+final cacheServiceProvider = CacheServiceProvider._();
+
+final class CacheServiceProvider
+    extends $FunctionalProvider<CacheService, CacheService, CacheService>
+    with $Provider<CacheService> {
+  CacheServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'cacheServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$cacheServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<CacheService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  CacheService create(Ref ref) {
+    return cacheService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CacheService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CacheService>(value),
+    );
+  }
+}
+
+String _$cacheServiceHash() => r'bf5dee3937cc8737dd1550a43c77eedd44eba0bd';
+
 @ProviderFor(roomRemoteDataSource)
 final roomRemoteDataSourceProvider = RoomRemoteDataSourceProvider._();
 
@@ -103,7 +144,7 @@ final class GeocodingRemoteDataSourceProvider
 }
 
 String _$geocodingRemoteDataSourceHash() =>
-    r'cc3172f49bae9a7138f560a5fdde855307f00ce6';
+    r'a4efc7a73656bbe9e5d81d971b513c223993435d';
 
 @ProviderFor(osrmRemoteDataSource)
 final osrmRemoteDataSourceProvider = OsrmRemoteDataSourceProvider._();
@@ -151,7 +192,7 @@ final class OsrmRemoteDataSourceProvider
 }
 
 String _$osrmRemoteDataSourceHash() =>
-    r'a816e80b3a7765b4276e3011c5e12ba953316e18';
+    r'342c59c92bfb8ef985122e3c96ca6775b60b7e8e';
 
 @ProviderFor(placesRemoteDataSource)
 final placesRemoteDataSourceProvider = PlacesRemoteDataSourceProvider._();
@@ -199,4 +240,4 @@ final class PlacesRemoteDataSourceProvider
 }
 
 String _$placesRemoteDataSourceHash() =>
-    r'4bbbee177271b4ba5da562017ad413105477ce71';
+    r'962a78b2b6339a064826b59383b8a054a4d12b80';

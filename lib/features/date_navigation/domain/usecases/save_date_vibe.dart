@@ -1,12 +1,12 @@
 import '../../../../core/error/result.dart';
 import '../entities/date_vibe.dart';
 import '../entities/voting_decisions.dart';
-import '../repositories/room_voting_repository.dart';
+import '../repositories/room_meeting_format_repository.dart';
 
 class SaveMeetingFormat {
   const SaveMeetingFormat(this._repo);
 
-  final RoomVotingRepository _repo;
+  final RoomMeetingFormatRepository _repo;
 
   Future<Result<void>> call({
     required String roomId,
@@ -26,7 +26,7 @@ class SaveMeetingFormat {
 class ConfirmMeetingFormat {
   const ConfirmMeetingFormat(this._repo);
 
-  final RoomVotingRepository _repo;
+  final RoomMeetingFormatRepository _repo;
 
   Future<Result<void>> call({
     required String roomId,
@@ -44,7 +44,7 @@ class ConfirmMeetingFormat {
 class RequestMeetingRevote {
   const RequestMeetingRevote(this._repo);
 
-  final RoomVotingRepository _repo;
+  final RoomMeetingFormatRepository _repo;
 
   Future<Result<void>> call({
     required String roomId,
@@ -64,7 +64,7 @@ class RequestMeetingRevote {
 class RespondMeetingRevote {
   const RespondMeetingRevote(this._repo);
 
-  final RoomVotingRepository _repo;
+  final RoomMeetingFormatRepository _repo;
 
   Future<Result<void>> call({
     required String roomId,

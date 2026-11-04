@@ -35,7 +35,7 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
     final state = ref.read(dateNavigationControllerProvider);
     final myPoint = state.myPoint(state.room.isCreator);
     if (myPoint == null) {
-      _showInfoSnackBar(UiCopy.focusPointMissing);
+      _showInfoSnackBar(context.l10n.focusPointMissing);
       return;
     }
     _focusOnAddressPoint(myPoint);
@@ -89,7 +89,7 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
         ),
       );
     } else {
-      _showInfoSnackBar(UiCopy.notEnoughPoints);
+      _showInfoSnackBar(context.l10n.notEnoughPoints);
     }
     return true;
   }

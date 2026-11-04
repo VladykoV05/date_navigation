@@ -11,12 +11,10 @@ Use this checklist whenever you add or modify a `MeetingFormat`.
 ## 2) Single Source of Truth (Format Config)
 
 - Update `config/format_chip_config.dart`:
-  - format label,
-  - chips/options,
-  - `placeType` values,
-  - Overpass selectors,
-  - Nominatim queries,
-  - relevance bonus.
+  - chips/options (`id`, `placeType`, Overpass/Nominatim queries, bonus),
+  - do **not** hardcode UI labels here — labels come from ARB via `chipLabelFor` / `meetingFormatLabel`.
+- Add format label keys to `lib/l10n/app_en.arb` and `app_ru.arb`.
+- Update scenario copy in `ScenarioCopyCatalog` / ARB scenario keys.
 
 Do not duplicate chip/query/type logic in widgets or data sources.
 

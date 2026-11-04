@@ -1,4 +1,5 @@
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
 import '../state/date_navigation_state.dart';
@@ -75,7 +76,7 @@ class PartnerFallbackResultResolver {
 
   PartnerFallbackFailureResult resolveUnexpectedFailure() {
     return const PartnerFallbackFailureResult(
-      failure: UnknownFailure('Не удалось рассчитать точку встречи'),
+      failure: UnknownFailure(FailureCodes.meetingPointCalcFailed),
     );
   }
 }

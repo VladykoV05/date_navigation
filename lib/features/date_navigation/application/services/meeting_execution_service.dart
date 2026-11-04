@@ -66,23 +66,12 @@ class MeetingExecutionService {
     required int searchRadius,
     required MeetingFormat meetingFormat,
   }) async {
-    final payload = places
-        .map(
-          (p) => <String, dynamic>{
-            'name': p.name,
-            'lat': p.lat,
-            'lon': p.lon,
-            'address': p.address,
-            'type': p.type,
-          },
-        )
-        .toList(growable: false);
     unawaited(
       _saveMeetingSnapshot(
         roomId: roomId,
         centerPoint: centerPoint,
         routePoints: routePoints,
-        places: payload,
+        places: places,
         searchRadius: searchRadius,
         meetingFormat: meetingFormat,
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../providers/date_navigation_provider.dart';
 
 class DateNavigationMapOverlay extends ConsumerWidget {
@@ -102,28 +103,29 @@ class _MapActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Semantics(
       container: true,
-      label: 'Действия карты',
+      label: l10n.mapActionsLabel,
       child: SafeArea(
         child: _MapOverlaySurface(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                tooltip: 'Показать всех',
+                tooltip: l10n.mapShowAllTooltip,
                 onPressed: canFitAllPoints ? onFitAllPoints : null,
                 icon: const Icon(Icons.fit_screen),
               ),
               const SizedBox(height: 4),
               IconButton(
-                tooltip: 'Сбросить поворот',
+                tooltip: l10n.mapResetBearingTooltip,
                 onPressed: onResetMapOrientation,
                 icon: const Icon(Icons.explore),
               ),
               const SizedBox(height: 4),
               IconButton(
-                tooltip: 'Ко мне',
+                tooltip: l10n.mapCenterOnMeTooltip,
                 onPressed: canFocusMyPoint ? onFocusMyPoint : null,
                 icon: const Icon(Icons.my_location),
               ),
@@ -151,30 +153,31 @@ class _MapLegend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
     final items = <Widget>[
       if (hasMyPoint)
         _LegendItem(
           icon: Icons.my_location,
           color: colorScheme.primary,
-          label: 'Я',
+          label: l10n.mapMarkerMe,
         ),
       if (hasPartnerPoint)
-        const _LegendItem(
+        _LegendItem(
           icon: Icons.location_on,
           color: Colors.red,
-          label: 'Партнер',
+          label: l10n.mapMarkerPartner,
         ),
       if (hasCenterPoint)
         _LegendItem(
           icon: Icons.adjust,
           color: colorScheme.primary,
-          label: 'Центр',
+          label: l10n.mapMarkerCenter,
         ),
       if (hasPlaces)
-        const _LegendItem(
+        _LegendItem(
           icon: Icons.place_outlined,
           color: Colors.green,
-          label: 'Места',
+          label: l10n.mapMarkerPlaces,
         ),
     ];
     if (items.isEmpty) return const SizedBox.shrink();

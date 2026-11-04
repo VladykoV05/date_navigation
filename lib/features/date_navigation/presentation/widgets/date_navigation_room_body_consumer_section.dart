@@ -1,18 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core_ui/core_ui.dart';
 import '../mappers/place_view_mapper.dart';
 import '../view_data/place_view_data.dart';
 import '../controllers/date_navigation_controller.dart';
 import '../providers/date_navigation_provider.dart';
 import '../providers/meeting_favorites_provider.dart';
-import './confirm_dialog.dart';
 import './place_card.dart';
 import './room_control_panel.dart';
 import './scenario_summary_sheet.dart';
-import './ui_copy.dart';
 import './welcome_view.dart';
 
 class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
@@ -50,9 +52,10 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
     final venueLocked = view.venueLocked;
     final isSessionClosed = view.isSessionClosed;
     final isSessionCompleted = view.sessionStatus.isCompleted;
+    final l10n = context.l10n;
     final sessionClosedLabel = isSessionCompleted
-        ? UiCopy.sessionCompletedHint
-        : UiCopy.sessionExpiredHint;
+        ? l10n.sessionCompletedHint
+        : l10n.sessionExpiredHint;
     if (venueLocked) {
       final name = view.finalChoiceName;
       final place = view.finalChoicePlace == null
@@ -69,7 +72,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'КОД: $displayCode',
+            l10n.roomCodeLabel(displayCode),
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 18,
@@ -78,7 +81,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Место согласовано',
+            l10n.venueAgreedTitle,
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -126,6 +129,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
                     SharePlus.instance.share(
                       ShareParams(
                         text: _shareScenarioText(
+                          context: context,
                           roomId: displayCode,
                           scenario: selectedScenario,
                         ),
@@ -135,7 +139,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
                 ),
               ),
               icon: const Icon(Icons.receipt_long_outlined),
-              label: const Text('Открыть итоговый план'),
+              label: Text(l10n.openFinalPlan),
             ),
           ],
           const SizedBox(height: 16),
@@ -162,11 +166,10 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
             onPressed: () async {
               final shouldLeave = await ConfirmDialog.showBinary(
                 context,
-                title: 'Покинуть комнату?',
-                message:
-                    'Вы выйдете из текущей комнаты на этом устройстве и вернетесь на стартовый экран.',
-                cancelLabel: UiCopy.noLabel,
-                confirmLabel: UiCopy.leaveRoomConfirm,
+                title: l10n.leaveRoomTitle,
+                message: l10n.leaveRoomMessage,
+                cancelLabel: l10n.noLabel,
+                confirmLabel: l10n.leaveRoomConfirm,
               );
               if (shouldLeave == true) {
                 HapticFeedback.mediumImpact();
@@ -175,7 +178,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
               }
             },
             icon: const Icon(Icons.logout),
-            label: const Text('Покинуть комнату'),
+            label: Text(l10n.leaveRoomButton),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size(double.infinity, 48),
             ),
@@ -190,10 +193,12 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       roomId: panelView.roomId,
       isLoading: panelView.isLoading,
       isGeocoding: panelView.isGeocoding,
+      isLocating: panelView.isGeocoding,
       isCalculatingMeeting: panelView.isCalculatingMeeting,
       isLoadingRoomAction: panelView.isLoadingRoomAction,
       addressController: addressController,
       onAddressSubmit: onSubmitAddress,
+      onUseCurrentLocation: () => unawaited(controller.submitMyLocation()),
       recentAddresses: panelView.recentAddresses,
       onAddressSuggestionSelected: onAddressSuggestionSelected,
       onAddressSuggestionDeleted: controller.removeRememberedAddress,
@@ -208,10 +213,13 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       onSearchRadiusChanged: controller.setSearchRadius,
       onSearchRadiusChangeEnd: controller.recalculateForRadius,
       onRetryPlaces: controller.recalculateForRadius,
-      onVotePlace: (place) => controller.voteForPlace(PlaceViewMapper.toPlace(place)),
+      onExpandRadiusAndRetry: controller.expandSearchRadiusAndRetry,
+      onVotePlace: (place) =>
+          controller.voteForPlace(PlaceViewMapper.toPlace(place)),
       voteCounts: panelView.voteCounts,
       myVotePlaceName: panelView.myVotePlaceName,
-      scoreForPlace: (place) => controller.scorePlace(PlaceViewMapper.toPlace(place)),
+      scoreForPlace: (place) =>
+          controller.scorePlace(PlaceViewMapper.toPlace(place)),
       isFavoritePlace: (place) => favoriteState.containsPlace(
         placeName: place.name,
         lat: place.lat,
@@ -239,37 +247,40 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       },
       isSessionClosed: panelView.isSessionClosed,
       sessionStatus: panelView.sessionStatus,
-      isSliverMode: true,
     );
   }
 
   String _shareScenarioText({
+    required BuildContext context,
     required String roomId,
     required ScenarioViewData scenario,
   }) {
+    final l10n = context.l10n;
     final buffer = StringBuffer()
-      ..writeln('План встречи в комнате #$roomId')
+      ..writeln(l10n.sharePlanHeader(roomId))
       ..writeln()
       ..writeln(scenario.title)
       ..writeln(scenario.description)
-      ..writeln('Длительность: ${scenario.totalDurationMinutes} мин');
+      ..writeln(l10n.sharePlanDuration(scenario.totalDurationMinutes));
     if (scenario.anchorPlace != null) {
-      buffer.writeln('Место: ${scenario.anchorPlace!.name}');
+      buffer.writeln(l10n.sharePlanPlace(scenario.anchorPlace!.name));
       final address = scenario.anchorPlace!.address;
       if (address != null && address.isNotEmpty) {
-        buffer.writeln('Адрес: $address');
+        buffer.writeln(l10n.sharePlanAddress(address));
       }
     }
     if (scenario.steps.isNotEmpty) {
       buffer.writeln();
-      buffer.writeln('Шаги:');
+      buffer.writeln(l10n.sharePlanSteps);
       for (final step in scenario.steps) {
-        final eta = step.etaMinutes == null ? '' : ' (${step.etaMinutes} мин)';
+        final eta = step.etaMinutes == null
+            ? ''
+            : ' ${l10n.minutesShort(step.etaMinutes!)}';
         buffer.writeln('- ${step.title}$eta');
       }
     }
     buffer.writeln();
-    buffer.write('Собрано в приложении для встречи');
+    buffer.write(l10n.sharePlanFooter);
     return buffer.toString();
   }
 }

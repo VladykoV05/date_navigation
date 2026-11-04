@@ -3,7 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/di/auth_di.dart';
-import '../../../../core/utils/place_type_localizer.dart';
+import '../../../../core/error/failure.dart';
+import '../../../../core/error/result.dart';
+import '../../../../core/l10n/app_copy.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core_ui/core_ui.dart';
 import '../../../user_profile/user_profile.dart';
 import '../../di/account_di.dart';
 import '../widgets/account_empty_state.dart';
@@ -21,17 +25,18 @@ class AccountPage extends ConsumerWidget {
     final textTheme = theme.textTheme;
     final state = ref.watch(accountControllerProvider);
     final accountController = ref.read(accountControllerProvider.notifier);
-    final user = ref.watch(currentUserProvider);
+    final user = ref.watch(currentUserProvider).value;
+    final l10n = context.l10n;
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Кабинет'),
-          bottom: const TabBar(
+          title: Text(l10n.accountTitle),
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'Избранное'),
-              Tab(text: 'История'),
+              Tab(text: l10n.accountTabFavorites),
+              Tab(text: l10n.accountTabHistory),
             ],
           ),
         ),
@@ -39,8 +44,22 @@ class AccountPage extends ConsumerWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.person),
-              title: Text(user?.displayName ?? 'Пользователь'),
+              title: Text(user?.displayName ?? l10n.accountUserFallback),
               subtitle: Text(user?.email ?? user?.uid ?? ''),
+            ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip_outlined),
+              title: Text(l10n.privacyTitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showPrivacySheet(context),
+            ),
+            ListTile(
+              leading: Icon(Icons.delete_forever, color: colorScheme.error),
+              title: Text(
+                l10n.deleteAccountButton,
+                style: TextStyle(color: colorScheme.error),
+              ),
+              onTap: () => _confirmDeleteAccount(context, ref),
             ),
             if (state.error != null)
               Padding(
@@ -49,7 +68,7 @@ class AccountPage extends ConsumerWidget {
                   vertical: 4,
                 ),
                 child: Text(
-                  state.error!,
+                  _localizeAccountError(context, state.error!),
                   style: textTheme.bodyMedium?.copyWith(
                     color: colorScheme.error,
                   ),
@@ -61,7 +80,7 @@ class AccountPage extends ConsumerWidget {
                   if (state.isLoading)
                     const Center(child: CircularProgressIndicator())
                   else if (state.favorites.isEmpty)
-                    const AccountEmptyState(message: 'Избранное пока пустое')
+                    AccountEmptyState(message: l10n.accountFavoritesEmpty)
                   else
                     ListView.separated(
                       itemCount: state.favorites.length,
@@ -75,14 +94,14 @@ class AccountPage extends ConsumerWidget {
                           subtitle: Text(
                             (favorite.address?.trim().isNotEmpty ?? false)
                                 ? favorite.address!
-                                : 'Адрес не указан',
+                                : l10n.addressNotSpecified,
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(Icons.info_outline),
                               IconButton(
-                                tooltip: 'Удалить из избранного',
+                                tooltip: l10n.removeFromFavoritesTooltip,
                                 icon: const Icon(Icons.delete_outline),
                                 onPressed: () =>
                                     accountController.removeFavorite(favorite),
@@ -95,9 +114,7 @@ class AccountPage extends ConsumerWidget {
                   if (state.isLoading)
                     const Center(child: CircularProgressIndicator())
                   else if (state.history.isEmpty)
-                    const AccountEmptyState(
-                      message: 'История встреч пока пустая',
-                    )
+                    AccountEmptyState(message: l10n.accountHistoryEmpty)
                   else
                     ListView.separated(
                       itemCount: state.history.length,
@@ -130,7 +147,7 @@ class AccountPage extends ConsumerWidget {
                           ),
                           subtitle: Text(
                             date == null
-                                ? 'Время неизвестно'
+                                ? l10n.timeUnknown
                                 : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
                           ),
                           trailing: const Icon(Icons.chevron_right),
@@ -154,7 +171,8 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     UserFavorite favorite,
   ) async {
-    final type = localizePlaceType(favorite.type);
+    final l10n = context.l10n;
+    final type = l10n.placeTypeLabelFromWire(favorite.type);
     final address = favorite.address?.trim();
     final lat = favorite.lat;
     final lon = favorite.lon;
@@ -194,7 +212,7 @@ class AccountPage extends ConsumerWidget {
                   child: Text(
                     (address != null && address.isNotEmpty)
                         ? address
-                        : 'Адрес не указан',
+                        : l10n.addressNotSpecified,
                   ),
                 ),
               ],
@@ -209,7 +227,7 @@ class AccountPage extends ConsumerWidget {
                   child: Text(
                     hasCoordinates
                         ? '${lat.toStringAsFixed(6)}, ${lon.toStringAsFixed(6)}'
-                        : 'Координаты не сохранены',
+                        : l10n.coordinatesNotSaved,
                   ),
                 ),
               ],
@@ -227,7 +245,7 @@ class AccountPage extends ConsumerWidget {
                       )
                     : null,
                 icon: const Icon(Icons.map_outlined),
-                label: const Text('Открыть на карте'),
+                label: Text(l10n.openOnMap),
               ),
             ),
           ],
@@ -255,9 +273,10 @@ class AccountPage extends ConsumerWidget {
     MeetingHistoryItem item, {
     required bool isAlreadyFavorite,
   }) async {
+    final l10n = context.l10n;
     final date = item.createdAt;
     final formattedDate = date == null
-        ? 'Время неизвестно'
+        ? l10n.timeUnknown
         : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 
     await showModalBottomSheet<void>(
@@ -291,8 +310,8 @@ class AccountPage extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     (item.placeType?.trim().isNotEmpty ?? false)
-                        ? localizePlaceType(item.placeType)
-                        : 'Тип не указан',
+                        ? l10n.placeTypeLabelFromWire(item.placeType)
+                        : l10n.typeNotSpecified,
                   ),
                 ),
               ],
@@ -307,7 +326,7 @@ class AccountPage extends ConsumerWidget {
                   child: Text(
                     (item.placeAddress?.trim().isNotEmpty ?? false)
                         ? item.placeAddress!
-                        : 'Адрес не сохранен',
+                        : l10n.addressNotSaved,
                   ),
                 ),
               ],
@@ -328,8 +347,8 @@ class AccountPage extends ConsumerWidget {
                               if (context.mounted) {
                                 Navigator.of(context).pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Добавлено в избранное'),
+                                  SnackBar(
+                                    content: Text(l10n.addedToFavorites),
                                   ),
                                 );
                               }
@@ -340,7 +359,9 @@ class AccountPage extends ConsumerWidget {
                             : Icons.bookmark_add_outlined,
                       ),
                       label: Text(
-                        isAlreadyFavorite ? 'Уже в избранном' : 'В избранное',
+                        isAlreadyFavorite
+                            ? l10n.alreadyInFavorites
+                            : l10n.addToFavorites,
                       ),
                     ),
                   ),
@@ -349,7 +370,7 @@ class AccountPage extends ConsumerWidget {
                     child: FilledButton.icon(
                       onPressed: () => _openHistoryPlaceOnMap(item.placeName),
                       icon: const Icon(Icons.map_outlined),
-                      label: const Text('Открыть на карте'),
+                      label: Text(l10n.openOnMap),
                     ),
                   ),
                 ],
@@ -365,5 +386,70 @@ class AccountPage extends ConsumerWidget {
     final query = Uri.encodeComponent(placeName);
     final url = Uri.parse('$_yandexMapsBaseUrl?text=$query&z=$_defaultMapZoom');
     await launchUrl(url, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _showPrivacySheet(BuildContext context) async {
+    final l10n = context.l10n;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.privacyTitle,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 12),
+              Text(l10n.privacyBody),
+              const SizedBox(height: 12),
+              Text(
+                l10n.storeReadyChecklistNote,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeleteAccount(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = context.l10n;
+    final confirmed = await ConfirmDialog.showBinary(
+      context,
+      title: l10n.deleteAccountTitle,
+      message: l10n.deleteAccountMessage,
+      cancelLabel: l10n.cancelLabel,
+      confirmLabel: l10n.deleteAccountConfirm,
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final result = await ref
+        .read(accountDeletionServiceProvider)
+        .deleteCurrentAccount();
+    if (!context.mounted) return;
+    switch (result) {
+      case Ok():
+        // AuthGate remounts on signed-out stream; keepAlive session is
+        // invalidated there to avoid cross-feature presentation imports.
+        break;
+      case Err(:final failure):
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.localizeFailure(failure))));
+    }
+  }
+
+  String _localizeAccountError(BuildContext context, String error) {
+    return context.l10n.localizeFailure(UnknownFailure(error));
   }
 }

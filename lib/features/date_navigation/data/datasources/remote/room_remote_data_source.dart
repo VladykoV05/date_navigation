@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
+import '../../../../../core/error/failure_codes.dart';
 import '../../../../../core/error/result.dart';
 import '../../../domain/entities/accepted_proposal_history_draft.dart';
 import '../../../domain/entities/voting_decisions.dart';
@@ -268,8 +269,10 @@ class RoomRemoteDataSource {
   }) {
     // Keep user-facing failures deterministic for the most common Firestore codes.
     return switch (e.code) {
-      'unavailable' => const NetworkFailure('Сервис временно недоступен'),
-      'permission-denied' => const UnknownFailure('Нет прав для операции'),
+      'unavailable' => const NetworkFailure(FailureCodes.serviceUnavailable),
+      'permission-denied' => const UnknownFailure(
+        FailureCodes.permissionDenied,
+      ),
       _ => UnknownFailure(fallback),
     };
   }

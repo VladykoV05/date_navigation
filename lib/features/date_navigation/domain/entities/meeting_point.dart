@@ -8,6 +8,7 @@ class MeetingPoint {
   final RouteInfo partnerRoute;
   final List<Place> nearbyPlaces;
   final List<GeoCoordinate> fullRouteGeometry;
+  final bool isRoutingDegraded;
 
   MeetingPoint({
     required this.location,
@@ -15,6 +16,7 @@ class MeetingPoint {
     required this.partnerRoute,
     required this.nearbyPlaces,
     this.fullRouteGeometry = const [],
+    this.isRoutingDegraded = false,
   });
 
   bool get isFair =>

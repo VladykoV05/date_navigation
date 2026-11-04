@@ -7,9 +7,7 @@ import '../../../config/date_navigation_config.dart';
 import '../../../domain/entities/place.dart';
 
 class CacheService {
-  static final _instance = CacheService._();
-  factory CacheService() => _instance;
-  CacheService._();
+  CacheService();
 
   static const _geoCacheDuration = Duration(hours: 24);
   static const _routeCacheDuration = Duration(hours: 6);
@@ -17,11 +15,16 @@ class CacheService {
     hours: DateNavigationConfig.placesCacheHours,
   );
 
-  Future<Map<String, double>?> getCachedCoords(String address) async {
+  Future<Map<String, double>?> getCachedCoords(
+    String address, {
+    String? localeTag,
+    String? regionKey,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = 'geo_$address';
-      final cacheTimeKey = 'geo_time_$address';
+      final keySuffix = _localizedKey(address, localeTag, regionKey: regionKey);
+      final cacheKey = 'geo_$keySuffix';
+      final cacheTimeKey = 'geo_time_$keySuffix';
 
       final cachedTime = prefs.getInt(cacheTimeKey);
       if (cachedTime != null) {
@@ -40,11 +43,17 @@ class CacheService {
     return null;
   }
 
-  Future<void> cacheCoords(String address, Map<String, double> coords) async {
+  Future<void> cacheCoords(
+    String address,
+    Map<String, double> coords, {
+    String? localeTag,
+    String? regionKey,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cacheKey = 'geo_$address';
-      final cacheTimeKey = 'geo_time_$address';
+      final keySuffix = _localizedKey(address, localeTag, regionKey: regionKey);
+      final cacheKey = 'geo_$keySuffix';
+      final cacheTimeKey = 'geo_time_$keySuffix';
 
       await prefs.setString(cacheKey, json.encode(coords));
       await prefs.setInt(cacheTimeKey, DateTime.now().millisecondsSinceEpoch);
@@ -104,10 +113,28 @@ class CacheService {
     }
   }
 
-  String makePlacesKey(double lat, double lon, int radius, {String? format}) {
+  String makePlacesKey(
+    double lat,
+    double lon,
+    int radius, {
+    String? format,
+    String? localeTag,
+  }) {
     final formatPart = (format == null || format.isEmpty) ? 'any' : format;
+    final localePart = (localeTag == null || localeTag.isEmpty)
+        ? 'default'
+        : localeTag;
     return '${DateNavigationConfig.placesCacheVersion}_${lat.toStringAsFixed(3)}_${lon.toStringAsFixed(3)}_'
-        '${radius}_$formatPart';
+        '${radius}_${formatPart}_$localePart';
+  }
+
+  String _localizedKey(String value, String? localeTag, {String? regionKey}) {
+    final parts = <String>[
+      if (localeTag != null && localeTag.isNotEmpty) localeTag,
+      if (regionKey != null && regionKey.isNotEmpty) regionKey,
+      value,
+    ];
+    return parts.join('_');
   }
 
   Future<List<Place>?> getCachedPlaces(String key) async {

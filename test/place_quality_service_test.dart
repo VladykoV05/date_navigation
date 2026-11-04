@@ -58,8 +58,8 @@ void main() {
       address: 'Минск, ул. Спортивная 1',
     );
 
-    expect(place.matchesType('sports_centre'), isTrue);
-    expect(place.matchesType('swimming_pool'), isTrue);
+    expect(place.matchesWireType('sports_centre'), isTrue);
+    expect(place.matchesWireType('swimming_pool'), isTrue);
   });
 
   test('isUsablePlace requires address or rating for all places', () {

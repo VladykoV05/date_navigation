@@ -1,8 +1,10 @@
 import '../../../../core/error/result.dart';
 import '../../domain/entities/date_vibe.dart';
+import '../../domain/entities/place.dart';
 import '../../domain/repositories/meeting_snapshot_repository.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 import '../datasources/remote/room_remote_data_source.dart';
+import '../mappers/date_scenario_mapper.dart';
 import '../mappers/geo_coordinate_mapper.dart';
 
 class MeetingSnapshotRepositoryImpl implements MeetingSnapshotRepository {
@@ -14,7 +16,7 @@ class MeetingSnapshotRepositoryImpl implements MeetingSnapshotRepository {
     required String roomId,
     required GeoCoordinate centerPoint,
     required List<GeoCoordinate> routePoints,
-    required List<Map<String, dynamic>> places,
+    required List<Place> places,
     required int searchRadius,
     required MeetingFormat meetingFormat,
   }) {
@@ -22,7 +24,9 @@ class MeetingSnapshotRepositoryImpl implements MeetingSnapshotRepository {
       roomId: roomId,
       centerPoint: GeoCoordinateMapper.toLatLng(centerPoint),
       routePoints: GeoCoordinateMapper.toLatLngList(routePoints),
-      places: places,
+      places: places
+          .map(DateScenarioMapper.placeToFirestore)
+          .toList(growable: false),
       searchRadius: searchRadius,
       meetingFormat: meetingFormat.wireValue,
     );

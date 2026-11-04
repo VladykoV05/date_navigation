@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/auth_di.dart';
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../core/utils/show_notification.dart';
 
@@ -26,12 +27,15 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       if (!mounted) return;
       ShowNotification.showSnackBar(
         context,
-        'Ошибка входа: ${e.message ?? e.code}',
+        context.l10n.signInError(e.message ?? e.code),
       );
     } catch (e, stack) {
       AppLogger.e('Google sign-in failed', e, stack);
       if (!mounted) return;
-      ShowNotification.showSnackBar(context, 'Google вход не выполнен: $e');
+      ShowNotification.showSnackBar(
+        context,
+        context.l10n.signInGenericError('$e'),
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -41,6 +45,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
@@ -77,13 +82,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Приложение для встречи',
+                      l10n.signInTitle,
                       textAlign: TextAlign.center,
                       style: textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Войдите через Google, чтобы сохранять избранные места и быстро продолжать встречу.',
+                      l10n.signInSubtitle,
                       textAlign: TextAlign.center,
                       style: textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
@@ -103,7 +108,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                         minimumSize: const Size(double.infinity, 52),
                       ),
                       label: Text(
-                        _isLoading ? 'Входим...' : 'Войти через Google',
+                        _isLoading ? l10n.signInLoading : l10n.signInButton,
                       ),
                     ),
                   ],

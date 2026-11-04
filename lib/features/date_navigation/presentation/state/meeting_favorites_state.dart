@@ -1,7 +1,10 @@
 import '../../../user_profile/user_profile.dart';
 
 class MeetingFavoritesState {
-  const MeetingFavoritesState({this.favorites = const [], this.isLoading = true});
+  const MeetingFavoritesState({
+    this.favorites = const [],
+    this.isLoading = true,
+  });
 
   final List<UserFavorite> favorites;
   final bool isLoading;

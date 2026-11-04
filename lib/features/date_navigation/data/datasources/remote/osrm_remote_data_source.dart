@@ -1,11 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
+import '../../../../../core/error/failure.dart';
+import '../../../../../core/error/failure_codes.dart';
+import '../../../../../core/error/result.dart';
 import '../../../../../core/utils/app_logger.dart';
 import '../local/cache_service.dart';
 import '../../../domain/entities/route_info.dart';
+
+typedef OsrmMeetingData = ({LatLng meetingPoint, List<LatLng> fullPolyline});
 
 class OsrmRemoteDataSource {
   static const String baseUrl = 'https://router.project-osrm.org';
@@ -13,11 +19,13 @@ class OsrmRemoteDataSource {
   final http.Client _client;
   final CacheService _cache;
 
-  OsrmRemoteDataSource({required http.Client client, CacheService? cache})
-    : _client = client,
-      _cache = cache ?? CacheService();
+  OsrmRemoteDataSource({
+    required http.Client client,
+    required CacheService cache,
+  }) : _client = client,
+       _cache = cache;
 
-  Future<({LatLng meetingPoint, List<LatLng> fullPolyline})> getMeetingData({
+  Future<Result<OsrmMeetingData>> getMeetingData({
     required LatLng from,
     required LatLng to,
     double fraction = 0.5,
@@ -35,17 +43,19 @@ class OsrmRemoteDataSource {
           .get(Uri.parse(url))
           .timeout(const Duration(seconds: 10));
       if (response.statusCode != 200) {
-        throw Exception('Ошибка сервера OSRM: ${response.statusCode}');
+        return const Err(NetworkFailure(FailureCodes.routingFailed));
       }
 
       final data = jsonDecode(response.body);
       if (data['routes'] == null || data['routes'].isEmpty) {
-        throw Exception('Маршрут не найден');
+        return const Err(NetworkFailure(FailureCodes.routingFailed));
       }
 
       final String encodedGeometry = data['routes'][0]['geometry'];
       final List<LatLng> points = _decodePolyline(encodedGeometry);
-      if (points.isEmpty) throw Exception('Пустая геометрия');
+      if (points.isEmpty) {
+        return const Err(ParseFailure(FailureCodes.routingFailed));
+      }
 
       final annotations =
           data['routes'][0]['legs']?[0]?['annotation'] as Map<String, dynamic>?;
@@ -62,22 +72,16 @@ class OsrmRemoteDataSource {
 
       if (meetingPoint.latitude.abs() > 90 ||
           meetingPoint.longitude.abs() > 180) {
-        AppLogger.w('⚠️ Некорректные координаты, применяем сдвиг 1e1');
-        return (
-          meetingPoint: _getGeometricCenter(from, to),
-          fullPolyline: points
-              .map((p) => LatLng(p.latitude / 10, p.longitude / 10))
-              .toList(),
-        );
+        return const Err(ParseFailure(FailureCodes.routingFailed));
       }
 
-      return (meetingPoint: meetingPoint, fullPolyline: points);
+      return Ok((meetingPoint: meetingPoint, fullPolyline: points));
+    } on TimeoutException {
+      AppLogger.e('💥 OSRM timeout');
+      return const Err(TimeoutFailure(FailureCodes.routingTimeout));
     } catch (e) {
       AppLogger.e('💥 OSRM Exception: $e');
-      return (
-        meetingPoint: _getGeometricCenter(from, to),
-        fullPolyline: <LatLng>[],
-      );
+      return const Err(NetworkFailure(FailureCodes.routingFailed));
     }
   }
 
@@ -167,11 +171,6 @@ class OsrmRemoteDataSource {
     }
     return points;
   }
-
-  LatLng _getGeometricCenter(LatLng from, LatLng to) => LatLng(
-    (from.latitude + to.latitude) / 2,
-    (from.longitude + to.longitude) / 2,
-  );
 
   LatLng _findPointByHalfDuration({
     required List<LatLng> points,

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
+import '../../../../../core/error/failure_codes.dart';
 import '../../../../../core/error/result.dart';
 import '../../../domain/entities/accepted_proposal_history_draft.dart';
 import '../../../domain/entities/room_status.dart';
@@ -49,7 +50,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'failed-precondition',
-              message: 'Голосование закрыто после финального выбора',
+              message: FailureCodes.votingClosed,
             );
           }
           final participants = List<String>.from(
@@ -59,14 +60,14 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message: 'Только участники комнаты могут голосовать',
+              message: FailureCodes.notRoomMember,
             );
           }
           tx.update(roomRef, {'votes.$userId': placeName});
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось проголосовать',
+      fallback: FailureCodes.voteFailed,
     );
   }
 
@@ -90,7 +91,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'failed-precondition',
-              message: 'Финальное место уже выбрано',
+              message: FailureCodes.finalPlaceAlreadyChosen,
             );
           }
           tx.update(roomRef, {
@@ -109,7 +110,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось предложить место',
+      fallback: FailureCodes.proposePlaceFailed,
     );
   }
 
@@ -209,7 +210,7 @@ class RoomVotingRemoteDataSource {
         return null;
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось ответить на предложение',
+      fallback: FailureCodes.respondProposalFailed,
     );
   }
 
@@ -256,7 +257,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось синхронизировать результаты',
+      fallback: FailureCodes.syncResultsFailed,
     );
   }
 
@@ -277,7 +278,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось сохранить сценарий встречи',
+      fallback: FailureCodes.saveScenarioFailed,
     );
   }
 
@@ -303,7 +304,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message: 'Только участники комнаты могут выбрать формат встречи',
+              message: FailureCodes.notRoomMember,
             );
           }
           final updatedAtField = userId == creatorUid
@@ -333,7 +334,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось сохранить формат встречи',
+      fallback: FailureCodes.saveFormatFailed,
     );
   }
 
@@ -359,8 +360,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message:
-                  'Только участники комнаты могут запрашивать пересогласование',
+              message: FailureCodes.notRoomMember,
             );
           }
           final currentRequest = Map<String, dynamic>.from(
@@ -373,7 +373,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'failed-precondition',
-              message: 'Запрос на пересогласование уже отправлен',
+              message: FailureCodes.revoteAlreadyRequested,
             );
           }
           final uniqueFormats = <String>{
@@ -402,7 +402,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось запросить пересогласование',
+      fallback: FailureCodes.requestRevoteFailed,
     );
   }
 
@@ -429,8 +429,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message:
-                  'Только участники комнаты могут отвечать на пересогласование',
+              message: FailureCodes.notRoomMember,
             );
           }
           final request = Map<String, dynamic>.from(
@@ -445,7 +444,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'failed-precondition',
-              message: 'Нельзя подтвердить собственный запрос',
+              message: FailureCodes.cannotConfirmOwnRevote,
             );
           }
           if (!isAccepted) {
@@ -477,7 +476,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось обработать запрос пересогласования',
+      fallback: FailureCodes.processRevoteFailed,
     );
   }
 
@@ -489,7 +488,7 @@ class RoomVotingRemoteDataSource {
   }) async {
     final normalized = format.trim();
     if (normalized.isEmpty) {
-      return const Err(UnknownFailure('Не выбран финальный формат встречи'));
+      return const Err(UnknownFailure(FailureCodes.formatNotSelected));
     }
     return FirestoreErrorGuard.runVoid(
       () async {
@@ -507,7 +506,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message: 'Только участники комнаты могут подтвердить формат',
+              message: FailureCodes.notRoomMember,
             );
           }
           tx.update(roomRef, {
@@ -517,7 +516,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось подтвердить формат встречи',
+      fallback: FailureCodes.confirmFormatFailed,
     );
   }
 
@@ -543,7 +542,7 @@ class RoomVotingRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message: 'Только участники комнаты могут менять радиус',
+              message: FailureCodes.notRoomMember,
             );
           }
           final updatedAtField = userId == creatorUid
@@ -556,7 +555,7 @@ class RoomVotingRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось сохранить радиус поиска',
+      fallback: FailureCodes.saveRadiusFailed,
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:math' show pi, sin, cos, sqrt, asin;
 
+import 'place_type.dart';
+
 class Place {
   final String name;
   final double lat;
@@ -39,16 +41,21 @@ class Place {
     return result;
   }
 
-  bool matchesType(String? wantedType) {
-    if (wantedType == null || wantedType.isEmpty) return true;
-    final wanted = wantedType.trim().toLowerCase();
-    if (types.contains(wanted)) return true;
+  PlaceType? get primaryType => PlaceType.tryParse(type);
+
+  bool matchesType(PlaceType? wantedType) {
+    if (wantedType == null) return true;
+    if (types.contains(wantedType.wireValue)) return true;
     // Backward-compatible filter behavior: sports centres can appear in pool flows.
-    if (wanted == 'swimming_pool' && types.contains('sports_centre')) {
+    if (wantedType == PlaceType.swimmingPool &&
+        types.contains(PlaceType.sportsCentre.wireValue)) {
       return true;
     }
     return false;
   }
+
+  bool matchesWireType(String? wantedType) =>
+      matchesType(PlaceType.tryParse(wantedType));
 
   double distanceTo(double targetLat, double targetLon) {
     const double earthRadius = 6371000;

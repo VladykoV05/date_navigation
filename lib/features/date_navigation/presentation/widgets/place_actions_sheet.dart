@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../domain/value_objects/geo_coordinate.dart';
+
+import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/services/navigation_service.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../../../core/utils/show_notification.dart';
+import '../../domain/value_objects/geo_coordinate.dart';
 import '../view_data/place_view_data.dart';
 import './place_details_sheet.dart';
 
@@ -26,6 +28,7 @@ Future<void> showPlaceActionsSheet({
     builder: (_) => StatefulBuilder(
       builder: (context, setModalState) {
         final colorScheme = Theme.of(context).colorScheme;
+        final l10n = context.l10n;
         return Container(
           decoration: BoxDecoration(
             color: colorScheme.surface,
@@ -57,7 +60,9 @@ Future<void> showPlaceActionsSheet({
                           isFavorite ? Icons.bookmark : Icons.bookmark_border,
                         ),
                         label: Text(
-                          isFavorite ? 'Убрать из избранного' : 'В избранное',
+                          isFavorite
+                              ? l10n.removeFromFavorites
+                              : l10n.addToFavorites,
                         ),
                         style: FilledButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
@@ -73,8 +78,8 @@ Future<void> showPlaceActionsSheet({
                                     ShowNotification.showSnackBar(
                                       context,
                                       isFavorite
-                                          ? 'Удалено из избранного'
-                                          : 'Добавлено в избранное',
+                                          ? l10n.removedFromFavorites
+                                          : l10n.addedToFavorites,
                                     );
                                     Navigator.pop(context);
                                   }
@@ -91,7 +96,7 @@ Future<void> showPlaceActionsSheet({
                       Expanded(
                         child: FilledButton.tonalIcon(
                           icon: const Icon(Icons.send),
-                          label: const Text('Предложить'),
+                          label: Text(l10n.proposePlace),
                           style: FilledButton.styleFrom(
                             minimumSize: const Size(double.infinity, 50),
                           ),
@@ -105,7 +110,7 @@ Future<void> showPlaceActionsSheet({
                                       HapticFeedback.lightImpact();
                                       ShowNotification.showSnackBar(
                                         context,
-                                        'Место предложено партнеру',
+                                        l10n.placeProposedToPartner,
                                       );
                                       Navigator.pop(context);
                                     }

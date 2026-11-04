@@ -1,9 +1,9 @@
 import '../../../../core/error/result.dart';
 import '../entities/voting_decisions.dart';
-import '../repositories/room_voting_repository.dart';
+import '../repositories/room_place_voting_repository.dart';
 
 class ProposePlace {
-  final RoomVotingRepository _repo;
+  final RoomPlaceVotingRepository _repo;
   const ProposePlace(this._repo);
 
   Future<Result<void>> call({

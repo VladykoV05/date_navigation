@@ -5,6 +5,26 @@
 *.swp
 .DS_Store
 firepit-log.txt
+flutter_*.log
+
+# Local secrets / dart-define payloads — never commit
+config/dart_defines.json
+config/*.local.json
+
+# Cloud Functions
+functions/node_modules/
+functions/lib/
+functions/.env
+functions/.env.*
+
+# External proxy
+proxy/node_modules/
+proxy/dist/
+proxy/.env
+proxy/.env.*
+
+# Xcode / CocoaPods local build products
+ios/build/
 .atom/
 .build/
 .buildlog/

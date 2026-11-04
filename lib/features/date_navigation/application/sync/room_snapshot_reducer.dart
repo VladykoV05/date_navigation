@@ -195,11 +195,23 @@ class RoomSnapshotReducer {
         (nextPoint2?.latitude != oldPoint2?.latitude) ||
         (nextPoint2?.longitude != oldPoint2?.longitude);
 
+    final partnerJoined =
+        roomSnapshot.partnerUid != null &&
+        roomSnapshot.partnerUid!.trim().isNotEmpty;
+    // Keep local degraded flag only while this device still owns a center with
+    // no route; snapshot sync with a real polyline clears it.
+    final routingDegraded = nextCenter == null
+        ? false
+        : nextRoute.isNotEmpty
+        ? false
+        : currentState.meeting.isRoutingDegraded;
+
     final nextState = currentState.copyWith(
       room: currentState.room.copyWith(
         isCreator: isCreator,
         point1: nextPoint1,
         point2: nextPoint2,
+        partnerJoined: partnerJoined,
         sessionStatus: sessionStatus,
       ),
       meeting: currentState.meeting.copyWith(
@@ -222,6 +234,7 @@ class RoomSnapshotReducer {
         selectedScenario: selectedScenario,
         meetingRevoteRequestByRole: meetingRevoteRequestByRole,
         meetingRevoteRequestStatus: meetingRevoteRequestStatus,
+        isRoutingDegraded: routingDegraded,
       ),
       voting: currentState.voting.copyWith(
         proposalPlaceName: roomSnapshot.proposal.placeName,

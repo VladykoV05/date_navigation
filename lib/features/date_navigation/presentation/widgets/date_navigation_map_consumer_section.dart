@@ -33,7 +33,9 @@ class DateNavigationMapConsumerSection extends ConsumerWidget {
     final venueLocked = view.venueLocked;
     final finalChoicePlace = view.finalChoicePlace;
     final mapPlaces = venueLocked
-        ? [?finalChoicePlace].map(PlaceViewMapper.fromPlace).toList(growable: false)
+        ? [
+            ?finalChoicePlace,
+          ].map(PlaceViewMapper.fromPlace).toList(growable: false)
         : PlaceViewMapper.fromPlaces(places);
     final isLoading = view.isLoading;
     final isCalculatingMeeting = view.isCalculatingMeeting;

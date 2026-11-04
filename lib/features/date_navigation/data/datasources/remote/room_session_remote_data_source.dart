@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../../core/error/failure.dart';
+import '../../../../../core/error/failure_codes.dart';
 import '../../../../../core/error/result.dart';
 import '../../../domain/entities/room_status.dart';
 import 'firestore_error_guard.dart';
@@ -25,7 +26,7 @@ class RoomSessionRemoteDataSource {
         throw FirebaseException(
           plugin: 'cloud_firestore',
           code: 'failed-precondition',
-          message: 'Не удалось определить создателя комнаты',
+          message: FailureCodes.creatorUnresolved,
         );
       }
       final now = DateTime.now();
@@ -35,7 +36,7 @@ class RoomSessionRemoteDataSource {
         throw FirebaseException(
           plugin: 'cloud_firestore',
           code: 'failed-precondition',
-          message: 'Код комнаты пустой',
+          message: FailureCodes.roomCodeEmpty,
         );
       }
       final roomRef = _firestore.collection(roomsCollection).doc();
@@ -54,7 +55,7 @@ class RoomSessionRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'already-exists',
-              message: 'Комната с таким кодом уже существует',
+              message: FailureCodes.roomCodeExists,
             );
           }
         }
@@ -95,13 +96,13 @@ class RoomSessionRemoteDataSource {
       return Ok(roomRef.id);
     } on FirebaseException catch (e) {
       final fallback = switch (e.code) {
-        'already-exists' => 'Комната с таким кодом уже существует',
-        'failed-precondition' => 'Не удалось определить создателя комнаты',
-        _ => 'Не удалось создать комнату',
+        'already-exists' => FailureCodes.roomCodeExists,
+        'failed-precondition' => e.message ?? FailureCodes.creatorUnresolved,
+        _ => FailureCodes.createRoomFailed,
       };
       return Err(_mapFirestoreFailure(e, fallback: fallback));
     } catch (_) {
-      return const Err(UnknownFailure('Не удалось создать комнату'));
+      return const Err(UnknownFailure(FailureCodes.createRoomFailed));
     }
   }
 
@@ -117,7 +118,7 @@ class RoomSessionRemoteDataSource {
         throw FirebaseException(
           plugin: 'cloud_firestore',
           code: 'not-found',
-          message: 'Комната не найдена',
+          message: FailureCodes.roomNotFound,
         );
       }
       final inviteRef = _firestore
@@ -126,7 +127,7 @@ class RoomSessionRemoteDataSource {
       final inviteSnapshot = await inviteRef.get();
       if (!inviteSnapshot.exists) {
         // Backward compatibility: old rooms used short code as document id.
-        return _joinLegacyRoomById(
+        return await _joinLegacyRoomById(
           roomsCollection: roomsCollection,
           roomId: normalizedInviteCode,
           userId: userId,
@@ -139,7 +140,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'not-found',
-            message: 'Комната не найдена',
+            message: FailureCodes.roomNotFound,
           );
         }
         final inviteData = inviteSnap.data() ?? <String, dynamic>{};
@@ -152,7 +153,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'not-found',
-            message: 'Комната не найдена',
+            message: FailureCodes.roomNotFound,
           );
         }
         final roomRef = _firestore
@@ -163,7 +164,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'not-found',
-            message: 'Комната не найдена',
+            message: FailureCodes.roomNotFound,
           );
         }
         final data = snap.data() ?? <String, dynamic>{};
@@ -181,7 +182,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'not-found',
-            message: 'Комната не найдена',
+            message: FailureCodes.roomNotFound,
           );
         }
 
@@ -189,7 +190,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'failed-precondition',
-            message: 'Комната повреждена: нет creatorUid',
+            message: FailureCodes.roomCorrupt,
           );
         }
 
@@ -204,7 +205,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'already-exists',
-            message: 'Комната уже занята вторым участником',
+            message: FailureCodes.roomFull,
           );
         }
 
@@ -221,13 +222,14 @@ class RoomSessionRemoteDataSource {
       return Ok(resolvedRoomId);
     } on FirebaseException catch (e) {
       final fallback = switch (e.code) {
-        'not-found' => 'Комната не найдена',
-        'already-exists' => 'В комнате уже есть второй участник',
-        _ => 'Не удалось присоединиться к комнате',
+        'not-found' => FailureCodes.roomNotFound,
+        'already-exists' => FailureCodes.roomFull,
+        'failed-precondition' => FailureCodes.roomCorrupt,
+        _ => FailureCodes.joinRoomFailed,
       };
       return Err(_mapFirestoreFailure(e, fallback: fallback));
     } catch (_) {
-      return const Err(UnknownFailure('Не удалось присоединиться к комнате'));
+      return const Err(UnknownFailure(FailureCodes.joinRoomFailed));
     }
   }
 
@@ -244,7 +246,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'not-found',
-            message: 'Комната не найдена',
+            message: FailureCodes.roomNotFound,
           );
         }
         final data = snap.data() ?? <String, dynamic>{};
@@ -258,7 +260,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'failed-precondition',
-            message: 'Комната повреждена: нет creatorUid',
+            message: FailureCodes.roomCorrupt,
           );
         }
         if (userId == creatorUid ||
@@ -270,7 +272,7 @@ class RoomSessionRemoteDataSource {
           throw FirebaseException(
             plugin: 'cloud_firestore',
             code: 'already-exists',
-            message: 'Комната уже занята вторым участником',
+            message: FailureCodes.roomFull,
           );
         }
         final normalizedParticipants = <String>{creatorUid, userId}.toList();
@@ -285,13 +287,14 @@ class RoomSessionRemoteDataSource {
       return Ok(roomId);
     } on FirebaseException catch (e) {
       final fallback = switch (e.code) {
-        'not-found' => 'Комната не найдена',
-        'already-exists' => 'В комнате уже есть второй участник',
-        _ => 'Не удалось присоединиться к комнате',
+        'not-found' => FailureCodes.roomNotFound,
+        'already-exists' => FailureCodes.roomFull,
+        'failed-precondition' => FailureCodes.roomCorrupt,
+        _ => FailureCodes.joinRoomFailed,
       };
       return Err(_mapFirestoreFailure(e, fallback: fallback));
     } catch (_) {
-      return const Err(UnknownFailure('Не удалось присоединиться к комнате'));
+      return const Err(UnknownFailure(FailureCodes.joinRoomFailed));
     }
   }
 
@@ -317,7 +320,7 @@ class RoomSessionRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message: 'Пользователь не является участником комнаты',
+              message: FailureCodes.notRoomMember,
             );
           }
           tx.update(roomRef, {
@@ -326,7 +329,7 @@ class RoomSessionRemoteDataSource {
         });
       },
       mapper: _mapFirestoreFailure,
-      fallback: 'Не удалось обновить координаты',
+      fallback: FailureCodes.updateLocationFailed,
     );
   }
 
@@ -344,7 +347,7 @@ class RoomSessionRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'not-found',
-              message: 'Комната не найдена',
+              message: FailureCodes.roomNotFound,
             );
           }
           final data = snap.data() ?? <String, dynamic>{};
@@ -354,7 +357,7 @@ class RoomSessionRemoteDataSource {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',
-              message: 'Только креатор может завершить сессию',
+              message: FailureCodes.onlyCreatorCanEnd,
             );
           }
           if (SessionStatus.fromWireValue(data['sessionStatus']).isCompleted) {
@@ -369,11 +372,11 @@ class RoomSessionRemoteDataSource {
       },
       mapper: _mapFirestoreFailure,
       fallbackFor: (e) => switch (e.code) {
-        'not-found' => 'Комната не найдена',
-        'permission-denied' => 'Только креатор может завершить сессию',
-        _ => 'Не удалось завершить сессию',
+        'not-found' => FailureCodes.roomNotFound,
+        'permission-denied' => FailureCodes.onlyCreatorCanEnd,
+        _ => FailureCodes.completeSessionFailed,
       },
-      unknownFallback: 'Не удалось завершить сессию',
+      unknownFallback: FailureCodes.completeSessionFailed,
     );
   }
 

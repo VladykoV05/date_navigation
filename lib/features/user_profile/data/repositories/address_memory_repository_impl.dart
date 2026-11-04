@@ -1,4 +1,5 @@
 import '../../domain/entities/remembered_address.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../domain/repositories/address_memory_repository.dart';
 import '../datasources/remote/user_address_memory_remote_data_source.dart';
@@ -24,7 +25,7 @@ class AddressMemoryRepositoryImpl implements AddressMemoryRepository {
   }) {
     return runUserProfileVoid(
       () => _remote.rememberAddress(userId: userId, address: address),
-      fallback: 'Не удалось сохранить адрес',
+      fallback: FailureCodes.saveAddressFailed,
     );
   }
 
@@ -35,7 +36,7 @@ class AddressMemoryRepositoryImpl implements AddressMemoryRepository {
   }) {
     return runUserProfileVoid(
       () => _remote.removeRememberedAddress(userId: userId, address: address),
-      fallback: 'Не удалось удалить адрес',
+      fallback: FailureCodes.deleteAddressFailed,
     );
   }
 }

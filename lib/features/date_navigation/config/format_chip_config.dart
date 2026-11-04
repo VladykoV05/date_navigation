@@ -1,9 +1,9 @@
 import '../domain/entities/date_vibe.dart';
+import '../domain/entities/place_type.dart';
 
 class FormatChipOption {
   const FormatChipOption({
     required this.id,
-    required this.label,
     required this.placeType,
     required this.overpassSelectors,
     required this.nominatimQueries,
@@ -11,8 +11,7 @@ class FormatChipOption {
   });
 
   final String id;
-  final String label;
-  final String? placeType;
+  final PlaceType? placeType;
   final List<String> overpassSelectors;
   final List<String> nominatimQueries;
   final double relevanceBonus;
@@ -22,23 +21,20 @@ class FormatChipConfig {
   static const List<FormatChipOption> _foodOptions = [
     FormatChipOption(
       id: 'all',
-      label: 'Все',
       placeType: null,
       overpassSelectors: [],
       nominatimQueries: [],
     ),
     FormatChipOption(
       id: 'cafe',
-      label: 'Кафе',
-      placeType: 'cafe',
+      placeType: PlaceType.cafe,
       overpassSelectors: ['node["amenity"="cafe"]', 'way["amenity"="cafe"]'],
       nominatimQueries: ['cafe'],
       relevanceBonus: 0.06,
     ),
     FormatChipOption(
       id: 'restaurant',
-      label: 'Рестораны',
-      placeType: 'restaurant',
+      placeType: PlaceType.restaurant,
       overpassSelectors: [
         'node["amenity"="restaurant"]',
         'way["amenity"="restaurant"]',
@@ -51,15 +47,13 @@ class FormatChipConfig {
   static const List<FormatChipOption> _cultureOptions = [
     FormatChipOption(
       id: 'all',
-      label: 'Все',
       placeType: null,
       overpassSelectors: [],
       nominatimQueries: [],
     ),
     FormatChipOption(
       id: 'cinema',
-      label: 'Кино',
-      placeType: 'cinema',
+      placeType: PlaceType.cinema,
       overpassSelectors: [
         'node["amenity"="cinema"]',
         'way["amenity"="cinema"]',
@@ -69,8 +63,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'museum',
-      label: 'Музеи',
-      placeType: 'museum',
+      placeType: PlaceType.museum,
       overpassSelectors: [
         'node["tourism"="museum"]',
         'way["tourism"="museum"]',
@@ -80,8 +73,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'gallery',
-      label: 'Галереи',
-      placeType: 'gallery',
+      placeType: PlaceType.gallery,
       overpassSelectors: [
         'node["tourism"="gallery"]',
         'way["tourism"="gallery"]',
@@ -91,8 +83,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'theatre',
-      label: 'Театры',
-      placeType: 'theatre',
+      placeType: PlaceType.theatre,
       overpassSelectors: [
         'node["amenity"="theatre"]',
         'way["amenity"="theatre"]',
@@ -105,23 +96,20 @@ class FormatChipConfig {
   static const List<FormatChipOption> _walkOnlyOptions = [
     FormatChipOption(
       id: 'all',
-      label: 'Все',
       placeType: null,
       overpassSelectors: [],
       nominatimQueries: [],
     ),
     FormatChipOption(
       id: 'park',
-      label: 'Парки',
-      placeType: 'park',
+      placeType: PlaceType.park,
       overpassSelectors: ['node["leisure"="park"]', 'way["leisure"="park"]'],
       nominatimQueries: ['park'],
       relevanceBonus: 0.08,
     ),
     FormatChipOption(
       id: 'viewpoint',
-      label: 'Видовые',
-      placeType: 'viewpoint',
+      placeType: PlaceType.viewpoint,
       overpassSelectors: [
         'node["tourism"="viewpoint"]',
         'way["tourism"="viewpoint"]',
@@ -134,15 +122,13 @@ class FormatChipConfig {
   static const List<FormatChipOption> _activeOptions = [
     FormatChipOption(
       id: 'all',
-      label: 'Все',
       placeType: null,
       overpassSelectors: [],
       nominatimQueries: [],
     ),
     FormatChipOption(
       id: 'fitness_centre',
-      label: 'Фитнес',
-      placeType: 'fitness_centre',
+      placeType: PlaceType.fitnessCentre,
       overpassSelectors: [
         'node["leisure"="fitness_centre"]',
         'way["leisure"="fitness_centre"]',
@@ -152,8 +138,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'sports_centre',
-      label: 'Спортцентр',
-      placeType: 'sports_centre',
+      placeType: PlaceType.sportsCentre,
       overpassSelectors: [
         'node["leisure"="sports_centre"]',
         'way["leisure"="sports_centre"]',
@@ -163,8 +148,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'swimming_pool',
-      label: 'Бассейн',
-      placeType: 'swimming_pool',
+      placeType: PlaceType.swimmingPool,
       overpassSelectors: [
         'node["leisure"="swimming_pool"]',
         'way["leisure"="swimming_pool"]',
@@ -174,8 +158,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'ice_rink',
-      label: 'Каток',
-      placeType: 'ice_rink',
+      placeType: PlaceType.iceRink,
       overpassSelectors: [
         'node["leisure"="ice_rink"]',
         'way["leisure"="ice_rink"]',
@@ -185,8 +168,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'active_racket',
-      label: 'Ракетки',
-      placeType: 'active_racket',
+      placeType: PlaceType.activeRacket,
       overpassSelectors: [
         'node["sport"~"tennis|badminton|squash|table_tennis|padel"]',
         'way["sport"~"tennis|badminton|squash|table_tennis|padel"]',
@@ -202,8 +184,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'active_team',
-      label: 'Командные',
-      placeType: 'active_team',
+      placeType: PlaceType.activeTeam,
       overpassSelectors: [
         'node["sport"~"football|basketball|volleyball|futsal|handball"]',
         'way["sport"~"football|basketball|volleyball|futsal|handball"]',
@@ -219,8 +200,7 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'active_climb',
-      label: 'Скалолаз.',
-      placeType: 'active_climb',
+      placeType: PlaceType.activeClimb,
       overpassSelectors: [
         'node["sport"~"climbing|bouldering"]',
         'way["sport"~"climbing|bouldering"]',
@@ -230,16 +210,14 @@ class FormatChipConfig {
     ),
     FormatChipOption(
       id: 'active_dance',
-      label: 'Танцы',
-      placeType: 'active_dance',
+      placeType: PlaceType.activeDance,
       overpassSelectors: ['node["sport"="dance"]', 'way["sport"="dance"]'],
       nominatimQueries: ['dance'],
       relevanceBonus: 0.09,
     ),
     FormatChipOption(
       id: 'active_mind_body',
-      label: 'Йога',
-      placeType: 'active_mind_body',
+      placeType: PlaceType.activeMindBody,
       overpassSelectors: [
         'node["sport"~"yoga|pilates"]',
         'way["sport"~"yoga|pilates"]',
@@ -264,7 +242,7 @@ class FormatChipConfig {
   static Set<String> allowedTypesFor(MeetingFormat format) {
     return optionsFor(
       format,
-    ).map((option) => option.placeType).whereType<String>().toSet();
+    ).map((option) => option.placeType?.wireValue).whereType<String>().toSet();
   }
 
   static List<String> overpassSelectorsFor(MeetingFormat format) {
@@ -284,9 +262,10 @@ class FormatChipConfig {
   }
 
   static double bonusForType(MeetingFormat format, String? type) {
-    if (type == null) return 0.0;
+    final parsedType = PlaceType.tryParse(type);
+    if (parsedType == null) return 0.0;
     for (final option in optionsFor(format)) {
-      if (option.placeType == type) return option.relevanceBonus;
+      if (option.placeType == parsedType) return option.relevanceBonus;
     }
     return 0.0;
   }
@@ -294,14 +273,5 @@ class FormatChipConfig {
   static List<FormatChipOption> optionsForWire(String? wireValue) {
     if (wireValue == null) return const [];
     return optionsFor(MeetingFormat.fromWireValue(wireValue));
-  }
-
-  static String formatLabel(MeetingFormat format) {
-    return switch (format) {
-      MeetingFormat.food => 'Кофе или ужин',
-      MeetingFormat.culture => 'Культура и впечатления',
-      MeetingFormat.walkOnly => 'Просто прогулка',
-      MeetingFormat.active => 'Активный формат',
-    };
   }
 }

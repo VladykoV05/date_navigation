@@ -1,20 +1,29 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/di/analytics_di.dart';
+import '../../../../core/di/auth_di.dart';
 import '../../../../core/error/failure.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/services/auth_session.dart';
 import '../../../../core/services/analytics_service.dart';
 import '../../../user_profile/user_profile.dart';
+import '../../di/application_providers.dart';
+import '../../di/date_navigation_di.dart';
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../domain/usecases/save_search_radius.dart';
 import '../../domain/usecases/watch_room.dart';
+import '../../../../core/utils/observability.dart';
+import '../../application/policies/failure_retry_policy.dart';
 import '../../application/policies/meeting_guard_policy.dart';
 import '../../application/services/address_submission_service.dart';
 import '../../application/services/date_assistant_service.dart';
+import '../../application/services/location_submission_service.dart';
 import '../../application/services/meeting_execution_service.dart';
 import '../../application/services/room_interaction_service.dart';
 import '../../application/services/room_lifecycle_service.dart';
@@ -30,147 +39,178 @@ import '../subscriptions/room_stream_subscription.dart';
 import '../../application/actions/vote_scenario_actions.dart';
 import './voting_controller.dart';
 import '../../application/state/date_navigation_state.dart';
+import '../providers/date_navigation_service_providers.dart';
 
-class DateNavigationController extends StateNotifier<DateNavigationState> {
+class DateNavigationController extends Notifier<DateNavigationState> {
   static const Duration _snapshotFreshFor = Duration(seconds: 20);
 
-  DateNavigationController({
-    required AddressSubmissionService addressSubmission,
-    required DateAssistantService dateAssistant,
-    required MeetingExecutionService meetingExecution,
-    required RoomInteractionService roomInteraction,
-    required RoomLifecycleService roomLifecycle,
-    required WatchRoom watchRoom,
-    required WatchRememberedAddresses watchFrequentAddresses,
-    required RemoveRememberedUserAddress removeRememberedAddress,
-    required SaveSearchRadius saveSearchRadius,
-    required AuthSession authSession,
-    required AnalyticsService analytics,
-  }) : _addressSubmission = addressSubmission,
-       _dateAssistant = dateAssistant,
-       _meetingExecution = meetingExecution,
-       _roomInteraction = roomInteraction,
-       _roomLifecycle = roomLifecycle,
-       _watchRoom = watchRoom,
-       _watchFrequentAddresses = watchFrequentAddresses,
-       _removeRememberedAddress = removeRememberedAddress,
-       _saveSearchRadius = saveSearchRadius,
-       _authSession = authSession,
-       _analytics = analytics,
-       super(const DateNavigationState()) {
-    _subscribeToFrequentAddresses();
-  }
-
-  final AddressSubmissionService _addressSubmission;
-  final DateAssistantService _dateAssistant;
-  final MeetingExecutionService _meetingExecution;
-  final RoomInteractionService _roomInteraction;
-  final RoomLifecycleService _roomLifecycle;
-  final WatchRoom _watchRoom;
-  final WatchRememberedAddresses _watchFrequentAddresses;
-  final RemoveRememberedUserAddress _removeRememberedAddress;
-  final SaveSearchRadius _saveSearchRadius;
-  final AuthSession _authSession;
-  final AnalyticsService _analytics;
-  late final MeetingPlanningController _meetingPlanningController =
-      MeetingPlanningController(
-        dateAssistant: _dateAssistant,
-        meetingExecution: _meetingExecution,
-        saveSearchRadius: _saveSearchRadius,
-        analytics: _analytics,
-        readState: () => state,
-        writeState: (next) => state = next,
-        ensureSessionActive: _ensureSessionActive,
-        ensureMeetingFormatMatched: _ensureMeetingFormatMatched,
-        requireUserId: _requireUserId,
-        setFailure: _setFailure,
-        clearFailure: _clearFailure,
-        setRoomActionLoading: _setRoomActionLoading,
-        setMeetingLoading: _setMeetingLoading,
-      );
-  late final RoomStreamSubscription _roomStreamSubscription =
-      RoomStreamSubscription(watchRoom: _watchRoom);
-  final MeetingGuardPolicy _meetingGuard = const MeetingGuardPolicy();
-  final ProposalActions _proposalActions = const ProposalActions();
-  final VoteScenarioActions _voteScenarioActions = const VoteScenarioActions();
-  final RoomSessionStateTransitions _roomActions =
-      const RoomSessionStateTransitions();
-  final MeetingInteractionTransitions _meetingInteraction =
-      const MeetingInteractionTransitions();
-  late final FrequentAddressesSubscription _frequentAddressesSubscription =
-      FrequentAddressesSubscription(
-        watchFrequentAddresses: _watchFrequentAddresses,
-      );
-  late final RoomSessionController _roomSessionController =
-      RoomSessionController(
-        roomLifecycle: _roomLifecycle,
-        roomActions: _roomActions,
-        meetingPlanner: _meetingPlanningController.meetingPlanner,
-        readState: () => state,
-        writeState: (next) => state = next,
-        requireUserId: _requireUserId,
-        setFailure: _setFailure,
-        clearFailure: _clearFailure,
-        setRoomActionLoading: _setRoomActionLoading,
-        cancelRoomSubscription: _roomStreamSubscription.cancel,
-        subscribeToRoom: _subscribeToRoom,
-      );
-  late final AddressMemoryController _addressMemoryController =
-      AddressMemoryController(
-        removeRememberedAddress: _removeRememberedAddress,
-        requireUserId: _requireUserId,
-        setFailure: _setFailure,
-        clearFailure: _clearFailure,
-      );
-  late final VotingController _votingController = VotingController(
-    roomInteraction: _roomInteraction,
-    dateAssistant: _dateAssistant,
-    proposalActions: _proposalActions,
-    voteScenarioActions: _voteScenarioActions,
-    meetingInteraction: _meetingInteraction,
-    readState: () => state,
-    writeState: (next) => state = next,
-    ensureSessionActive: _ensureSessionActive,
-    ensureMeetingFormatMatched: _ensureMeetingFormatMatched,
-    requireUserId: _requireUserId,
-    setFailure: _setFailure,
-    clearFailure: _clearFailure,
-    setRoomActionLoading: _setRoomActionLoading,
-  );
+  late final AddressSubmissionService _addressSubmission;
+  late final DateAssistantService _dateAssistant;
+  late final MeetingExecutionService _meetingExecution;
+  late final RoomInteractionService _roomInteraction;
+  late final RoomLifecycleService _roomLifecycle;
+  late final WatchRoom _watchRoom;
+  late final WatchRememberedAddresses _watchFrequentAddresses;
+  late final RemoveRememberedUserAddress _removeRememberedAddress;
+  late final SaveSearchRadius _saveSearchRadius;
+  late final LocationSubmissionService _locationSubmission;
+  late final AuthSession _authSession;
+  late final AnalyticsService _analytics;
+  late final MeetingGuardPolicy _meetingGuard;
+  late final ProposalActions _proposalActions;
+  late final VoteScenarioActions _voteScenarioActions;
+  late final RoomSessionStateTransitions _roomActions;
+  late final MeetingInteractionTransitions _meetingInteraction;
+  late final MeetingPlanningController _meetingPlanningController;
+  late final RoomStreamSubscription _roomStreamSubscription;
+  late final FrequentAddressesSubscription _frequentAddressesSubscription;
+  late final RoomSessionController _roomSessionController;
+  late final AddressMemoryController _addressMemoryController;
+  late final VotingController _votingController;
 
   int _geocodeRequestSeq = 0;
+  bool _disposed = false;
+  String? _lastSubmittedAddress;
+  static const _retryPolicy = FailureRetryPolicy();
+
+  @override
+  DateNavigationState build() {
+    // Use read (not watch): rebuilding this Notifier would wipe the room session.
+    _addressSubmission = ref.read(addressSubmissionServiceProvider);
+    _dateAssistant = ref.read(dateAssistantServiceProvider);
+    _meetingExecution = ref.read(meetingExecutionServiceProvider);
+    _roomInteraction = ref.read(roomInteractionServiceProvider);
+    _roomLifecycle = ref.read(roomLifecycleServiceProvider);
+    _watchRoom = ref.read(watchRoomProvider);
+    _watchFrequentAddresses = ref.read(profileWatchRememberedAddressesProvider);
+    _removeRememberedAddress = ref.read(
+      profileRemoveRememberedUserAddressProvider,
+    );
+    _saveSearchRadius = ref.read(saveSearchRadiusProvider);
+    _locationSubmission = ref.read(locationSubmissionServiceProvider);
+    _authSession = ref.read(authSessionProvider);
+    _analytics = ref.read(analyticsServiceProvider);
+    _meetingGuard = ref.read(meetingGuardPolicyProvider);
+    _proposalActions = ref.read(proposalActionsProvider);
+    _voteScenarioActions = ref.read(voteScenarioActionsProvider);
+    _roomActions = ref.read(roomSessionStateTransitionsProvider);
+    _meetingInteraction = ref.read(meetingInteractionTransitionsProvider);
+
+    _meetingPlanningController = MeetingPlanningController(
+      dateAssistant: _dateAssistant,
+      meetingExecution: _meetingExecution,
+      saveSearchRadius: _saveSearchRadius,
+      analytics: _analytics,
+      readState: () => state,
+      writeState: _writeState,
+      ensureSessionActive: _ensureSessionActive,
+      ensureMeetingFormatMatched: _ensureMeetingFormatMatched,
+      requireUserId: _requireUserId,
+      setFailure: _setFailure,
+      clearFailure: _clearFailure,
+      setRoomActionLoading: _setRoomActionLoading,
+      setMeetingLoading: _setMeetingLoading,
+    );
+    _roomStreamSubscription = RoomStreamSubscription(watchRoom: _watchRoom);
+    _frequentAddressesSubscription = FrequentAddressesSubscription(
+      watchFrequentAddresses: _watchFrequentAddresses,
+    );
+    _roomSessionController = RoomSessionController(
+      roomLifecycle: _roomLifecycle,
+      roomActions: _roomActions,
+      meetingPlanner: _meetingPlanningController.meetingPlanner,
+      readState: () => state,
+      writeState: _writeState,
+      requireUserId: _requireUserId,
+      setFailure: _setFailure,
+      clearFailure: _clearFailure,
+      setRoomActionLoading: _setRoomActionLoading,
+      cancelRoomSubscription: _roomStreamSubscription.cancel,
+      subscribeToRoom: _subscribeToRoom,
+    );
+    _addressMemoryController = AddressMemoryController(
+      removeRememberedAddress: _removeRememberedAddress,
+      requireUserId: _requireUserId,
+      setFailure: _setFailure,
+      clearFailure: _clearFailure,
+    );
+    _votingController = VotingController(
+      roomInteraction: _roomInteraction,
+      dateAssistant: _dateAssistant,
+      proposalActions: _proposalActions,
+      voteScenarioActions: _voteScenarioActions,
+      meetingInteraction: _meetingInteraction,
+      readState: () => state,
+      writeState: _writeState,
+      ensureSessionActive: _ensureSessionActive,
+      ensureMeetingFormatMatched: _ensureMeetingFormatMatched,
+      requireUserId: _requireUserId,
+      setFailure: _setFailure,
+      clearFailure: _clearFailure,
+      setRoomActionLoading: _setRoomActionLoading,
+    );
+
+    ref.onDispose(() {
+      _disposed = true;
+      _meetingPlanningController.meetingPlanner.resetAll();
+      unawaited(_roomStreamSubscription.cancel());
+      unawaited(_frequentAddressesSubscription.dispose());
+    });
+
+    _subscribeToFrequentAddresses();
+    return const DateNavigationState();
+  }
 
   String get userId => _authSession.currentUserId ?? '';
 
   String? _requireUserId(String operation) {
     final uid = _authSession.currentUserId;
     if (uid != null && uid.isNotEmpty) return uid;
-    _setFailure(const UnknownFailure('Пользователь не авторизован'), operation);
+    _setFailure(
+      const UnknownFailure(FailureCodes.userNotAuthenticated),
+      operation,
+    );
     return null;
   }
 
+  void _writeState(DateNavigationState next) {
+    if (_disposed) return;
+    state = next;
+  }
+
   void _clearFailure() {
-    state = state.copyWith(
-      ui: state.ui.copyWith(lastFailure: null, failureOperation: null),
+    _writeState(
+      state.copyWith(
+        ui: state.ui.copyWith(lastFailure: null, failureOperation: null),
+      ),
     );
   }
 
   void _setFailure(Failure failure, String operation) {
-    state = state.copyWith(
-      ui: state.ui.copyWith(lastFailure: failure, failureOperation: operation),
+    _writeState(
+      state.copyWith(
+        ui: state.ui.copyWith(
+          lastFailure: failure,
+          failureOperation: operation,
+        ),
+      ),
     );
   }
 
   void _setRoomActionLoading(bool value) {
-    state = state.copyWith(ui: state.ui.copyWith(isLoadingRoomAction: value));
+    _writeState(
+      state.copyWith(ui: state.ui.copyWith(isLoadingRoomAction: value)),
+    );
   }
 
   void _setGeocodingLoading(bool value) {
-    state = state.copyWith(ui: state.ui.copyWith(isGeocoding: value));
+    _writeState(state.copyWith(ui: state.ui.copyWith(isGeocoding: value)));
   }
 
   void _setMeetingLoading(bool value) {
-    state = state.copyWith(ui: state.ui.copyWith(isCalculatingMeeting: value));
+    _writeState(
+      state.copyWith(ui: state.ui.copyWith(isCalculatingMeeting: value)),
+    );
   }
 
   bool _ensureSessionActive(String operation) {
@@ -191,13 +231,6 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
     return false;
   }
 
-  @override
-  void dispose() {
-    unawaited(_roomStreamSubscription.cancel());
-    unawaited(_frequentAddressesSubscription.dispose());
-    super.dispose();
-  }
-
   Future<void> createRoom() async {
     await _roomSessionController.createRoom();
   }
@@ -211,6 +244,8 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
     if (uid == null) return false;
     if (address.isEmpty || state.room.roomId == null) return false;
     if (!_ensureSessionActive('geocode')) return false;
+    _lastSubmittedAddress = address;
+    Observability.breadcrumb('geocode_start', data: {'len': address.length});
     final req = ++_geocodeRequestSeq;
     _setGeocodingLoading(true);
     _clearFailure();
@@ -229,6 +264,34 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
         _setGeocodingLoading(false);
         _clearFailure();
         return true;
+    }
+  }
+
+  Future<bool> submitMyLocation() async {
+    final uid = _requireUserId('location');
+    if (uid == null) return false;
+    final roomId = state.room.roomId;
+    if (roomId == null) return false;
+    if (!_ensureSessionActive('location')) return false;
+
+    _setGeocodingLoading(true);
+    _clearFailure();
+    try {
+      final result = await _locationSubmission.submitCurrentLocation(
+        roomId: roomId,
+        userId: uid,
+      );
+      switch (result) {
+        case Err(:final failure):
+          _setFailure(failure, 'location');
+          return false;
+        case Ok():
+          unawaited(_analytics.locationSubmitted());
+          _clearFailure();
+          return true;
+      }
+    } finally {
+      _setGeocodingLoading(false);
     }
   }
 
@@ -252,6 +315,15 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
     await _meetingPlanningController.recalculateForRadius();
   }
 
+  /// Bumps search radius by one slider step (≈200m) then recalculates places.
+  Future<void> expandSearchRadiusAndRetry() async {
+    const step = 200.0;
+    const maxRadius = 3000.0;
+    final next = (state.meeting.searchRadius + step).clamp(200.0, maxRadius);
+    setSearchRadius(next);
+    await recalculateForRadius();
+  }
+
   Future<void> calculateMeeting() async {
     await _meetingPlanningController.calculateMeeting();
   }
@@ -271,6 +343,38 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   void clearError() {
     if (state.ui.errorMessage != null) {
       _clearFailure();
+    }
+  }
+
+  Future<void> retryLastFailure() async {
+    final failure = state.ui.lastFailure;
+    if (failure == null) return;
+    final action = _retryPolicy.actionFor(
+      failure: failure,
+      failureOperation: state.ui.failureOperation,
+      hasBothPoints: state.room.point1 != null && state.room.point2 != null,
+    );
+    switch (action) {
+      case FailureRetryAction.recalculateMeeting:
+        await recalculateForRadius();
+      case FailureRetryAction.retryGeocode:
+        final address = _lastSubmittedAddress;
+        if (address != null && address.isNotEmpty) {
+          await submitMyAddress(address);
+        } else {
+          _clearFailure();
+        }
+      case FailureRetryAction.resubscribeRoom:
+        final roomId = state.room.roomId;
+        if (roomId == null || roomId.isEmpty) {
+          _clearFailure();
+          return;
+        }
+        Observability.breadcrumb('room_stream_retry', data: {'roomId': roomId});
+        _clearFailure();
+        _subscribeToRoom(roomId);
+      case FailureRetryAction.none:
+        break;
     }
   }
 
@@ -314,8 +418,12 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
   void _subscribeToFrequentAddresses() {
     _frequentAddressesSubscription.bind(
       userId: _authSession.currentUserId,
-      onData: (addresses) => state = state.copyWith(
-        addressMemory: state.addressMemory.copyWith(recentAddresses: addresses),
+      onData: (addresses) => _writeState(
+        state.copyWith(
+          addressMemory: state.addressMemory.copyWith(
+            recentAddresses: addresses,
+          ),
+        ),
       ),
     );
   }
@@ -328,11 +436,17 @@ class DateNavigationController extends StateNotifier<DateNavigationState> {
       meetingPlanner: _meetingPlanningController.meetingPlanner,
       snapshotFreshFor: _snapshotFreshFor,
       onApplication: _applyRoomStreamApplication,
+      onError: (error, stack) {
+        _setFailure(
+          const NetworkFailure(FailureCodes.roomStreamFailed),
+          'room_stream',
+        );
+      },
     );
   }
 
   void _applyRoomStreamApplication(RoomStreamApplicationResult application) {
-    state = application.nextState;
+    _writeState(application.nextState);
     if (application.matchedFormatToTrack != null) {
       unawaited(
         _analytics.meetingFormatMatched(

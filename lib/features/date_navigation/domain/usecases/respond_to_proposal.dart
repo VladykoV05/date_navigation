@@ -1,10 +1,10 @@
 import '../../../../core/error/result.dart';
 import '../entities/accepted_proposal_history_draft.dart';
 import '../entities/voting_decisions.dart';
-import '../repositories/room_voting_repository.dart';
+import '../repositories/room_place_voting_repository.dart';
 
 class RespondToProposal {
-  final RoomVotingRepository _repo;
+  final RoomPlaceVotingRepository _repo;
   const RespondToProposal(this._repo);
 
   Future<Result<AcceptedProposalHistoryDraft?>> call({

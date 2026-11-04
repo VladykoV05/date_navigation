@@ -1,11 +1,11 @@
 import '../../../../core/error/result.dart';
 import '../entities/date_scenario.dart';
-import '../repositories/room_voting_repository.dart';
+import '../repositories/room_scenario_repository.dart';
 
 class SaveSelectedScenario {
   const SaveSelectedScenario(this._repo);
 
-  final RoomVotingRepository _repo;
+  final RoomScenarioRepository _repo;
 
   Future<Result<void>> call({
     required String roomId,
@@ -14,7 +14,7 @@ class SaveSelectedScenario {
   }) {
     return _repo.saveSelectedScenario(
       roomId: roomId,
-      scenario: scenario.toMap(),
+      scenario: scenario,
       selectedByUserId: selectedByUserId,
     );
   }

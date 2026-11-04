@@ -17,11 +17,7 @@ void main() {
 
   test('canRecalculate returns false when loading', () {
     expect(
-      policy.canRecalculate(
-        hasPoint1: true,
-        hasPoint2: true,
-        isLoading: true,
-      ),
+      policy.canRecalculate(hasPoint1: true, hasPoint2: true, isLoading: true),
       isFalse,
     );
   });

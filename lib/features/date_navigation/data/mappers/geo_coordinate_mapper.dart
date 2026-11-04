@@ -6,10 +6,7 @@ class GeoCoordinateMapper {
   const GeoCoordinateMapper._();
 
   static GeoCoordinate fromLatLng(latlong.LatLng value) {
-    return GeoCoordinate(
-      latitude: value.latitude,
-      longitude: value.longitude,
-    );
+    return GeoCoordinate(latitude: value.latitude, longitude: value.longitude);
   }
 
   static latlong.LatLng toLatLng(GeoCoordinate value) {

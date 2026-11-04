@@ -1,27 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/l10n/l10n_extensions.dart';
+
 Future<void> showJoinRoomDialog({
   required BuildContext context,
   required void Function(String code) onJoinCode,
+  String? initialCode,
 }) async {
   await showDialog<void>(
     context: context,
-    builder: (_) => _JoinRoomDialog(onJoinCode: onJoinCode),
+    builder: (_) =>
+        _JoinRoomDialog(onJoinCode: onJoinCode, initialCode: initialCode),
   );
 }
 
 class _JoinRoomDialog extends StatefulWidget {
-  const _JoinRoomDialog({required this.onJoinCode});
+  const _JoinRoomDialog({required this.onJoinCode, this.initialCode});
 
   final void Function(String code) onJoinCode;
+  final String? initialCode;
 
   @override
   State<_JoinRoomDialog> createState() => _JoinRoomDialogState();
 }
 
 class _JoinRoomDialogState extends State<_JoinRoomDialog> {
-  final _controller = TextEditingController();
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialCode ?? '');
+  }
 
   @override
   void dispose() {
@@ -38,8 +49,9 @@ class _JoinRoomDialogState extends State<_JoinRoomDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
-      title: const Text('Введите код'),
+      title: Text(l10n.joinRoomTitle),
       content: TextField(
         controller: _controller,
         keyboardType: TextInputType.number,
@@ -47,10 +59,10 @@ class _JoinRoomDialogState extends State<_JoinRoomDialog> {
         maxLength: 4,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         autofocus: true,
-        decoration: const InputDecoration(
-          labelText: 'Код комнаты',
-          hintText: '4 цифры, например 1234',
-          helperText: 'Введите код, который отправил партнер',
+        decoration: InputDecoration(
+          labelText: l10n.joinRoomCodeLabel,
+          hintText: l10n.joinRoomCodeHint,
+          helperText: l10n.joinRoomCodeHelper,
           counterText: '',
         ),
         onSubmitted: (_) => _submitCode(),
@@ -58,9 +70,12 @@ class _JoinRoomDialogState extends State<_JoinRoomDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Отмена'),
+          child: Text(l10n.cancelLabel),
         ),
-        ElevatedButton(onPressed: _submitCode, child: const Text('Войти')),
+        ElevatedButton(
+          onPressed: _submitCode,
+          child: Text(l10n.joinRoomSubmit),
+        ),
       ],
     );
   }

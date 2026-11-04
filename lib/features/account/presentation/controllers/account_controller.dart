@@ -1,52 +1,45 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/di/auth_di.dart';
+import '../../../../core/error/failure_codes.dart';
 import '../../../../core/error/result.dart';
-import '../../../../core/services/auth_session.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../user_profile/user_profile.dart';
 import '../state/account_state.dart';
 
-class AccountController extends StateNotifier<AccountState> {
-  AccountController({
-    required WatchUserFavorites watchUserFavorites,
-    required WatchUserHistory watchUserHistory,
-    required UpsertUserFavorite addUserFavorite,
-    required RemoveUserFavorite removeUserFavorite,
-    required AuthSession authSession,
-  }) : _watchUserFavorites = watchUserFavorites,
-       _watchUserHistory = watchUserHistory,
-       _addUserFavorite = addUserFavorite,
-       _removeUserFavorite = removeUserFavorite,
-       _authSession = authSession,
-       super(const AccountState()) {
-    _bind();
-  }
-
-  final WatchUserFavorites _watchUserFavorites;
-  final WatchUserHistory _watchUserHistory;
-  final UpsertUserFavorite _addUserFavorite;
-  final RemoveUserFavorite _removeUserFavorite;
-  final AuthSession _authSession;
-
+class AccountController extends Notifier<AccountState> {
   StreamSubscription<List<UserFavorite>>? _favoritesSub;
   StreamSubscription? _historySub;
   String? _favoritesError;
   String? _historyError;
 
-  String get _userId => _authSession.currentUserId ?? '';
+  String get _userId => ref.read(authSessionProvider).currentUserId ?? '';
 
-  void _bind() {
+  @override
+  AccountState build() {
+    ref.onDispose(() {
+      _favoritesSub?.cancel();
+      _historySub?.cancel();
+    });
+
     if (_userId.isEmpty) {
-      state = state.copyWith(
+      return const AccountState(
         isLoading: false,
-        error: 'Пользователь не авторизован',
+        error: FailureCodes.userNotAuthenticated,
       );
-      return;
     }
 
-    _favoritesSub = _watchUserFavorites(userId: _userId).listen(
+    _bindStreams();
+    return const AccountState();
+  }
+
+  void _bindStreams() {
+    final watchFavorites = ref.read(profileWatchUserFavoritesProvider);
+    final watchHistory = ref.read(profileWatchUserHistoryProvider);
+
+    _favoritesSub = watchFavorites(userId: _userId).listen(
       (favorites) {
         _favoritesError = null;
         state = state.copyWith(
@@ -57,7 +50,7 @@ class AccountController extends StateNotifier<AccountState> {
       },
       onError: (Object e, StackTrace s) {
         AppLogger.e('Account favorites stream failed', e, s);
-        _favoritesError = 'Не удалось загрузить избранное';
+        _favoritesError = FailureCodes.favoritesLoadFailed;
         state = state.copyWith(
           isLoading: false,
           favorites: const [],
@@ -66,7 +59,7 @@ class AccountController extends StateNotifier<AccountState> {
       },
     );
 
-    _historySub = _watchUserHistory(userId: _userId).listen(
+    _historySub = watchHistory(userId: _userId).listen(
       (history) {
         _historyError = null;
         state = state.copyWith(
@@ -77,7 +70,7 @@ class AccountController extends StateNotifier<AccountState> {
       },
       onError: (Object e, StackTrace s) {
         AppLogger.e('Account history stream failed', e, s);
-        _historyError = 'Не удалось загрузить историю';
+        _historyError = FailureCodes.historyLoadFailed;
         state = state.copyWith(
           isLoading: false,
           history: const [],
@@ -91,7 +84,7 @@ class AccountController extends StateNotifier<AccountState> {
 
   Future<void> removeFavorite(UserFavorite favorite) async {
     if (_userId.isEmpty) return;
-    final result = await _removeUserFavorite(
+    final result = await ref.read(profileRemoveUserFavoriteProvider)(
       userId: _userId,
       favorite: favorite,
     );
@@ -105,7 +98,7 @@ class AccountController extends StateNotifier<AccountState> {
     if (_userId.isEmpty) return;
     final normalizedName = item.placeName.trim();
     if (normalizedName.isEmpty) return;
-    final result = await _addUserFavorite(
+    final result = await ref.read(profileUpsertUserFavoriteProvider)(
       userId: _userId,
       placeName: normalizedName,
       placeAddress: item.placeAddress,
@@ -118,11 +111,9 @@ class AccountController extends StateNotifier<AccountState> {
       state = state.copyWith(error: failure.message);
     }
   }
-
-  @override
-  void dispose() {
-    _favoritesSub?.cancel();
-    _historySub?.cancel();
-    super.dispose();
-  }
 }
+
+final accountControllerProvider =
+    NotifierProvider.autoDispose<AccountController, AccountState>(
+      AccountController.new,
+    );
