@@ -92,7 +92,32 @@ service cloud.firestore {
 
     function creatorIdentityUnchanged() {
       return request.resource.data.creatorUid == resource.data.creatorUid
-             && unchanged('createdBy');
+             && unchanged('createdBy')
+             && unchanged('hostUid')
+             && unchanged('type')
+             && unchanged('visibility')
+             && unchanged('capacity')
+             && unchanged('participants')
+             && unchanged('participantCount');
+    }
+
+    function isValidCapacity(value) {
+      return value is int && value >= 2 && value <= 20;
+    }
+
+    // Open room: a new member joins through one transaction that appends
+    // exactly one uid and respects capacity. Nothing else may change.
+    function isOpenJoinUpdate() {
+      return resource.data.type == 'open'
+             && resource.data.sessionStatus == 'active'
+             && !(request.auth.uid in resource.data.participants)
+             && request.resource.data.participants.size() == resource.data.participants.size() + 1
+             && request.auth.uid in request.resource.data.participants
+             && resource.data.participants.size() < resource.data.capacity
+             && request.resource.data.capacity == resource.data.capacity
+             && request.resource.data.type == 'open'
+             && request.resource.data.creatorUid == resource.data.creatorUid
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'participantCount', 'updatedAt']);
     }
 
     // Participants may only mutate their own address / format / radius fields.
@@ -168,7 +193,8 @@ service cloud.firestore {
 
       // Keep create permissive for authenticated creator to avoid schema drift lockouts.
       allow create: if isSignedIn()
-                    && request.resource.data.creatorUid == request.auth.uid;
+                    && request.resource.data.creatorUid == request.auth.uid
+                    && (!('capacity' in request.resource.data) || isValidCapacity(request.resource.data.capacity));
 
       allow update: if isSignedIn()
                     && (
@@ -177,9 +203,29 @@ service cloud.firestore {
                         && roleScopedRoomFieldsOk()
                       )
                       || isJoinUpdate()
+                      || isOpenJoinUpdate()
                     );
 
       allow delete: if false;
+
+      // Participant docs: each user writes only their own doc.
+      // Host doc is created with the room; members join an open room only.
+      match /participants/{uid} {
+        allow read: if isSignedIn();
+        allow create: if isSelf(uid)
+                      && (
+                        (
+                          request.resource.data.role == 'host'
+                          && (!roomExists(roomId) || roomDoc(roomId).data.creatorUid == uid)
+                        )
+                        || (
+                          request.resource.data.role == 'member'
+                          && roomExists(roomId)
+                          && roomDoc(roomId).data.type == 'open'
+                        )
+                      );
+        allow update, delete: if false;
+      }
     }
 
     match /roomInvites/{inviteCode} {

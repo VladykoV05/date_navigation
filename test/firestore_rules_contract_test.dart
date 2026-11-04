@@ -35,4 +35,35 @@ void main() {
     );
     expect(rules, contains('request.resource.data.expiresAt is timestamp'));
   });
+
+  test('open room join is a single guarded transaction path', () {
+    expect(rules, contains('isOpenJoinUpdate'));
+    expect(rules, contains("resource.data.type == 'open'"));
+    expect(
+      rules,
+      contains('resource.data.participants.size() < resource.data.capacity'),
+    );
+    expect(
+      rules,
+      contains("hasOnly(['participants', 'participantCount', 'updatedAt'])"),
+    );
+  });
+
+  test('open room fields cannot be changed by members', () {
+    expect(rules, contains("unchanged('type')"));
+    expect(rules, contains("unchanged('capacity')"));
+    expect(rules, contains("unchanged('hostUid')"));
+    expect(rules, contains("unchanged('participants')"));
+  });
+
+  test('participant docs are created only by their owner', () {
+    expect(rules, contains('match /participants/{uid}'));
+    expect(rules, contains('allow update, delete: if false;'));
+  });
+
+  test('open rooms have a composite index for discovery', () {
+    final indexes = File('firestore.indexes.json').readAsStringSync();
+    expect(indexes, contains('"sessionStatus"'));
+    expect(indexes, contains('"visibility"'));
+  });
 }
