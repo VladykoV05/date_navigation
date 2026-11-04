@@ -28,7 +28,21 @@ Stretch: reverse geocode, accuracy circle, «рядом со мной», custom 
 Теория: `theory/geolocation.md`, `theory/global-geocoding.md`.
 
 ## R2. Открытые сессии + события + схема v2
-**Статус:** planned.
+**Статус:** in progress: доменная модель v2 и mapper готовы.
+
+Сделано:
+- `RoomType`, `RoomVisibility`, `RoomParticipantRole`, `RoomParticipant`.
+- `RoomEventSnapshot`.
+- `RoomSnapshot`: `schemaVersion`, `type`, `visibility`, `capacity`, `hostUid`,
+  `participants`, `event`.
+- Mapper v1/v2: v1 выводит участников из creator/partner, v2 читает
+  participants/event.
+- Тесты mapper: v1 derivation, v2 open room + event.
+
+Осталось:
+- data layer: create open room, join transaction, participant subcollection.
+- discovery/list, rules, indexes, migration.
+- UI открытых сессий и событий.
 
 Планируемые изменения:
 - `domain/entities/room_snapshot.dart` — `RoomType`, `visibility`, `capacity`, participant, event.

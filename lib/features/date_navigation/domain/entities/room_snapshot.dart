@@ -83,6 +83,104 @@ class RoomFinalChoiceSnapshot {
   }
 }
 
+enum RoomType {
+  private('private'),
+  open('open');
+
+  const RoomType(this.wireValue);
+
+  final String wireValue;
+
+  bool get isOpen => this == RoomType.open;
+
+  static RoomType fromWireValue(Object? value) {
+    final normalized = value?.toString().trim().toLowerCase();
+    return normalized == 'open' ? RoomType.open : RoomType.private;
+  }
+}
+
+enum RoomVisibility {
+  invite('invite'),
+  public('public');
+
+  const RoomVisibility(this.wireValue);
+
+  final String wireValue;
+
+  static RoomVisibility fromWireValue(Object? value) {
+    final normalized = value?.toString().trim().toLowerCase();
+    return normalized == 'public'
+        ? RoomVisibility.public
+        : RoomVisibility.invite;
+  }
+}
+
+enum RoomParticipantRole {
+  host('host'),
+  member('member');
+
+  const RoomParticipantRole(this.wireValue);
+
+  final String wireValue;
+
+  static RoomParticipantRole fromWireValue(Object? value) {
+    final normalized = value?.toString().trim().toLowerCase();
+    return normalized == 'host'
+        ? RoomParticipantRole.host
+        : RoomParticipantRole.member;
+  }
+}
+
+class RoomParticipant {
+  const RoomParticipant({
+    required this.uid,
+    this.role = RoomParticipantRole.member,
+    this.point,
+    this.searchRadius,
+    this.meetingFormats = const [],
+    this.selectedMeetingFormat,
+    this.lastReadAt,
+  });
+
+  final String uid;
+  final RoomParticipantRole role;
+  final GeoCoordinate? point;
+  final int? searchRadius;
+  final List<MeetingFormat> meetingFormats;
+  final MeetingFormat? selectedMeetingFormat;
+  final DateTime? lastReadAt;
+}
+
+class RoomEventSnapshot {
+  const RoomEventSnapshot({
+    required this.id,
+    required this.title,
+    this.startsAt,
+    this.venueName,
+    this.address,
+    this.lat,
+    this.lon,
+    this.imageUrl,
+    this.sourceUrl,
+    this.price,
+    this.category,
+    this.source,
+  });
+
+  final String id;
+  final String title;
+  final DateTime? startsAt;
+  final String? venueName;
+  final String? address;
+  final double? lat;
+  final double? lon;
+  final String? imageUrl;
+  final String? sourceUrl;
+  final String? price;
+  final String? category;
+  final String? source;
+}
+
 class RoomSnapshot {
   const RoomSnapshot({
     required this.id,
@@ -106,6 +204,13 @@ class RoomSnapshot {
     this.partnerSearchRadiusUpdatedAt,
     this.meetingRevoteRequest = const RoomRevoteRequestSnapshot(),
     this.finalChoice = const RoomFinalChoiceSnapshot(),
+    this.schemaVersion = 1,
+    this.type = RoomType.private,
+    this.visibility = RoomVisibility.invite,
+    this.capacity = 2,
+    this.hostUid = '',
+    this.participants = const [],
+    this.event,
   });
 
   final String id;
@@ -129,4 +234,24 @@ class RoomSnapshot {
   final DateTime? partnerSearchRadiusUpdatedAt;
   final RoomRevoteRequestSnapshot meetingRevoteRequest;
   final RoomFinalChoiceSnapshot finalChoice;
+  final int schemaVersion;
+  final RoomType type;
+  final RoomVisibility visibility;
+  final int capacity;
+  final String hostUid;
+  final List<RoomParticipant> participants;
+  final RoomEventSnapshot? event;
+
+  bool get isOpen => type.isOpen;
+  String get effectiveHostUid => hostUid.isNotEmpty ? hostUid : creatorUid;
+  List<String> get participantUids => participants
+      .map((participant) => participant.uid)
+      .toList(growable: false);
+
+  RoomParticipant? participantByUid(String uid) {
+    for (final participant in participants) {
+      if (participant.uid == uid) return participant;
+    }
+    return null;
+  }
 }
