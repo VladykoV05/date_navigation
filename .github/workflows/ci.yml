@@ -5,26 +5,91 @@ on:
     branches: ['**']
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  quality:
+  flutter:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
+
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Verify generated localizations
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n
+
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed lib test
+
       - name: Static analyze
         run: flutter analyze
-      - name: Architecture dependency tests
-        run: flutter test test/architecture_dependency_test.dart
-      - name: Firestore rules contract tests
-        run: flutter test test/firestore_rules_contract_test.dart
+
       - name: Run tests
         run: flutter test
+
       - name: Android debug build smoke
         run: flutter build apk --debug
+
+  functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: functions
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck and build
+        run: npm run build
+
+  proxy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: proxy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: proxy/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build

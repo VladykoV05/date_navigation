@@ -30,10 +30,11 @@ class RoomSnapshotMapper {
     final legacySelectedMeetingFormat = _parseMeetingFormat(
       data['selectedMeetingFormat'],
     );
+    final creatorUid = (data['creatorUid'] ?? '').toString();
 
     return RoomSnapshot(
       id: id,
-      creatorUid: (data['creatorUid'] ?? '').toString(),
+      creatorUid: creatorUid,
       partnerUid: _nonEmptyTrimmed(data['partnerUid']),
       point1: _parseLatLng(data['point1']),
       point2: _parseLatLng(data['point2']),
@@ -91,8 +92,133 @@ class RoomSnapshotMapper {
         address: _nonEmptyTrimmed(data['finalChoiceAddress']),
         type: _nonEmptyTrimmed(data['finalChoiceType']),
       ),
+      schemaVersion: (data['schemaVersion'] as num?)?.toInt() ?? 1,
+      type: RoomType.fromWireValue(data['type']),
+      visibility: RoomVisibility.fromWireValue(data['visibility']),
+      capacity: (data['capacity'] as num?)?.toInt() ?? 2,
+      hostUid: _nonEmptyTrimmed(data['hostUid']) ?? creatorUid,
+      participants: _parseParticipants(data),
+      event: _parseEvent(data['event']),
     );
   }
+
+  static List<RoomParticipant> _parseParticipants(Map<String, dynamic> data) {
+    final raw = data['participants'];
+    if (raw is List) {
+      final parsed = <RoomParticipant>[];
+      final hostUid =
+          _nonEmptyTrimmed(data['hostUid']) ??
+          (data['creatorUid'] ?? '').toString();
+      for (final item in raw) {
+        if (item is String) {
+          final uid = _nonEmptyTrimmed(item);
+          if (uid == null) continue;
+          parsed.add(
+            RoomParticipant(
+              uid: uid,
+              role: uid == hostUid
+                  ? RoomParticipantRole.host
+                  : RoomParticipantRole.member,
+            ),
+          );
+          continue;
+        }
+        if (item is! Map) continue;
+        final map = Map<String, dynamic>.from(item);
+        final uid = _nonEmptyTrimmed(map['uid']);
+        if (uid == null) continue;
+        parsed.add(
+          RoomParticipant(
+            uid: uid,
+            role: RoomParticipantRole.fromWireValue(map['role']),
+            point: _parseLatLng(map['point']),
+            searchRadius: (map['searchRadius'] as num?)?.toInt(),
+            meetingFormats: _parseMeetingFormats(
+              formatsRaw: map['meetingFormats'],
+              legacyRaw: map['meetingFormat'],
+            ),
+            selectedMeetingFormat: _parseMeetingFormat(
+              map['selectedMeetingFormat'],
+            ),
+            lastReadAt: _parseTimestamp(map['lastReadAt']),
+          ),
+        );
+      }
+      if (parsed.isNotEmpty) return parsed;
+    }
+    return _deriveParticipants(data);
+  }
+
+  static List<RoomParticipant> _deriveParticipants(Map<String, dynamic> data) {
+    final creatorUid = (data['creatorUid'] ?? '').toString();
+    if (creatorUid.isEmpty) return const [];
+    final partnerUid = _nonEmptyTrimmed(data['partnerUid']);
+    return [
+      RoomParticipant(
+        uid: creatorUid,
+        role: RoomParticipantRole.host,
+        point: _parseLatLng(data['point1']),
+        searchRadius: (data['creatorSearchRadius'] as num?)?.toInt(),
+        meetingFormats: _parseMeetingFormats(
+          formatsRaw: data['creatorMeetingFormats'],
+          legacyRaw: data['creatorMeetingFormat'],
+        ),
+        selectedMeetingFormat: _parseMeetingFormat(
+          data['creatorSelectedMeetingFormat'],
+        ),
+      ),
+      if (partnerUid != null)
+        RoomParticipant(
+          uid: partnerUid,
+          point: _parseLatLng(data['point2']),
+          searchRadius: (data['partnerSearchRadius'] as num?)?.toInt(),
+          meetingFormats: _parseMeetingFormats(
+            formatsRaw: data['partnerMeetingFormats'],
+            legacyRaw: data['partnerMeetingFormat'],
+          ),
+          selectedMeetingFormat: _parseMeetingFormat(
+            data['partnerSelectedMeetingFormat'],
+          ),
+        ),
+    ];
+  }
+
+  static RoomEventSnapshot? _parseEvent(dynamic raw) {
+    if (raw is! Map) return null;
+    final map = Map<String, dynamic>.from(raw);
+    final id = _nonEmptyTrimmed(map['id']);
+    final title = _nonEmptyTrimmed(map['title']);
+    if (id == null || title == null) return null;
+    return RoomEventSnapshot(
+      id: id,
+      title: title,
+      startsAt: _parseTimestamp(map['startsAt']),
+      venueName: _nonEmptyTrimmed(map['venueName']),
+      address: _nonEmptyTrimmed(map['address']),
+      lat: (map['lat'] as num?)?.toDouble(),
+      lon: (map['lon'] as num?)?.toDouble(),
+      imageUrl: _nonEmptyTrimmed(map['imageUrl']),
+      sourceUrl: _nonEmptyTrimmed(map['sourceUrl']),
+      price: _nonEmptyTrimmed(map['price']),
+      category: _nonEmptyTrimmed(map['category']),
+      source: _nonEmptyTrimmed(map['source']),
+    );
+  }
+
+  static Map<String, dynamic> eventToWire(RoomEventSnapshot event) => {
+    'id': event.id,
+    'title': event.title,
+    if (event.startsAt != null) 'startsAt': Timestamp.fromDate(event.startsAt!),
+    if (event.venueName != null) 'venueName': event.venueName,
+    if (event.address != null) 'address': event.address,
+    if (event.lat != null) 'lat': event.lat,
+    if (event.lon != null) 'lon': event.lon,
+    if (event.imageUrl != null) 'imageUrl': event.imageUrl,
+    if (event.sourceUrl != null) 'sourceUrl': event.sourceUrl,
+    if (event.price != null) 'price': event.price,
+    if (event.category != null) 'category': event.category,
+    if (event.source != null) 'source': event.source,
+  };
 
   static GeoCoordinate? _parseLatLng(dynamic raw) {
     return GeoCoordinateMapper.fromWireMap(raw);
