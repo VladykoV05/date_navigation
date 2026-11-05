@@ -99,6 +99,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
 
     _meetingPlanningController = MeetingPlanningController(
       dateAssistant: _dateAssistant,
+      chatRepository: ref.read(chatRepositoryProvider),
       meetingExecution: _meetingExecution,
       saveSearchRadius: _saveSearchRadius,
       analytics: _analytics,
@@ -118,6 +119,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
     );
     _roomSessionController = RoomSessionController(
       roomLifecycle: _roomLifecycle,
+      chatRepository: ref.read(chatRepositoryProvider),
       roomActions: _roomActions,
       meetingPlanner: _meetingPlanningController.meetingPlanner,
       readState: () => state,
@@ -137,6 +139,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
     );
     _votingController = VotingController(
       roomInteraction: _roomInteraction,
+      chatRepository: ref.read(chatRepositoryProvider),
       dateAssistant: _dateAssistant,
       proposalActions: _proposalActions,
       voteScenarioActions: _voteScenarioActions,

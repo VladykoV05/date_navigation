@@ -1152,4 +1152,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatLoadOlder => 'Load older';
+
+  @override
+  String get systemParticipantJoined => 'Participant joined';
+
+  @override
+  String get systemFormatConfirmed => 'Meeting format confirmed';
+
+  @override
+  String get systemPlaceSelected => 'Place selected';
 }

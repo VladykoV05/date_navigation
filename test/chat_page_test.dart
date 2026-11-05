@@ -65,6 +65,15 @@ class _FakeChatRepository implements ChatRepository {
   }
 
   @override
+  Future<Result<void>> sendSystemMessage({
+    required String roomId,
+    required String senderUid,
+    required String code,
+  }) async {
+    return const Ok(null);
+  }
+
+  @override
   Future<Result<void>> markRead({
     required String roomId,
     required String userId,

@@ -3,6 +3,7 @@ import 'dart:async';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/voting_decisions.dart';
+import '../../domain/repositories/chat_repository.dart';
 import '../../application/actions/meeting_collaboration_actions.dart';
 import '../../application/actions/meeting_format_actions.dart';
 import '../../application/services/date_assistant_service.dart';
@@ -20,6 +21,7 @@ typedef MeetingFormatFailureWriter =
 class MeetingFormatController {
   const MeetingFormatController({
     required DateAssistantService dateAssistant,
+    required ChatRepository chatRepository,
     required MeetingPlannerRuntime meetingPlanner,
     required MeetingFormatStateReader readState,
     required MeetingFormatStateWriter writeState,
@@ -29,6 +31,7 @@ class MeetingFormatController {
     required void Function() clearFailure,
     required void Function(bool value) setRoomActionLoading,
   }) : _dateAssistant = dateAssistant,
+       _chatRepository = chatRepository,
        _meetingPlanner = meetingPlanner,
        _readState = readState,
        _writeState = writeState,
@@ -39,6 +42,7 @@ class MeetingFormatController {
        _setRoomActionLoading = setRoomActionLoading;
 
   final DateAssistantService _dateAssistant;
+  final ChatRepository _chatRepository;
   final MeetingPlannerRuntime _meetingPlanner;
   final MeetingFormatStateReader _readState;
   final MeetingFormatStateWriter _writeState;
@@ -174,6 +178,13 @@ class MeetingFormatController {
           _meetingInteraction.onMeetingFormatConfirmed(
             _readState(),
             format: confirmedFormat,
+          ),
+        );
+        unawaited(
+          _chatRepository.sendSystemMessage(
+            roomId: roomId,
+            senderUid: uid,
+            code: 'system.format_confirmed',
           ),
         );
         return;

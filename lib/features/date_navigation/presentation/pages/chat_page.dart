@@ -214,6 +214,20 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (message.kind == ChatMessageKind.system) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Center(
+          child: Text(
+            _systemText(context, message.text),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      );
+    }
     final colorScheme = Theme.of(context).colorScheme;
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
@@ -231,4 +245,14 @@ class _MessageBubble extends StatelessWidget {
       ),
     );
   }
+}
+
+String _systemText(BuildContext context, String code) {
+  final l10n = context.l10n;
+  return switch (code) {
+    'system.participant_joined' => l10n.systemParticipantJoined,
+    'system.format_confirmed' => l10n.systemFormatConfirmed,
+    'system.place_selected' => l10n.systemPlaceSelected,
+    _ => code,
+  };
 }

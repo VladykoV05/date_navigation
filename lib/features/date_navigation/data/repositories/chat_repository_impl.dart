@@ -46,6 +46,19 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
+  Future<Result<void>> sendSystemMessage({
+    required String roomId,
+    required String senderUid,
+    required String code,
+  }) {
+    return _remote.sendSystemMessage(
+      roomId: roomId,
+      senderUid: senderUid,
+      code: code,
+    );
+  }
+
+  @override
   Future<Result<void>> markRead({
     required String roomId,
     required String userId,
