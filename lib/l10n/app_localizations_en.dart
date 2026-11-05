@@ -1278,4 +1278,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileChooseAvatar => 'Choose an avatar';
+
+  @override
+  String get planNextStepTitle => 'Next place';
+
+  @override
+  String get planNotChosen => 'No place chosen yet';
+
+  @override
+  String get planSuggestButton => 'Suggest a place';
+
+  @override
+  String get planSuggestionsTitle => 'Suggestions';
+
+  @override
+  String get planChooseButton => 'Choose';
+
+  @override
+  String get planChosenLabel => 'Chosen';
+
+  @override
+  String get planEmptySuggestions => 'No suggestions yet';
+
+  @override
+  String get planRadiusLabel => 'Radius from the event';
+
+  @override
+  String planRadiusOption(Object meters) {
+    return '$meters m';
+  }
+
+  @override
+  String get planSuggestNameLabel => 'Place name';
+
+  @override
+  String get planSuggestAddressLabel => 'Address';
+
+  @override
+  String get planSuggestSubmit => 'Suggest';
+
+  @override
+  String get planAddressNotFound => 'Address not found';
+
+  @override
+  String planTooFar(Object meters) {
+    return 'The place is farther than $meters m from the event venue';
+  }
+
+  @override
+  String get planSuggestLimit => 'You can suggest at most 5 places per hour';
+
+  @override
+  String get planSaveFailed => 'Could not save the plan. Try again.';
+
+  @override
+  String planProposedBy(Object name) {
+    return 'from $name';
+  }
 }

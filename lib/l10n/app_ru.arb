@@ -396,5 +396,22 @@
   "profileSaveError": "Не удалось сохранить профиль",
   "profileCancel": "Отмена",
   "profileSave": "Сохранить",
-  "profileChooseAvatar": "Выберите аватар"
+  "profileChooseAvatar": "Выберите аватар",
+  "planNextStepTitle": "Следующее место",
+  "planNotChosen": "Место пока не выбрано",
+  "planSuggestButton": "Предложить место",
+  "planSuggestionsTitle": "Предложения",
+  "planChooseButton": "Выбрать",
+  "planChosenLabel": "Выбрано",
+  "planEmptySuggestions": "Предложений пока нет",
+  "planRadiusLabel": "Радиус от события",
+  "planRadiusOption": "{meters} м",
+  "planSuggestNameLabel": "Название места",
+  "planSuggestAddressLabel": "Адрес",
+  "planSuggestSubmit": "Предложить",
+  "planAddressNotFound": "Адрес не найден",
+  "planTooFar": "Место дальше {meters} м от площадки события",
+  "planSuggestLimit": "Можно предложить не больше 5 мест в час",
+  "planSaveFailed": "Не удалось сохранить план. Попробуйте ещё раз.",
+  "planProposedBy": "от {name}"
 }

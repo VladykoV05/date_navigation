@@ -2359,6 +2359,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose an avatar'**
   String get profileChooseAvatar;
+
+  /// No description provided for @planNextStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next place'**
+  String get planNextStepTitle;
+
+  /// No description provided for @planNotChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'No place chosen yet'**
+  String get planNotChosen;
+
+  /// No description provided for @planSuggestButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest a place'**
+  String get planSuggestButton;
+
+  /// No description provided for @planSuggestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get planSuggestionsTitle;
+
+  /// No description provided for @planChooseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get planChooseButton;
+
+  /// No description provided for @planChosenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen'**
+  String get planChosenLabel;
+
+  /// No description provided for @planEmptySuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggestions yet'**
+  String get planEmptySuggestions;
+
+  /// No description provided for @planRadiusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Radius from the event'**
+  String get planRadiusLabel;
+
+  /// No description provided for @planRadiusOption.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String planRadiusOption(Object meters);
+
+  /// No description provided for @planSuggestNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Place name'**
+  String get planSuggestNameLabel;
+
+  /// No description provided for @planSuggestAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get planSuggestAddressLabel;
+
+  /// No description provided for @planSuggestSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest'**
+  String get planSuggestSubmit;
+
+  /// No description provided for @planAddressNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Address not found'**
+  String get planAddressNotFound;
+
+  /// No description provided for @planTooFar.
+  ///
+  /// In en, this message translates to:
+  /// **'The place is farther than {meters} m from the event venue'**
+  String planTooFar(Object meters);
+
+  /// No description provided for @planSuggestLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can suggest at most 5 places per hour'**
+  String get planSuggestLimit;
+
+  /// No description provided for @planSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the plan. Try again.'**
+  String get planSaveFailed;
+
+  /// No description provided for @planProposedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'from {name}'**
+  String planProposedBy(Object name);
 }
 
 class _AppLocalizationsDelegate

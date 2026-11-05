@@ -30,6 +30,8 @@ abstract final class FailureCodes {
   static const onlyCreatorCanEnd = 'only_creator_can_end';
   static const completeSessionFailed = 'complete_session_failed';
   static const leaveRoomFailed = 'leave_room_failed';
+  static const suggestionLimit = 'suggestion_limit';
+  static const planSaveFailed = 'plan_save_failed';
   static const profileSaveFailed = 'profile_save_failed';
   static const hostAlone = 'host_alone';
 

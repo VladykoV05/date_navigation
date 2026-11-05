@@ -220,6 +220,8 @@ class RoomSnapshotReducer {
         point1: nextPoint1,
         point2: nextPoint2,
         isOpen: roomSnapshot.isOpen,
+        nextStep: roomSnapshot.isOpen ? roomSnapshot.nextStep : null,
+        planRadiusMeters: roomSnapshot.planRadiusMeters,
         selfUid: userId,
         openParticipants: roomSnapshot.isOpen
             ? roomSnapshot.participants

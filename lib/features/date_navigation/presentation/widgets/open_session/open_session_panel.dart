@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/l10n/l10n_extensions.dart';
 import '../../../../../core/profile/profile_providers.dart';
+import '../../view_data/open_plan_view_data.dart';
+import 'open_plan_tab.dart';
 import '../../../../../core_ui/core_ui.dart';
 import '../../view_data/open_participant_view_data.dart';
 import '../../view_data/room_event_view_data.dart';
@@ -30,6 +32,10 @@ class OpenSessionPanel extends StatefulWidget {
     required this.canComplete,
     required this.onCompleteSession,
     this.isExpired = false,
+    this.roomId = '',
+    this.isCreator = false,
+    this.nextStep,
+    this.planRadiusMeters = 1000,
   });
 
   final String displayCode;
@@ -46,6 +52,10 @@ class OpenSessionPanel extends StatefulWidget {
   final bool canLeave;
   final bool isClosed;
   final bool isExpired;
+  final String roomId;
+  final bool isCreator;
+  final NextStepViewData? nextStep;
+  final int planRadiusMeters;
   final bool canComplete;
   final VoidCallback onCompleteSession;
 
@@ -278,7 +288,16 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
                   ),
               ],
             ),
-        if (_tab == OpenSessionTab.plan) _PlanTab(event: widget.event),
+        if (_tab == OpenSessionTab.plan)
+          OpenPlanTab(
+            roomId: widget.roomId,
+            selfUid: widget.selfUid,
+            isCreator: widget.isCreator,
+            isClosed: widget.isClosed,
+            event: widget.event,
+            nextStep: widget.nextStep,
+            planRadiusMeters: widget.planRadiusMeters,
+          ),
       ],
     );
   }
@@ -408,38 +427,6 @@ class _ParticipantRow extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _PlanTab extends StatelessWidget {
-  const _PlanTab({required this.event});
-
-  final RoomEventViewData? event;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final e = event;
-    if (e == null) {
-      return Text(l10n.openSessionNoEvent);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.openSessionPlanFromEvent,
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        Text(
-          e.title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        if (e.venueName != null) Text(e.venueName!),
-        if (e.address != null) Text(e.address!),
-      ],
     );
   }
 }

@@ -5,6 +5,7 @@ import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/room_snapshot.dart';
+import '../../domain/entities/open_plan.dart';
 import '../../domain/entities/room_status.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 
@@ -30,6 +31,12 @@ abstract class RoomSessionState with _$RoomSessionState {
     GeoCoordinate? point2,
 
     @Default(false) bool isOpen,
+
+    /// Следующее место плана (открытая сессия).
+    NextStep? nextStep,
+
+    /// Радиус поиска от площадки события, метры.
+    @Default(planRadiusDefaultMeters) int planRadiusMeters,
 
     /// Uid of the current user (set by the reducer for the open-session screen).
     String? selfUid,

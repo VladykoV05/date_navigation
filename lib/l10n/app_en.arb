@@ -622,5 +622,22 @@
   "profileSaveError": "Could not save the profile",
   "profileCancel": "Cancel",
   "profileSave": "Save",
-  "profileChooseAvatar": "Choose an avatar"
+  "profileChooseAvatar": "Choose an avatar",
+  "planNextStepTitle": "Next place",
+  "planNotChosen": "No place chosen yet",
+  "planSuggestButton": "Suggest a place",
+  "planSuggestionsTitle": "Suggestions",
+  "planChooseButton": "Choose",
+  "planChosenLabel": "Chosen",
+  "planEmptySuggestions": "No suggestions yet",
+  "planRadiusLabel": "Radius from the event",
+  "planRadiusOption": "{meters} m",
+  "planSuggestNameLabel": "Place name",
+  "planSuggestAddressLabel": "Address",
+  "planSuggestSubmit": "Suggest",
+  "planAddressNotFound": "Address not found",
+  "planTooFar": "The place is farther than {meters} m from the event venue",
+  "planSuggestLimit": "You can suggest at most 5 places per hour",
+  "planSaveFailed": "Could not save the plan. Try again.",
+  "planProposedBy": "from {name}"
 }

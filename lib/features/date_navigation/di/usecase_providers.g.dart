@@ -91,6 +91,182 @@ final class JoinRoomProvider
 
 String _$joinRoomHash() => r'86f675fb1fb4f5d9f1114700675003a60ddc7bae';
 
+@ProviderFor(watchPlaceSuggestions)
+final watchPlaceSuggestionsProvider = WatchPlaceSuggestionsProvider._();
+
+final class WatchPlaceSuggestionsProvider
+    extends
+        $FunctionalProvider<
+          WatchPlaceSuggestions,
+          WatchPlaceSuggestions,
+          WatchPlaceSuggestions
+        >
+    with $Provider<WatchPlaceSuggestions> {
+  WatchPlaceSuggestionsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'watchPlaceSuggestionsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$watchPlaceSuggestionsHash();
+
+  @$internal
+  @override
+  $ProviderElement<WatchPlaceSuggestions> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  WatchPlaceSuggestions create(Ref ref) {
+    return watchPlaceSuggestions(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(WatchPlaceSuggestions value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<WatchPlaceSuggestions>(value),
+    );
+  }
+}
+
+String _$watchPlaceSuggestionsHash() =>
+    r'932f767052329ff7e906ef880b729eb88375e8e0';
+
+@ProviderFor(suggestPlace)
+final suggestPlaceProvider = SuggestPlaceProvider._();
+
+final class SuggestPlaceProvider
+    extends $FunctionalProvider<SuggestPlace, SuggestPlace, SuggestPlace>
+    with $Provider<SuggestPlace> {
+  SuggestPlaceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'suggestPlaceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$suggestPlaceHash();
+
+  @$internal
+  @override
+  $ProviderElement<SuggestPlace> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SuggestPlace create(Ref ref) {
+    return suggestPlace(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SuggestPlace value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SuggestPlace>(value),
+    );
+  }
+}
+
+String _$suggestPlaceHash() => r'252f8413d7e9672c4fd8fc5d2406887a8dc50d8e';
+
+@ProviderFor(chooseSuggestion)
+final chooseSuggestionProvider = ChooseSuggestionProvider._();
+
+final class ChooseSuggestionProvider
+    extends
+        $FunctionalProvider<
+          ChooseSuggestion,
+          ChooseSuggestion,
+          ChooseSuggestion
+        >
+    with $Provider<ChooseSuggestion> {
+  ChooseSuggestionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'chooseSuggestionProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$chooseSuggestionHash();
+
+  @$internal
+  @override
+  $ProviderElement<ChooseSuggestion> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ChooseSuggestion create(Ref ref) {
+    return chooseSuggestion(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ChooseSuggestion value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ChooseSuggestion>(value),
+    );
+  }
+}
+
+String _$chooseSuggestionHash() => r'61267ed0feaa61661f3de903fec43a5afd6062f9';
+
+@ProviderFor(setPlanRadius)
+final setPlanRadiusProvider = SetPlanRadiusProvider._();
+
+final class SetPlanRadiusProvider
+    extends $FunctionalProvider<SetPlanRadius, SetPlanRadius, SetPlanRadius>
+    with $Provider<SetPlanRadius> {
+  SetPlanRadiusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'setPlanRadiusProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$setPlanRadiusHash();
+
+  @$internal
+  @override
+  $ProviderElement<SetPlanRadius> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SetPlanRadius create(Ref ref) {
+    return setPlanRadius(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SetPlanRadius value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SetPlanRadius>(value),
+    );
+  }
+}
+
+String _$setPlanRadiusHash() => r'9d4d78c3844ad42b5698650aafe1021bdc6cfcad';
+
 @ProviderFor(completeSession)
 final completeSessionProvider = CompleteSessionProvider._();
 

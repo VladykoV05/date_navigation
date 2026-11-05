@@ -4,6 +4,7 @@ import '../../../../core/di/auth_di.dart';
 import '../../application/state/date_navigation_state.dart';
 import '../mappers/place_view_mapper.dart';
 import '../view_data/open_participant_view_data.dart';
+import '../view_data/open_plan_view_data.dart';
 import '../view_data/room_control_panel_data.dart';
 import '../view_data/room_event_view_data.dart';
 import '../controllers/date_navigation_controller.dart';
@@ -83,6 +84,13 @@ final dateNavigationRoomBodyViewProvider = Provider.autoDispose(
         votesByUser: s.voting.votesByUser,
         isOpen: s.room.isOpen,
         selfUid: s.room.selfUid,
+        nextStep: s.room.nextStep == null
+            ? null
+            : NextStepViewData(
+                name: s.room.nextStep!.name,
+                address: s.room.nextStep!.address,
+              ),
+        planRadiusMeters: s.room.planRadiusMeters,
         openParticipants: s.room.openParticipants
             .map(OpenParticipantViewData.fromParticipant)
             .toList(growable: false),

@@ -1290,4 +1290,61 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileChooseAvatar => 'Выберите аватар';
+
+  @override
+  String get planNextStepTitle => 'Следующее место';
+
+  @override
+  String get planNotChosen => 'Место пока не выбрано';
+
+  @override
+  String get planSuggestButton => 'Предложить место';
+
+  @override
+  String get planSuggestionsTitle => 'Предложения';
+
+  @override
+  String get planChooseButton => 'Выбрать';
+
+  @override
+  String get planChosenLabel => 'Выбрано';
+
+  @override
+  String get planEmptySuggestions => 'Предложений пока нет';
+
+  @override
+  String get planRadiusLabel => 'Радиус от события';
+
+  @override
+  String planRadiusOption(Object meters) {
+    return '$meters м';
+  }
+
+  @override
+  String get planSuggestNameLabel => 'Название места';
+
+  @override
+  String get planSuggestAddressLabel => 'Адрес';
+
+  @override
+  String get planSuggestSubmit => 'Предложить';
+
+  @override
+  String get planAddressNotFound => 'Адрес не найден';
+
+  @override
+  String planTooFar(Object meters) {
+    return 'Место дальше $meters м от площадки события';
+  }
+
+  @override
+  String get planSuggestLimit => 'Можно предложить не больше 5 мест в час';
+
+  @override
+  String get planSaveFailed => 'Не удалось сохранить план. Попробуйте ещё раз.';
+
+  @override
+  String planProposedBy(Object name) {
+    return 'от $name';
+  }
 }

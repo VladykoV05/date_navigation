@@ -8,6 +8,7 @@ import '../../domain/entities/room_status.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 import 'date_scenario_mapper.dart';
 import 'geo_coordinate_mapper.dart';
+import '../../domain/entities/open_plan.dart';
 
 class RoomSnapshotMapper {
   const RoomSnapshotMapper();
@@ -41,6 +42,10 @@ class RoomSnapshotMapper {
       creatorUid: creatorUid,
       partnerUid: _nonEmptyTrimmed(data['partnerUid']),
       inviteCode: _nonEmptyTrimmed(data['inviteCode']),
+      nextStep: _parseNextStep(data['nextStep']),
+      planRadiusMeters:
+          (data['planRadiusMeters'] as num?)?.toInt() ??
+          planRadiusDefaultMeters,
       point1: _parseLatLng(data['point1']),
       point2: _parseLatLng(data['point2']),
       proposal: RoomProposalSnapshot(
@@ -253,6 +258,21 @@ class RoomSnapshotMapper {
 
   static GeoCoordinate? _parseLatLng(dynamic raw) {
     return GeoCoordinateMapper.fromWireMap(raw);
+  }
+
+  static NextStep? _parseNextStep(dynamic raw) {
+    if (raw is! Map) return null;
+    final lat = (raw['lat'] as num?)?.toDouble();
+    final lon = (raw['lon'] as num?)?.toDouble();
+    final name = _nonEmptyTrimmed(raw['name']);
+    if (lat == null || lon == null || name == null) return null;
+    return NextStep(
+      name: name,
+      address: _nonEmptyTrimmed(raw['address']),
+      lat: lat,
+      lon: lon,
+      chosenBy: _nonEmptyTrimmed(raw['chosenBy']),
+    );
   }
 
   static String? _nonEmptyTrimmed(dynamic value) {

@@ -62,6 +62,10 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
     if (view.isOpen) {
       final unread = ref.watch(chatUnreadCountProvider(roomId));
       return OpenSessionPanel(
+        roomId: roomId,
+        isCreator: view.isCreator,
+        nextStep: view.nextStep,
+        planRadiusMeters: view.planRadiusMeters,
         displayCode: displayCode,
         participants: view.openParticipants,
         selfUid: view.selfUid,

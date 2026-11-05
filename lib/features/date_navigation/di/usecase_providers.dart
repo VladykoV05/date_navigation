@@ -20,6 +20,26 @@ JoinRoom joinRoom(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+WatchPlaceSuggestions watchPlaceSuggestions(Ref ref) {
+  return WatchPlaceSuggestions(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+SuggestPlace suggestPlace(Ref ref) {
+  return SuggestPlace(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+ChooseSuggestion chooseSuggestion(Ref ref) {
+  return ChooseSuggestion(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+SetPlanRadius setPlanRadius(Ref ref) {
+  return SetPlanRadius(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
 CompleteSession completeSession(Ref ref) {
   return CompleteSession(ref.watch(roomSessionRepositoryProvider));
 }
