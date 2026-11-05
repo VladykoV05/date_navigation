@@ -1,5 +1,6 @@
 import 'package:date_navigation/features/date_navigation/domain/entities/room_snapshot.dart';
 import 'package:date_navigation/features/date_navigation/presentation/pages/open_sessions_page.dart';
+import 'package:date_navigation/features/date_navigation/presentation/providers/date_navigation_service_providers.dart';
 import 'package:date_navigation/features/date_navigation/presentation/providers/open_sessions_provider.dart';
 import 'package:date_navigation/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,15 @@ RoomSnapshot _room({
   );
 }
 
-Widget _app(List<RoomSnapshot> rooms) {
+Widget _app(
+  List<RoomSnapshot> rooms, {
+  List<RoomEventSnapshot> events = const [],
+}) {
   return ProviderScope(
-    overrides: [openSessionsProvider.overrideWith((ref) async => rooms)],
+    overrides: [
+      openSessionsProvider.overrideWith((ref) async => rooms),
+      eventsProvider.overrideWith((ref) async => events),
+    ],
     child: MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: const [
@@ -76,6 +83,24 @@ void main() {
     expect(find.text('Full'), findsOneWidget);
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
+  });
+
+  testWidgets('create dialog lists TicketPro events', (tester) async {
+    await tester.pumpWidget(
+      _app(
+        const [],
+        events: const [RoomEventSnapshot(id: 'e1', title: 'Zoloto')],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Create session').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Event'), findsOneWidget);
+
+    await tester.tap(find.text('No event'));
+    await tester.pumpAndSettle();
+    expect(find.text('Zoloto'), findsOneWidget);
   });
 
   testWidgets('empty list shows empty state', (tester) async {

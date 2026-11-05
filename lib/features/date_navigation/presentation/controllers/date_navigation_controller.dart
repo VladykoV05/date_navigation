@@ -13,6 +13,7 @@ import '../../../user_profile/user_profile.dart';
 import '../../di/application_providers.dart';
 import '../../di/date_navigation_di.dart';
 import '../../domain/entities/date_scenario.dart';
+import '../../domain/entities/room_snapshot.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
@@ -235,8 +236,10 @@ class DateNavigationController extends Notifier<DateNavigationState> {
     await _roomSessionController.createRoom();
   }
 
-  Future<void> createOpenRoom({required int capacity}) =>
-      _roomSessionController.createOpenRoom(capacity: capacity);
+  Future<void> createOpenRoom({
+    required int capacity,
+    RoomEventSnapshot? event,
+  }) => _roomSessionController.createOpenRoom(capacity: capacity, event: event);
 
   Future<void> joinOpenRoom(String roomId) =>
       _roomSessionController.joinOpenRoom(roomId);

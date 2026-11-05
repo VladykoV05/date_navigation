@@ -6,6 +6,7 @@ import '../../application/runtime/meeting_planner_runtime.dart';
 import '../../application/state_transitions/room_session_state_transitions.dart';
 import '../../application/services/room_lifecycle_service.dart';
 import '../../application/state/date_navigation_state.dart';
+import '../../domain/entities/room_snapshot.dart';
 
 typedef DateNavigationStateReader = DateNavigationState Function();
 typedef DateNavigationStateWriter = void Function(DateNavigationState state);
@@ -100,7 +101,10 @@ class RoomSessionController {
     }
   }
 
-  Future<void> createOpenRoom({required int capacity}) async {
+  Future<void> createOpenRoom({
+    required int capacity,
+    RoomEventSnapshot? event,
+  }) async {
     final uid = _requireUserId('room');
     if (uid == null) return;
     _setRoomActionLoading(true);
@@ -108,6 +112,7 @@ class RoomSessionController {
     final res = await _roomLifecycle.createOpenRoom(
       hostUid: uid,
       capacity: capacity,
+      event: event,
     );
     switch (res) {
       case Err(:final failure):
