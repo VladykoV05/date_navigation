@@ -38,35 +38,10 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
   }
 
   Future<void> _rename(PublicProfileViewData? profile) async {
-    final l10n = context.l10n;
-    final controller = TextEditingController(text: profile?.shownName ?? '');
     final name = await showDialog<String>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.profileEditName),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          maxLength: 40,
-          decoration: InputDecoration(
-            labelText: l10n.profileNameLabel,
-            helperText: l10n.profileNameHint,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(l10n.profileCancel),
-          ),
-          FilledButton(
-            onPressed: () =>
-                Navigator.of(dialogContext).pop(controller.text.trim()),
-            child: Text(l10n.profileSave),
-          ),
-        ],
-      ),
+      builder: (_) => _RenameDialog(initial: profile?.shownName ?? ''),
     );
-    controller.dispose();
     if (name == null || name.isEmpty) return;
     await _run(
       () => ref
@@ -214,6 +189,56 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Диалог переименования: контроллер живёт в State и уничтожается вместе с диалогом,
+/// иначе поле использует уже удалённый контроллер во время анимации закрытия.
+class _RenameDialog extends StatefulWidget {
+  const _RenameDialog({required this.initial});
+
+  final String initial;
+
+  @override
+  State<_RenameDialog> createState() => _RenameDialogState();
+}
+
+class _RenameDialogState extends State<_RenameDialog> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initial,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      title: Text(l10n.profileEditName),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        maxLength: 40,
+        decoration: InputDecoration(
+          labelText: l10n.profileNameLabel,
+          helperText: l10n.profileNameHint,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.profileCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+          child: Text(l10n.profileSave),
+        ),
+      ],
     );
   }
 }
