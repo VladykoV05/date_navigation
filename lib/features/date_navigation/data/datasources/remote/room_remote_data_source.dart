@@ -272,6 +272,13 @@ class RoomRemoteDataSource {
     );
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> watchParticipants(String roomId) {
+    return _sessionDataSource.watchParticipants(
+      roomsCollection: roomsCollection,
+      roomId: roomId,
+    );
+  }
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> watchRoom(String roomId) {
     return _sessionDataSource.watchRoom(
       roomsCollection: roomsCollection,

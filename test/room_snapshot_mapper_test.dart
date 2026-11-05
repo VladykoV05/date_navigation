@@ -115,4 +115,37 @@ void main() {
     expect(snapshot.participants.last.role, RoomParticipantRole.member);
     expect(snapshot.participantUids, ['host-1', 'guest-2']);
   });
+
+  test('merges participant docs with points into open room', () {
+    final snapshot = mapper.fromMap(
+      'room-6',
+      {
+        'schemaVersion': 2,
+        'type': 'open',
+        'visibility': 'public',
+        'capacity': 3,
+        'creatorUid': 'host',
+        'hostUid': 'host',
+        'participants': ['host', 'guest'],
+      },
+      participantDocs: {
+        'host': {
+          'role': 'host',
+          'point': {'lat': 1.0, 'lng': 2.0},
+          'searchRadius': 500,
+        },
+        'guest': {
+          'role': 'member',
+          'point': {'lat': 3.0, 'lng': 4.0},
+          'searchRadius': 700,
+        },
+      },
+    );
+
+    expect(snapshot.participants, hasLength(2));
+    expect(snapshot.participants.first.point?.latitude, 1.0);
+    expect(snapshot.participants.last.point?.longitude, 4.0);
+    expect(snapshot.participants.last.searchRadius, 700);
+    expect(snapshot.participants.last.role, RoomParticipantRole.member);
+  });
 }

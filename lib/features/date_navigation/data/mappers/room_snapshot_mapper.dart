@@ -18,7 +18,11 @@ class RoomSnapshotMapper {
     return fromMap(document.id, data);
   }
 
-  RoomSnapshot fromMap(String id, Map<String, dynamic> data) {
+  RoomSnapshot fromMap(
+    String id,
+    Map<String, dynamic> data, {
+    Map<String, Map<String, dynamic>> participantDocs = const {},
+  }) {
     final snapshotRaw = Map<String, dynamic>.from(
       data['meetingSnapshot'] ?? const <String, dynamic>{},
     );
@@ -97,12 +101,35 @@ class RoomSnapshotMapper {
       visibility: RoomVisibility.fromWireValue(data['visibility']),
       capacity: (data['capacity'] as num?)?.toInt() ?? 2,
       hostUid: _nonEmptyTrimmed(data['hostUid']) ?? creatorUid,
-      participants: _parseParticipants(data),
+      participants: _parseParticipants(data, participantDocs: participantDocs),
       event: _parseEvent(data['event']),
     );
   }
 
-  static List<RoomParticipant> _parseParticipants(Map<String, dynamic> data) {
+  static List<RoomParticipant> _parseParticipants(
+    Map<String, dynamic> data, {
+    Map<String, Map<String, dynamic>> participantDocs = const {},
+  }) {
+    if (participantDocs.isNotEmpty) {
+      final hostUid =
+          _nonEmptyTrimmed(data['hostUid']) ??
+          (data['creatorUid'] ?? '').toString();
+      final rawUids = data['participants'];
+      final uids = rawUids is List
+          ? rawUids.map((uid) => uid.toString()).toList(growable: false)
+          : participantDocs.keys.toList(growable: false);
+      return [
+        for (final uid in uids)
+          participantDocs.containsKey(uid)
+              ? _participantFromDoc(uid, participantDocs[uid]!)
+              : RoomParticipant(
+                  uid: uid,
+                  role: uid == hostUid
+                      ? RoomParticipantRole.host
+                      : RoomParticipantRole.member,
+                ),
+      ];
+    }
     final raw = data['participants'];
     if (raw is List) {
       final parsed = <RoomParticipant>[];
@@ -147,6 +174,24 @@ class RoomSnapshotMapper {
       if (parsed.isNotEmpty) return parsed;
     }
     return _deriveParticipants(data);
+  }
+
+  static RoomParticipant _participantFromDoc(
+    String uid,
+    Map<String, dynamic> map,
+  ) {
+    return RoomParticipant(
+      uid: uid,
+      role: RoomParticipantRole.fromWireValue(map['role']),
+      point: _parseLatLng(map['point']),
+      searchRadius: (map['searchRadius'] as num?)?.toInt(),
+      meetingFormats: _parseMeetingFormats(
+        formatsRaw: map['meetingFormats'],
+        legacyRaw: map['meetingFormat'],
+      ),
+      selectedMeetingFormat: _parseMeetingFormat(map['selectedMeetingFormat']),
+      lastReadAt: _parseTimestamp(map['lastReadAt']),
+    );
   }
 
   static List<RoomParticipant> _deriveParticipants(Map<String, dynamic> data) {
