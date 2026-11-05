@@ -2215,6 +2215,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Participant'**
   String get openSessionParticipantMember;
+
+  /// No description provided for @failureLeaveRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not leave the session. Try again.'**
+  String get failureLeaveRoom;
+
+  /// No description provided for @failureHostCannotLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'The host cannot leave until host transfer is ready.'**
+  String get failureHostCannotLeave;
+
+  /// No description provided for @systemParticipantLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant left'**
+  String get systemParticipantLeft;
+
+  /// No description provided for @openSessionHostCannotLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'The host cannot leave yet: host transfer is coming later'**
+  String get openSessionHostCannotLeave;
 }
 
 class _AppLocalizationsDelegate

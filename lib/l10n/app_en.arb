@@ -598,5 +598,9 @@
   "openSessionLeave": "Leave",
   "openSessionPlanFromEvent": "Event",
   "openSessionEmptyParticipants": "Nobody here yet",
-  "openSessionParticipantMember": "Participant"
+  "openSessionParticipantMember": "Participant",
+  "failureLeaveRoom": "Could not leave the session. Try again.",
+  "failureHostCannotLeave": "The host cannot leave until host transfer is ready.",
+  "systemParticipantLeft": "Participant left",
+  "openSessionHostCannotLeave": "The host cannot leave yet: host transfer is coming later"
 }

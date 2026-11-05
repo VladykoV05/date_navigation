@@ -431,6 +431,85 @@ class RoomSessionRemoteDataSource {
     );
   }
 
+  /// Member leaves an open room: one transaction updates the room, writes a
+  /// system message while still a member, and deletes the member document.
+  Future<Result<void>> leaveOpenRoom({
+    required String roomsCollection,
+    required String roomId,
+    required String userId,
+  }) async {
+    return FirestoreErrorGuard.runVoidWithFallback(
+      () async {
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        final memberRef = roomRef.collection('participants').doc(userId);
+        final messageRef = roomRef.collection('messages').doc();
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          if (!snap.exists) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'not-found',
+              message: FailureCodes.roomNotFound,
+            );
+          }
+          final data = snap.data() ?? <String, dynamic>{};
+          if ((data['type'] ?? '').toString() != 'open') {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.notRoomMember,
+            );
+          }
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          if (creatorUid == userId) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.hostCannotLeave,
+            );
+          }
+          final participants = List<String>.from(
+            data['participants'] ?? const <String>[],
+          );
+          if (!participants.contains(userId)) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.notRoomMember,
+            );
+          }
+          final remaining = participants
+              .where((uid) => uid != userId)
+              .toList(growable: false);
+          final storedCount =
+              (data['participantCount'] as num?)?.toInt() ??
+              participants.length;
+          tx.update(roomRef, {
+            'participants': remaining,
+            'participantCount': storedCount - 1,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+          tx.set(messageRef, {
+            'senderUid': userId,
+            'text': 'system.participant_left',
+            'kind': 'system',
+            'clientId': messageRef.id,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+          tx.delete(memberRef);
+        });
+      },
+      mapper: _mapFirestoreFailure,
+      fallbackFor: (e) => switch (e.code) {
+        'not-found' => FailureCodes.roomNotFound,
+        'permission-denied' => e.message ?? FailureCodes.leaveRoomFailed,
+        _ => FailureCodes.leaveRoomFailed,
+      },
+      unknownFallback: FailureCodes.leaveRoomFailed,
+    );
+  }
+
   static const int openRoomCapacityMax = 20;
 
   Future<Result<String>> createOpenRoom({

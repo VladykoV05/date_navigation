@@ -81,6 +81,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         },
         unreadCount: unread,
         event: view.event,
+        canLeave: !view.isCreator,
       );
     }
     final venueLocked = view.venueLocked;

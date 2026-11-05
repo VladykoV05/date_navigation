@@ -133,6 +133,47 @@ final class CompleteSessionProvider
 
 String _$completeSessionHash() => r'07e1d2de9328193083ca02b88bd7b16cb8261313';
 
+@ProviderFor(leaveOpenRoom)
+final leaveOpenRoomProvider = LeaveOpenRoomProvider._();
+
+final class LeaveOpenRoomProvider
+    extends $FunctionalProvider<LeaveOpenRoom, LeaveOpenRoom, LeaveOpenRoom>
+    with $Provider<LeaveOpenRoom> {
+  LeaveOpenRoomProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'leaveOpenRoomProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$leaveOpenRoomHash();
+
+  @$internal
+  @override
+  $ProviderElement<LeaveOpenRoom> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  LeaveOpenRoom create(Ref ref) {
+    return leaveOpenRoom(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LeaveOpenRoom value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LeaveOpenRoom>(value),
+    );
+  }
+}
+
+String _$leaveOpenRoomHash() => r'73dacf40460cec72dc6a5e5d200fa4b62281efd1';
+
 @ProviderFor(watchRoom)
 final watchRoomProvider = WatchRoomProvider._();
 

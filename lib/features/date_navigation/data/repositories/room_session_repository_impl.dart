@@ -92,6 +92,14 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   }
 
   @override
+  Future<Result<void>> leaveOpenRoom({
+    required String roomId,
+    required String userId,
+  }) {
+    return _remote.leaveOpenRoom(roomId: roomId, userId: userId);
+  }
+
+  @override
   Stream<RoomSnapshot> watchRoom(String roomId) {
     final controller = StreamController<RoomSnapshot>();
     StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? roomSub;

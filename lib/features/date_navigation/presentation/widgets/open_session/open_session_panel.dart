@@ -22,6 +22,7 @@ class OpenSessionPanel extends StatefulWidget {
     required this.onLeaveRoom,
     required this.unreadCount,
     required this.event,
+    required this.canLeave,
   });
 
   final String displayCode;
@@ -35,6 +36,7 @@ class OpenSessionPanel extends StatefulWidget {
   final VoidCallback onLeaveRoom;
   final int unreadCount;
   final RoomEventViewData? event;
+  final bool canLeave;
 
   @override
   State<OpenSessionPanel> createState() => _OpenSessionPanelState();
@@ -138,12 +140,21 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
               ),
             ),
             TextButton.icon(
-              onPressed: widget.onLeaveRoom,
+              onPressed: widget.canLeave ? widget.onLeaveRoom : null,
               icon: const Icon(Icons.logout),
               label: Text(l10n.openSessionLeave),
             ),
           ],
         ),
+        if (!widget.canLeave) ...[
+          const SizedBox(height: 4),
+          Text(
+            l10n.openSessionHostCannotLeave,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+        ],
         if (!widget.hasOwnPoint) ...[
           const SizedBox(height: 8),
           FilledButton.icon(

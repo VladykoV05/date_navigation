@@ -9,6 +9,7 @@ import '../../domain/usecases/complete_session.dart';
 import '../../domain/usecases/create_room.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/usecases/join_room.dart';
+import '../../domain/usecases/leave_open_room.dart';
 import '../../domain/usecases/open_room_usecases.dart';
 
 class RoomLifecycleService {
@@ -17,12 +18,14 @@ class RoomLifecycleService {
   RoomLifecycleService({
     required CreateRoom createRoom,
     required CompleteSession completeSession,
+    required LeaveOpenRoom leaveOpenRoom,
     required JoinRoom joinRoom,
     required CreateOpenRoom createOpenRoom,
     required JoinOpenRoom joinOpenRoom,
     required AnalyticsService analytics,
   }) : _createRoom = createRoom,
        _completeSession = completeSession,
+       _leaveOpenRoom = leaveOpenRoom,
        _joinRoom = joinRoom,
        _createOpenRoom = createOpenRoom,
        _joinOpenRoom = joinOpenRoom,
@@ -30,6 +33,7 @@ class RoomLifecycleService {
 
   final CreateRoom _createRoom;
   final CompleteSession _completeSession;
+  final LeaveOpenRoom _leaveOpenRoom;
   final JoinRoom _joinRoom;
   final CreateOpenRoom _createOpenRoom;
   final JoinOpenRoom _joinOpenRoom;
@@ -111,6 +115,13 @@ class RoomLifecycleService {
       case Err(:final failure):
         return Err(failure);
     }
+  }
+
+  Future<Result<void>> leaveOpenRoom({
+    required String roomId,
+    required String userId,
+  }) {
+    return _leaveOpenRoom(roomId: roomId, userId: userId);
   }
 
   Future<Result<void>> completeSession({

@@ -251,6 +251,7 @@ String _systemText(BuildContext context, String code) {
   final l10n = context.l10n;
   return switch (code) {
     'system.participant_joined' => l10n.systemParticipantJoined,
+    'system.participant_left' => l10n.systemParticipantLeft,
     'system.format_confirmed' => l10n.systemFormatConfirmed,
     'system.place_selected' => l10n.systemPlaceSelected,
     _ => code,

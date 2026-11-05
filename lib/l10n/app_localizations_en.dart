@@ -1200,4 +1200,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSessionParticipantMember => 'Participant';
+
+  @override
+  String get failureLeaveRoom => 'Could not leave the session. Try again.';
+
+  @override
+  String get failureHostCannotLeave =>
+      'The host cannot leave until host transfer is ready.';
+
+  @override
+  String get systemParticipantLeft => 'Participant left';
+
+  @override
+  String get openSessionHostCannotLeave =>
+      'The host cannot leave yet: host transfer is coming later';
 }

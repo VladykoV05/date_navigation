@@ -372,5 +372,9 @@
   "openSessionLeave": "Выйти",
   "openSessionPlanFromEvent": "Событие",
   "openSessionEmptyParticipants": "Пока никого нет",
-  "openSessionParticipantMember": "Участник"
+  "openSessionParticipantMember": "Участник",
+  "failureLeaveRoom": "Не удалось выйти из сессии. Попробуйте ещё раз.",
+  "failureHostCannotLeave": "Хост не может выйти, пока передача хоста не готова.",
+  "systemParticipantLeft": "Участник вышел",
+  "openSessionHostCannotLeave": "Хост не может выйти: передача хоста появится позже"
 }

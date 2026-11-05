@@ -427,6 +427,10 @@ class DateNavigationController extends Notifier<DateNavigationState> {
 
   /// Выход из комнаты на этом устройстве (подписка снимается, локальное состояние сбрасывается).
   void leaveRoom() {
+    if (state.room.isOpen) {
+      unawaited(_roomSessionController.leaveOpenRoom());
+      return;
+    }
     _roomSessionController.leaveRoom();
   }
 

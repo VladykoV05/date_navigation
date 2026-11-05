@@ -101,6 +101,17 @@ class RoomRemoteDataSource {
     );
   }
 
+  Future<Result<void>> leaveOpenRoom({
+    required String roomId,
+    required String userId,
+  }) async {
+    return _sessionDataSource.leaveOpenRoom(
+      roomsCollection: roomsCollection,
+      roomId: roomId,
+      userId: userId,
+    );
+  }
+
   Future<Result<void>> completeSession({
     required String roomId,
     required String userId,

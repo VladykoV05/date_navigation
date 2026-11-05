@@ -25,6 +25,7 @@ Widget _host0({
   required List<OpenParticipantViewData> participants,
   required bool hasOwnPoint,
   VoidCallback? onLeave,
+  bool canLeave = true,
 }) {
   return MaterialApp(
     locale: const Locale('ru'),
@@ -49,6 +50,7 @@ Widget _host0({
           onLeaveRoom: onLeave ?? () {},
           unreadCount: 0,
           event: null,
+          canLeave: canLeave,
         ),
       ),
     ),
@@ -116,6 +118,29 @@ void main() {
     await tester.tap(find.text('Выйти'));
     await tester.pump();
     expect(left, isTrue);
+  });
+
+  testWidgets('UC-11: host cannot leave, sees hint, tap does nothing', (
+    tester,
+  ) async {
+    var left = false;
+    await tester.pumpWidget(
+      _host0(
+        participants: const [_host, _other],
+        hasOwnPoint: true,
+        canLeave: false,
+        onLeave: () => left = true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Хост не может выйти: передача хоста появится позже'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Выйти'));
+    await tester.pump();
+    expect(left, isFalse);
   });
 
   testWidgets('tabs: plan tab shows no-event text without event', (

@@ -1211,4 +1211,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openSessionParticipantMember => 'Участник';
+
+  @override
+  String get failureLeaveRoom =>
+      'Не удалось выйти из сессии. Попробуйте ещё раз.';
+
+  @override
+  String get failureHostCannotLeave =>
+      'Хост не может выйти, пока передача хоста не готова.';
+
+  @override
+  String get systemParticipantLeft => 'Участник вышел';
+
+  @override
+  String get openSessionHostCannotLeave =>
+      'Хост не может выйти: передача хоста появится позже';
 }
