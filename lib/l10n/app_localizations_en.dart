@@ -1197,4 +1197,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSessionEmptyParticipants => 'Nobody here yet';
+
+  @override
+  String get openSessionParticipantMember => 'Participant';
 }

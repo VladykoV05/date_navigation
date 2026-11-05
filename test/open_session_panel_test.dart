@@ -71,6 +71,21 @@ void main() {
     expect(find.text('адрес не указан'), findsOneWidget);
   });
 
+  testWidgets('UC-08: tapping a participant opens card with address status', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host0(participants: const [_host, _other], hasOwnPoint: true),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Участник 2'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Участник'), findsOneWidget);
+    expect(find.text('адрес указан'), findsNWidgets(3));
+  });
+
   testWidgets('UC-09: address button shown only without own point', (
     tester,
   ) async {

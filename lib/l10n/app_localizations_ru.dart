@@ -1208,4 +1208,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openSessionEmptyParticipants => 'Пока никого нет';
+
+  @override
+  String get openSessionParticipantMember => 'Участник';
 }

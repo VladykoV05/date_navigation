@@ -2209,6 +2209,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nobody here yet'**
   String get openSessionEmptyParticipants;
+
+  /// No description provided for @openSessionParticipantMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant'**
+  String get openSessionParticipantMember;
 }
 
 class _AppLocalizationsDelegate

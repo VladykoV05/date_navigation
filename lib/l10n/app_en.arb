@@ -597,5 +597,6 @@
   "openSessionAddressNotSet": "address not set",
   "openSessionLeave": "Leave",
   "openSessionPlanFromEvent": "Event",
-  "openSessionEmptyParticipants": "Nobody here yet"
+  "openSessionEmptyParticipants": "Nobody here yet",
+  "openSessionParticipantMember": "Participant"
 }

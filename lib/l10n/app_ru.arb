@@ -371,5 +371,6 @@
   "openSessionAddressNotSet": "адрес не указан",
   "openSessionLeave": "Выйти",
   "openSessionPlanFromEvent": "Событие",
-  "openSessionEmptyParticipants": "Пока никого нет"
+  "openSessionEmptyParticipants": "Пока никого нет",
+  "openSessionParticipantMember": "Участник"
 }

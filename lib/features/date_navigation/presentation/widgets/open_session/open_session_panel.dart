@@ -200,6 +200,11 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
                     ),
                     hasAddress: widget.participants[i].hasAddress,
                     isHost: widget.participants[i].isHost,
+                    onTap: () => _openParticipantCard(
+                      context,
+                      _participantName(context, i, widget.participants[i]),
+                      widget.participants[i],
+                    ),
                   ),
               ],
             ),
@@ -213,6 +218,44 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
     if (trimmed.isEmpty) return '?';
     return trimmed.substring(0, 1).toUpperCase();
   }
+
+  void _openParticipantCard(
+    BuildContext context,
+    String name,
+    OpenParticipantViewData participant,
+  ) {
+    final l10n = context.l10n;
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) {
+        final textTheme = Theme.of(sheetContext).textTheme;
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(name, style: textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Text(
+                participant.isHost
+                    ? l10n.openSessionParticipantHost
+                    : l10n.openSessionParticipantMember,
+                style: textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                participant.hasAddress
+                    ? l10n.openSessionAddressSet
+                    : l10n.openSessionAddressNotSet,
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _ParticipantRow extends StatelessWidget {
@@ -221,44 +264,52 @@ class _ParticipantRow extends StatelessWidget {
     required this.initial,
     required this.hasAddress,
     required this.isHost,
+    required this.onTap,
   });
 
   final String name;
   final String initial;
   final bool hasAddress;
   final bool isHost;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: scheme.primaryContainer,
-            child: Text(initial),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                Text(
-                  hasAddress
-                      ? l10n.openSessionAddressSet
-                      : l10n.openSessionAddressNotSet,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: scheme.primaryContainer,
+              child: Text(initial),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    hasAddress
+                        ? l10n.openSessionAddressSet
+                        : l10n.openSessionAddressNotSet,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
