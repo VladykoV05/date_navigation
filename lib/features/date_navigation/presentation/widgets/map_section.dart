@@ -15,6 +15,7 @@ class MapSection extends StatefulWidget {
   final GeoCoordinate? centerPoint;
   final GeoCoordinate? point1;
   final GeoCoordinate? point2;
+  final List<GeoCoordinate> openParticipantPoints;
   final List<PlaceViewData> foundPlaces;
   final void Function(PlaceViewData) onPlaceTap;
   final bool isSearching;
@@ -31,6 +32,7 @@ class MapSection extends StatefulWidget {
     required this.centerPoint,
     required this.point1,
     required this.point2,
+    this.openParticipantPoints = const [],
     required this.foundPlaces,
     required this.onPlaceTap,
     required this.isSearching,
@@ -120,6 +122,11 @@ class _MapSectionState extends State<MapSection> {
     }
     if (partnerPoint != null) {
       markers.add(_marker(partnerPoint, Icons.location_on, colorScheme.error));
+    }
+    for (final point in GeoMapMapper.toLatLngList(
+      widget.openParticipantPoints,
+    )) {
+      markers.add(_marker(point, Icons.location_on, colorScheme.primary));
     }
     if (widget.showMeetingRouteAndRadius && centerPoint != null) {
       markers.add(_buildCenterMarker(context, centerPoint));

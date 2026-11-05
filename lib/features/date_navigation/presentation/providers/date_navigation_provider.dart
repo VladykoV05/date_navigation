@@ -25,6 +25,7 @@ final dateNavigationMapViewProvider = Provider.autoDispose(
         centerPoint: s.meeting.centerPoint,
         point1: s.room.point1,
         point2: s.room.point2,
+        openParticipantPoints: s.room.openParticipantPoints,
         filteredPlaces: s.meeting.filteredPlaces,
         isLoading: s.ui.isLoading,
         isGeocoding: s.ui.isGeocoding,

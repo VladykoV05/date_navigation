@@ -55,6 +55,7 @@ class DateNavigationMapConsumerSection extends ConsumerWidget {
       centerPoint: view.centerPoint,
       point1: view.point1,
       point2: view.point2,
+      openParticipantPoints: view.openParticipantPoints,
       foundPlaces: mapPlaces,
       onPlaceTap: onPlaceTap,
       isSearching: showBlockingLoading && isLoading,

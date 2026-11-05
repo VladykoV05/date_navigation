@@ -21,6 +21,9 @@ abstract class RoomSessionState with _$RoomSessionState {
     GeoCoordinate? point1,
     GeoCoordinate? point2,
 
+    /// Points of all participants of an open session (point1/point2 are unused there).
+    @Default([]) List<GeoCoordinate> openParticipantPoints,
+
     /// True when partnerUid is set on the room document (joined, address optional).
     @Default(false) bool partnerJoined,
     @Default(SessionStatus.active) SessionStatus sessionStatus,

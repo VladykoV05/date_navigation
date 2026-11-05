@@ -211,6 +211,12 @@ class RoomSnapshotReducer {
         isCreator: isCreator,
         point1: nextPoint1,
         point2: nextPoint2,
+        openParticipantPoints: roomSnapshot.isOpen
+            ? roomSnapshot.participants
+                  .map((participant) => participant.point)
+                  .whereType<GeoCoordinate>()
+                  .toList(growable: false)
+            : const [],
         partnerJoined: partnerJoined,
         sessionStatus: sessionStatus,
         event: roomSnapshot.event,
