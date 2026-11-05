@@ -325,5 +325,25 @@
   "deleteAccountConfirm": "Удалить аккаунт",
   "deleteAccountButton": "Удалить аккаунт",
   "deleteAccountFailed": "Не удалось удалить аккаунт. Войдите снова и повторите.",
-  "storeReadyChecklistNote": "Разрешения: только Интернет. Без постоянного GPS. Данные: аккаунт и sync комнат через Firebase."
+  "storeReadyChecklistNote": "Разрешения: только Интернет. Без постоянного GPS. Данные: аккаунт и sync комнат через Firebase.",
+  "openSessionsTitle": "Открытые сессии",
+  "openSessionsCreate": "Создать сессию",
+  "openSessionsRefresh": "Обновить",
+  "openSessionsEmpty": "Открытых сессий пока нет. Создай свою и позови людей.",
+  "openSessionsLoadFailed": "Не удалось загрузить открытые сессии",
+  "openSessionsCapacity": "Максимум людей",
+  "openSessionNoEvent": "Открытая сессия",
+  "openSessionMembers": "{count} из {capacity}",
+  "openSessionJoin": "Войти",
+  "openSessionFull": "Заполнено",
+  "@openSessionMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -5,11 +5,13 @@ import '../../../../core/l10n/l10n_extensions.dart';
 class WelcomeView extends StatelessWidget {
   final VoidCallback onCreateRoom;
   final VoidCallback onJoinRoom;
+  final VoidCallback onOpenSessions;
 
   const WelcomeView({
     super.key,
     required this.onCreateRoom,
     required this.onJoinRoom,
+    required this.onOpenSessions,
   });
 
   @override
@@ -44,6 +46,10 @@ class WelcomeView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextButton(onPressed: onJoinRoom, child: Text(l10n.welcomeJoinByCode)),
+        TextButton(
+          onPressed: onOpenSessions,
+          child: Text(l10n.openSessionsTitle),
+        ),
       ],
     );
   }

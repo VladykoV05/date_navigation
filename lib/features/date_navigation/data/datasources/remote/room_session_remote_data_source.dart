@@ -168,6 +168,13 @@ class RoomSessionRemoteDataSource {
           );
         }
         final data = snap.data() ?? <String, dynamic>{};
+        if (data['type'] == 'open') {
+          throw FirebaseException(
+            plugin: 'cloud_firestore',
+            code: 'failed-precondition',
+            message: FailureCodes.roomNotOpen,
+          );
+        }
         final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
             .toString();
         final partnerUid = (data['partnerUid'] ?? '').toString();
@@ -224,7 +231,10 @@ class RoomSessionRemoteDataSource {
       final fallback = switch (e.code) {
         'not-found' => FailureCodes.roomNotFound,
         'already-exists' => FailureCodes.roomFull,
-        'failed-precondition' => FailureCodes.roomCorrupt,
+        'failed-precondition' =>
+          e.message == FailureCodes.roomNotOpen
+              ? FailureCodes.roomNotOpen
+              : FailureCodes.roomCorrupt,
         _ => FailureCodes.joinRoomFailed,
       };
       return Err(_mapFirestoreFailure(e, fallback: fallback));
@@ -250,6 +260,13 @@ class RoomSessionRemoteDataSource {
           );
         }
         final data = snap.data() ?? <String, dynamic>{};
+        if (data['type'] == 'open') {
+          throw FirebaseException(
+            plugin: 'cloud_firestore',
+            code: 'failed-precondition',
+            message: FailureCodes.roomNotOpen,
+          );
+        }
         final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
             .toString();
         final partnerUid = (data['partnerUid'] ?? '').toString();
@@ -289,7 +306,10 @@ class RoomSessionRemoteDataSource {
       final fallback = switch (e.code) {
         'not-found' => FailureCodes.roomNotFound,
         'already-exists' => FailureCodes.roomFull,
-        'failed-precondition' => FailureCodes.roomCorrupt,
+        'failed-precondition' =>
+          e.message == FailureCodes.roomNotOpen
+              ? FailureCodes.roomNotOpen
+              : FailureCodes.roomCorrupt,
         _ => FailureCodes.joinRoomFailed,
       };
       return Err(_mapFirestoreFailure(e, fallback: fallback));

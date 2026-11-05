@@ -551,5 +551,25 @@
   "deleteAccountConfirm": "Delete account",
   "deleteAccountButton": "Delete account",
   "deleteAccountFailed": "Could not delete the account. Sign in again and retry.",
-  "storeReadyChecklistNote": "Permissions: Internet only. No continuous GPS tracking. Data safety: account + room sync via Firebase."
+  "storeReadyChecklistNote": "Permissions: Internet only. No continuous GPS tracking. Data safety: account + room sync via Firebase.",
+  "openSessionsTitle": "Open sessions",
+  "openSessionsCreate": "Create session",
+  "openSessionsRefresh": "Refresh",
+  "openSessionsEmpty": "No open sessions yet. Create one and invite people.",
+  "openSessionsLoadFailed": "Could not load open sessions",
+  "openSessionsCapacity": "Max people",
+  "openSessionNoEvent": "Open session",
+  "openSessionMembers": "{count} of {capacity}",
+  "openSessionJoin": "Join",
+  "openSessionFull": "Full",
+  "@openSessionMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  }
 }

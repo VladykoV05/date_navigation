@@ -19,6 +19,7 @@ abstract final class FailureCodes {
   static const roomFull = 'room_full';
   static const roomCorrupt = 'room_corrupt';
   static const roomNotOpen = 'room_not_open';
+  static const eventSourceUnavailable = 'event_source_unavailable';
   static const roomCapacityInvalid = 'room_capacity_invalid';
   static const creatorUnresolved = 'creator_unresolved';
   static const notRoomMember = 'not_room_member';
