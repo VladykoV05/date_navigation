@@ -100,6 +100,53 @@ class RoomSessionController {
     }
   }
 
+  Future<void> createOpenRoom({required int capacity}) async {
+    final uid = _requireUserId('room');
+    if (uid == null) return;
+    _setRoomActionLoading(true);
+    _clearFailure();
+    final res = await _roomLifecycle.createOpenRoom(
+      hostUid: uid,
+      capacity: capacity,
+    );
+    switch (res) {
+      case Err(:final failure):
+        _setRoomActionLoading(false);
+        _setFailure(failure, 'room');
+      case Ok(value: final access):
+        _writeState(
+          _roomActions.afterJoinSuccess(
+            _readState(),
+            roomId: access.roomId,
+            inviteCode: access.inviteCode,
+          ),
+        );
+        _subscribeToRoom(access.roomId);
+    }
+  }
+
+  Future<void> joinOpenRoom(String roomId) async {
+    final uid = _requireUserId('room');
+    if (uid == null) return;
+    _setRoomActionLoading(true);
+    _clearFailure();
+    final res = await _roomLifecycle.joinOpenRoom(roomId: roomId, userId: uid);
+    switch (res) {
+      case Err(:final failure):
+        _setRoomActionLoading(false);
+        _setFailure(failure, 'join');
+      case Ok(value: final access):
+        _writeState(
+          _roomActions.afterJoinSuccess(
+            _readState(),
+            roomId: access.roomId,
+            inviteCode: access.inviteCode,
+          ),
+        );
+        _subscribeToRoom(access.roomId);
+    }
+  }
+
   Future<void> completeSession() async {
     final uid = _requireUserId('room');
     if (uid == null) return;

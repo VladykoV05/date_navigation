@@ -48,7 +48,9 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         onJoinRoom: onShowJoinDialog,
       );
     }
-    final displayCode = view.inviteCode ?? roomId;
+    final displayCode = (view.inviteCode?.isNotEmpty ?? false)
+        ? view.inviteCode!
+        : roomId;
     final venueLocked = view.venueLocked;
     final isSessionClosed = view.isSessionClosed;
     final isSessionCompleted = view.sessionStatus.isCompleted;

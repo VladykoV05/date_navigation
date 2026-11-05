@@ -235,6 +235,12 @@ class DateNavigationController extends Notifier<DateNavigationState> {
     await _roomSessionController.createRoom();
   }
 
+  Future<void> createOpenRoom({required int capacity}) =>
+      _roomSessionController.createOpenRoom(capacity: capacity);
+
+  Future<void> joinOpenRoom(String roomId) =>
+      _roomSessionController.joinOpenRoom(roomId);
+
   void joinRoom(String code) {
     _roomSessionController.joinRoom(code);
   }
