@@ -65,6 +65,7 @@ class DateNavigationMapConsumerSection extends ConsumerWidget {
       ),
       searchRadius: searchRadius,
       routePoints: routePoints,
+      event: view.event,
       showMeetingRouteAndRadius: !venueLocked,
     );
   }
