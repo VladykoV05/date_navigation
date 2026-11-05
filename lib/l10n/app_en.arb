@@ -575,5 +575,12 @@
   "openSessionsEvent": "Event",
   "openSessionsEventNone": "No event",
   "openSessionsEventsUnavailable": "Event catalog is unavailable. Create a session without an event.",
-  "openEventRoute": "Route to event"
+  "openEventRoute": "Route to event",
+  "chatTitle": "Chat",
+  "chatInputHint": "Message",
+  "chatSend": "Send",
+  "chatEmpty": "No messages yet",
+  "chatLoadFailed": "Could not load messages",
+  "chatSendFailed": "Could not send message",
+  "chatOpen": "Chat"
 }

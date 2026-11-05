@@ -98,6 +98,54 @@ final class CacheServiceProvider
 
 String _$cacheServiceHash() => r'bf5dee3937cc8737dd1550a43c77eedd44eba0bd';
 
+@ProviderFor(chatRemoteDataSource)
+final chatRemoteDataSourceProvider = ChatRemoteDataSourceProvider._();
+
+final class ChatRemoteDataSourceProvider
+    extends
+        $FunctionalProvider<
+          ChatRemoteDataSource,
+          ChatRemoteDataSource,
+          ChatRemoteDataSource
+        >
+    with $Provider<ChatRemoteDataSource> {
+  ChatRemoteDataSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'chatRemoteDataSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$chatRemoteDataSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<ChatRemoteDataSource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ChatRemoteDataSource create(Ref ref) {
+    return chatRemoteDataSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ChatRemoteDataSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ChatRemoteDataSource>(value),
+    );
+  }
+}
+
+String _$chatRemoteDataSourceHash() =>
+    r'30ce348317cb3b9827601172f22e32eef1648bdf';
+
 @ProviderFor(roomRemoteDataSource)
 final roomRemoteDataSourceProvider = RoomRemoteDataSourceProvider._();
 

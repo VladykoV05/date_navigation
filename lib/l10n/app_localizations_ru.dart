@@ -1139,4 +1139,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openEventRoute => 'Маршрут к событию';
+
+  @override
+  String get chatTitle => 'Чат';
+
+  @override
+  String get chatInputHint => 'Сообщение';
+
+  @override
+  String get chatSend => 'Отправить';
+
+  @override
+  String get chatEmpty => 'Сообщений пока нет';
+
+  @override
+  String get chatLoadFailed => 'Не удалось загрузить сообщения';
+
+  @override
+  String get chatSendFailed => 'Не удалось отправить сообщение';
+
+  @override
+  String get chatOpen => 'Чат';
 }

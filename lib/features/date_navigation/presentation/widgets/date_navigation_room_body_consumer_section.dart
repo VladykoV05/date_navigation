@@ -17,6 +17,7 @@ import './place_card.dart';
 import './room_control_panel.dart';
 import './scenario_summary_sheet.dart';
 import './welcome_view.dart';
+import '../pages/chat_page.dart';
 import '../pages/open_sessions_page.dart';
 
 class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
@@ -234,6 +235,9 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       ),
       isCreator: panelView.isCreator,
       event: panelView.event,
+      onOpenChat: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => ChatPage(roomId: roomId))),
       onOpenEventRoute:
           panelView.event?.lat != null && panelView.event?.lon != null
           ? () {

@@ -1128,4 +1128,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openEventRoute => 'Route to event';
+
+  @override
+  String get chatTitle => 'Chat';
+
+  @override
+  String get chatInputHint => 'Message';
+
+  @override
+  String get chatSend => 'Send';
+
+  @override
+  String get chatEmpty => 'No messages yet';
+
+  @override
+  String get chatLoadFailed => 'Could not load messages';
+
+  @override
+  String get chatSendFailed => 'Could not send message';
+
+  @override
+  String get chatOpen => 'Chat';
 }

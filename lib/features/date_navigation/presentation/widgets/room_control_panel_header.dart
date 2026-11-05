@@ -18,6 +18,7 @@ class RoomControlPanelHeader extends StatelessWidget {
     required this.isSessionClosed,
     required this.sessionClosedText,
     required this.onLeaveRoom,
+    this.onOpenChat,
   });
 
   static const double _loadingIndicatorSize = 20;
@@ -32,6 +33,7 @@ class RoomControlPanelHeader extends StatelessWidget {
   final bool isSessionClosed;
   final String sessionClosedText;
   final VoidCallback onLeaveRoom;
+  final VoidCallback? onOpenChat;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,12 @@ class RoomControlPanelHeader extends StatelessWidget {
                 ),
               ),
             ),
+            if (onOpenChat != null)
+              IconButton(
+                tooltip: l10n.chatOpen,
+                onPressed: onOpenChat,
+                icon: const Icon(Icons.chat_bubble_outline),
+              ),
             if (isLoading)
               const SizedBox(
                 width: _loadingIndicatorSize,
