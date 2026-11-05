@@ -14,6 +14,23 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
+  Future<Result<List<ChatMessage>>> fetchMessages({
+    required String roomId,
+    required int limit,
+    DateTime? before,
+  }) {
+    return _remote.fetchMessages(roomId: roomId, limit: limit, before: before);
+  }
+
+  @override
+  Stream<DateTime?> watchLastRead({
+    required String roomId,
+    required String userId,
+  }) {
+    return _remote.watchLastRead(roomId: roomId, userId: userId);
+  }
+
+  @override
   Future<Result<void>> sendMessage({
     required String roomId,
     required String senderUid,

@@ -8,7 +8,6 @@ import '../../../../core/error/result.dart';
 import '../../../../core/l10n/l10n_extensions.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../di/date_navigation_di.dart';
-import '../providers/chat_provider.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({super.key, required this.roomId});
@@ -20,19 +19,40 @@ class ChatPage extends ConsumerStatefulWidget {
 }
 
 class _ChatPageState extends ConsumerState<ChatPage> {
+  static const int _pageSize = 50;
+
   final _controller = TextEditingController();
+  StreamSubscription<List<ChatMessage>>? _subscription;
+  List<ChatMessage> _messages = const [];
   bool _sending = false;
+  bool _loadingOlder = false;
+  bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
+    _subscribe();
     WidgetsBinding.instance.addPostFrameCallback((_) => _markRead());
   }
 
   @override
   void dispose() {
+    unawaited(_subscription?.cancel());
     _controller.dispose();
     super.dispose();
+  }
+
+  void _subscribe() {
+    _subscription = ref
+        .read(chatRepositoryProvider)
+        .watchMessages(widget.roomId, limit: _pageSize)
+        .listen((items) {
+          if (!mounted) return;
+          setState(() {
+            _messages = _merge(items, _messages);
+            _hasMore = items.length >= _pageSize;
+          });
+        }, onError: (_) {});
   }
 
   Future<void> _markRead() async {
@@ -41,6 +61,30 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     await ref
         .read(chatRepositoryProvider)
         .markRead(roomId: widget.roomId, userId: uid);
+  }
+
+  Future<void> _loadOlder() async {
+    if (_loadingOlder || !_hasMore || _messages.isEmpty) return;
+    final oldest = _messages.last;
+    setState(() => _loadingOlder = true);
+    final result = await ref
+        .read(chatRepositoryProvider)
+        .fetchMessages(
+          roomId: widget.roomId,
+          limit: _pageSize,
+          before: oldest.createdAt,
+        );
+    if (!mounted) return;
+    setState(() => _loadingOlder = false);
+    switch (result) {
+      case Ok(value: final older):
+        setState(() {
+          _messages = _merge(older, _messages);
+          _hasMore = older.length >= _pageSize;
+        });
+      case Err():
+        break;
+    }
   }
 
   Future<void> _send() async {
@@ -61,6 +105,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     switch (result) {
       case Ok():
         _controller.clear();
+        unawaited(_markRead());
       case Err():
         ScaffoldMessenger.of(
           context,
@@ -68,34 +113,63 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     }
   }
 
+  List<ChatMessage> _merge(
+    List<ChatMessage> incoming,
+    List<ChatMessage> current,
+  ) {
+    final byId = <String, ChatMessage>{
+      for (final message in current) message.id: message,
+      for (final message in incoming) message.id: message,
+    };
+    final merged = byId.values.toList(growable: false);
+    merged.sort((a, b) {
+      final aTime = a.createdAt;
+      final bTime = b.createdAt;
+      if (aTime == null && bTime == null) return 0;
+      if (aTime == null) return 1;
+      if (bTime == null) return -1;
+      return bTime.compareTo(aTime);
+    });
+    return merged;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final currentUserId =
         ref.watch(authSessionProvider.select((s) => s.currentUserId)) ?? '';
-    final messages = ref.watch(chatMessagesProvider(widget.roomId));
     return Scaffold(
       appBar: AppBar(title: Text(l10n.chatTitle)),
       body: Column(
         children: [
           Expanded(
-            child: messages.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, _) => Center(child: Text(l10n.chatLoadFailed)),
-              data: (items) {
-                if (items.isEmpty) {
-                  return Center(child: Text(l10n.chatEmpty));
-                }
-                return ListView.builder(
-                  reverse: true,
-                  padding: const EdgeInsets.all(12),
-                  itemCount: items.length,
-                  itemBuilder: (_, index) => _MessageBubble(
-                    message: items[index],
-                    isMine: items[index].senderUid == currentUserId,
+            child: Column(
+              children: [
+                if (_hasMore)
+                  TextButton(
+                    onPressed: _loadingOlder ? null : _loadOlder,
+                    child: _loadingOlder
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(l10n.chatLoadOlder),
                   ),
-                );
-              },
+                Expanded(
+                  child: _messages.isEmpty
+                      ? Center(child: Text(l10n.chatEmpty))
+                      : ListView.builder(
+                          reverse: true,
+                          padding: const EdgeInsets.all(12),
+                          itemCount: _messages.length,
+                          itemBuilder: (_, index) => _MessageBubble(
+                            message: _messages[index],
+                            isMine: _messages[index].senderUid == currentUserId,
+                          ),
+                        ),
+                ),
+              ],
             ),
           ),
           SafeArea(

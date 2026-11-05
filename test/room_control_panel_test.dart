@@ -27,6 +27,8 @@ void main() {
     MeetingFormatView? lastAgreedMeetingFormat,
     VoidCallback? onUseCurrentLocation,
     RoomEventViewData? event,
+    int unreadCount = 0,
+    VoidCallback? onOpenChat,
   }) {
     return ProviderScope(
       overrides: [
@@ -90,6 +92,8 @@ void main() {
               sessionStatus: SessionStatusView.active,
               isCreator: true,
               event: event,
+              unreadCount: unreadCount,
+              onOpenChat: onOpenChat ?? () {},
               onLeaveRoom: () {},
             ),
           ),
@@ -97,6 +101,18 @@ void main() {
       ),
     );
   }
+
+  testWidgets('shows unread chat badge', (tester) async {
+    await tester.pumpWidget(
+      buildPanel(
+        onMeetingFormatsChanged: (_) {},
+        onMeetingFormatConfirmed: (_) {},
+        unreadCount: 3,
+      ),
+    );
+
+    expect(find.text('3'), findsOneWidget);
+  });
 
   testWidgets('shows event banner when room has event', (tester) async {
     await tester.pumpWidget(

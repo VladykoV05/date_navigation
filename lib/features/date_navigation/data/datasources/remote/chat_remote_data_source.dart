@@ -25,6 +25,43 @@ class ChatRemoteDataSource {
         );
   }
 
+  Future<Result<List<ChatMessage>>> fetchMessages({
+    required String roomId,
+    required int limit,
+    DateTime? before,
+  }) async {
+    try {
+      Query<Map<String, dynamic>> query = _messages(
+        roomId,
+      ).orderBy('createdAt', descending: true);
+      if (before != null) {
+        query = query.endBefore([Timestamp.fromDate(before)]);
+      }
+      final snapshot = await query.limit(limit).get();
+      return Ok(snapshot.docs.map(_fromDocument).toList(growable: false));
+    } on FirebaseException catch (e) {
+      return Err(_mapFailure(e, FailureCodes.chatLoadFailed));
+    } catch (_) {
+      return const Err(UnknownFailure(FailureCodes.chatLoadFailed));
+    }
+  }
+
+  Stream<DateTime?> watchLastRead({
+    required String roomId,
+    required String userId,
+  }) {
+    return _firestore
+        .collection('rooms')
+        .doc(roomId)
+        .collection('reads')
+        .doc(userId)
+        .snapshots()
+        .map((snapshot) {
+          final raw = snapshot.data()?['lastReadAt'];
+          return raw is Timestamp ? raw.toDate() : null;
+        });
+  }
+
   Future<Result<void>> sendMessage({
     required String roomId,
     required String senderUid,

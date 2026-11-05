@@ -582,5 +582,6 @@
   "chatEmpty": "No messages yet",
   "chatLoadFailed": "Could not load messages",
   "chatSendFailed": "Could not send message",
-  "chatOpen": "Chat"
+  "chatOpen": "Chat",
+  "chatLoadOlder": "Load older"
 }

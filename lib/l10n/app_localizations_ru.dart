@@ -1160,4 +1160,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatOpen => 'Чат';
+
+  @override
+  String get chatLoadOlder => 'Загрузить старые';
 }

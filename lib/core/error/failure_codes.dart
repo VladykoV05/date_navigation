@@ -22,6 +22,7 @@ abstract final class FailureCodes {
   static const eventSourceUnavailable = 'event_source_unavailable';
   static const chatSendFailed = 'chat_send_failed';
   static const chatReadFailed = 'chat_read_failed';
+  static const chatLoadFailed = 'chat_load_failed';
   static const roomCapacityInvalid = 'room_capacity_invalid';
   static const creatorUnresolved = 'creator_unresolved';
   static const notRoomMember = 'not_room_member';
