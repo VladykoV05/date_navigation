@@ -465,13 +465,6 @@ class RoomSessionRemoteDataSource {
           final sessionClosed = SessionStatus.fromWireValue(
             data['sessionStatus'],
           ).isClosed;
-          if (creatorUid == userId && !sessionClosed) {
-            throw FirebaseException(
-              plugin: 'cloud_firestore',
-              code: 'permission-denied',
-              message: FailureCodes.hostCannotLeave,
-            );
-          }
           final participants = List<String>.from(
             data['participants'] ?? const <String>[],
           );
@@ -488,11 +481,34 @@ class RoomSessionRemoteDataSource {
           final storedCount =
               (data['participantCount'] as num?)?.toInt() ??
               participants.length;
+          final isActiveHost = creatorUid == userId && !sessionClosed;
+          if (isActiveHost && remaining.isEmpty) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.hostAlone,
+            );
+          }
+          // Active host leaves: ownership passes to participants[1] (earliest member).
+          final newHost = isActiveHost ? participants[1] : null;
           tx.update(roomRef, {
             'participants': remaining,
             'participantCount': storedCount - 1,
             'updatedAt': FieldValue.serverTimestamp(),
+            'creatorUid': ?newHost,
+            'createdBy': ?newHost,
+            'hostUid': ?newHost,
           });
+          if (newHost != null) {
+            final transferRef = roomRef.collection('messages').doc();
+            tx.set(transferRef, {
+              'senderUid': userId,
+              'text': 'system.host_transferred',
+              'kind': 'system',
+              'clientId': transferRef.id,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          }
           tx.set(messageRef, {
             'senderUid': userId,
             'text': 'system.participant_left',

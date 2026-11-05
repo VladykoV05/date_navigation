@@ -223,6 +223,20 @@ class RoomSnapshotReducer {
         selfUid: userId,
         openParticipants: roomSnapshot.isOpen
             ? roomSnapshot.participants
+                  .map(
+                    (p) => RoomParticipant(
+                      uid: p.uid,
+                      role: p.uid == roomSnapshot.creatorUid
+                          ? RoomParticipantRole.host
+                          : RoomParticipantRole.member,
+                      point: p.point,
+                      searchRadius: p.searchRadius,
+                      meetingFormats: p.meetingFormats,
+                      selectedMeetingFormat: p.selectedMeetingFormat,
+                      lastReadAt: p.lastReadAt,
+                    ),
+                  )
+                  .toList(growable: false)
             : const [],
         openOwnPoint: roomSnapshot.isOpen
             ? _openPointOf(roomSnapshot, userId)

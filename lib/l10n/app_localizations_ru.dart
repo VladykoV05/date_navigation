@@ -1217,15 +1217,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось выйти из сессии. Попробуйте ещё раз.';
 
   @override
-  String get failureHostCannotLeave =>
-      'Хост не может выйти, пока передача хоста не готова.';
-
-  @override
   String get systemParticipantLeft => 'Участник вышел';
-
-  @override
-  String get openSessionHostCannotLeave =>
-      'Хост не может выйти: передача хоста появится позже';
 
   @override
   String get openSessionComplete => 'Завершить сессию';
@@ -1249,4 +1241,15 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get openSessionClosedHint =>
       'Сессия завершена. Чат только для чтения, вход закрыт.';
+
+  @override
+  String get failureHostAlone =>
+      'Вы единственный участник. Завершите сессию, чтобы выйти.';
+
+  @override
+  String get openSessionHostAlone =>
+      'Чтобы выйти, завершите сессию: вы единственный участник';
+
+  @override
+  String get systemHostTransferred => 'Хост передан участнику';
 }

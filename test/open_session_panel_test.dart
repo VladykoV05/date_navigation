@@ -126,7 +126,7 @@ void main() {
     expect(left, isTrue);
   });
 
-  testWidgets('UC-11: host cannot leave, sees hint, tap does nothing', (
+  testWidgets('UC-11: solo host cannot leave, sees hint, tap does nothing', (
     tester,
   ) async {
     var left = false;
@@ -141,7 +141,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('Хост не может выйти: передача хоста появится позже'),
+      find.text('Чтобы выйти, завершите сессию: вы единственный участник'),
       findsOneWidget,
     );
     await tester.tap(find.text('Выйти'));

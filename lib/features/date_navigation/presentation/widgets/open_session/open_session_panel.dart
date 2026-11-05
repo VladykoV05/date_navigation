@@ -194,7 +194,7 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
         if (!widget.canLeave) ...[
           const SizedBox(height: 4),
           Text(
-            l10n.openSessionHostCannotLeave,
+            l10n.openSessionHostAlone,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),

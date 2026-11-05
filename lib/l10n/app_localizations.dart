@@ -2222,23 +2222,11 @@ abstract class AppLocalizations {
   /// **'Could not leave the session. Try again.'**
   String get failureLeaveRoom;
 
-  /// No description provided for @failureHostCannotLeave.
-  ///
-  /// In en, this message translates to:
-  /// **'The host cannot leave until host transfer is ready.'**
-  String get failureHostCannotLeave;
-
   /// No description provided for @systemParticipantLeft.
   ///
   /// In en, this message translates to:
   /// **'Participant left'**
   String get systemParticipantLeft;
-
-  /// No description provided for @openSessionHostCannotLeave.
-  ///
-  /// In en, this message translates to:
-  /// **'The host cannot leave yet: host transfer is coming later'**
-  String get openSessionHostCannotLeave;
 
   /// No description provided for @openSessionComplete.
   ///
@@ -2281,6 +2269,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session ended. Chat is read-only, joining is closed.'**
   String get openSessionClosedHint;
+
+  /// No description provided for @failureHostAlone.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the only participant. End the session to leave.'**
+  String get failureHostAlone;
+
+  /// No description provided for @openSessionHostAlone.
+  ///
+  /// In en, this message translates to:
+  /// **'To leave, end the session: you are the only participant'**
+  String get openSessionHostAlone;
+
+  /// No description provided for @systemHostTransferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Host transferred to a participant'**
+  String get systemHostTransferred;
 }
 
 class _AppLocalizationsDelegate

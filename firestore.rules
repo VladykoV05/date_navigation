@@ -130,6 +130,23 @@ service cloud.firestore {
              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'participantCount', 'updatedAt']);
     }
 
+    // Host leaves an active open room: ownership passes to participants[1] (the
+    // earliest member, since the host is always participants[0]). One member less.
+    function isOpenHostTransferUpdate() {
+      return resource.data.type == 'open'
+             && resource.data.sessionStatus == 'active'
+             && request.auth.uid == resource.data.creatorUid
+             && resource.data.participants.size() >= 2
+             && request.resource.data.creatorUid == resource.data.participants[1]
+             && request.resource.data.creatorUid != resource.data.creatorUid
+             && !(request.auth.uid in request.resource.data.participants)
+             && request.resource.data.participants.size() == resource.data.participants.size() - 1
+             && request.resource.data.participantCount == resource.data.participantCount - 1
+             && request.resource.data.capacity == resource.data.capacity
+             && request.resource.data.type == 'open'
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'participantCount', 'creatorUid', 'createdBy', 'hostUid', 'updatedAt']);
+    }
+
     // Only the creator ends a session (active -> completed), touching nothing else.
     // Applies to private and open rooms; participants cannot change the status.
     function isCreatorCompleteUpdate() {
@@ -230,6 +247,7 @@ service cloud.firestore {
                       || isOpenJoinUpdate()
                       || isOpenLeaveUpdate()
                       || isCreatorCompleteUpdate()
+                      || isOpenHostTransferUpdate()
                     );
 
       allow delete: if false;
@@ -296,7 +314,10 @@ service cloud.firestore {
                         resource.data.role == 'member'
                         || (resource.data.role == 'host'
                             && roomExists(roomId)
-                            && roomDoc(roomId).data.get('sessionStatus', 'active') != 'active')
+                            && (
+                              roomDoc(roomId).data.get('sessionStatus', 'active') != 'active'
+                              || roomDoc(roomId).data.creatorUid == uid
+                            ))
                       );
       }
     }

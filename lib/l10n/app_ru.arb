@@ -374,14 +374,15 @@
   "openSessionEmptyParticipants": "Пока никого нет",
   "openSessionParticipantMember": "Участник",
   "failureLeaveRoom": "Не удалось выйти из сессии. Попробуйте ещё раз.",
-  "failureHostCannotLeave": "Хост не может выйти, пока передача хоста не готова.",
   "systemParticipantLeft": "Участник вышел",
-  "openSessionHostCannotLeave": "Хост не может выйти: передача хоста появится позже",
   "openSessionComplete": "Завершить сессию",
   "openSessionCompleteTitle": "Завершить сессию?",
   "openSessionCompleteBody": "Чат станет только для чтения, вход в сессию закроется.",
   "openSessionCompleteAction": "Завершить",
   "openSessionCancel": "Отмена",
   "chatReadOnlyHint": "Сессия завершена: только чтение",
-  "openSessionClosedHint": "Сессия завершена. Чат только для чтения, вход закрыт."
+  "openSessionClosedHint": "Сессия завершена. Чат только для чтения, вход закрыт.",
+  "failureHostAlone": "Вы единственный участник. Завершите сессию, чтобы выйти.",
+  "openSessionHostAlone": "Чтобы выйти, завершите сессию: вы единственный участник",
+  "systemHostTransferred": "Хост передан участнику"
 }

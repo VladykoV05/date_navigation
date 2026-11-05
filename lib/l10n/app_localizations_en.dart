@@ -1205,15 +1205,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureLeaveRoom => 'Could not leave the session. Try again.';
 
   @override
-  String get failureHostCannotLeave =>
-      'The host cannot leave until host transfer is ready.';
-
-  @override
   String get systemParticipantLeft => 'Participant left';
-
-  @override
-  String get openSessionHostCannotLeave =>
-      'The host cannot leave yet: host transfer is coming later';
 
   @override
   String get openSessionComplete => 'End session';
@@ -1237,4 +1229,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get openSessionClosedHint =>
       'Session ended. Chat is read-only, joining is closed.';
+
+  @override
+  String get failureHostAlone =>
+      'You are the only participant. End the session to leave.';
+
+  @override
+  String get openSessionHostAlone =>
+      'To leave, end the session: you are the only participant';
+
+  @override
+  String get systemHostTransferred => 'Host transferred to a participant';
 }

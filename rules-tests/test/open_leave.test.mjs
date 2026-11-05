@@ -86,9 +86,12 @@ test('host cannot leave through the room update', async () => {
   }));
 });
 
-test('host cannot delete own participant document', async () => {
+// Host doc deletion is allowed only for the room creator (leave with ownership
+// transfer, see open_host_transfer.test.mjs). A standalone delete of the host doc
+// is a known trade-off: rules cannot require the room update in the same commit.
+test('non-creator cannot delete the host participant document', async () => {
   await seed();
-  await assertFails(deleteDoc(doc(as('host'), 'rooms/open1/participants/host')));
+  await assertFails(deleteDoc(doc(as('guest'), 'rooms/open1/participants/host')));
 });
 
 test('non-participant cannot remove a member from the room', async () => {
