@@ -1347,4 +1347,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String planProposedBy(Object name) {
     return 'от $name';
   }
+
+  @override
+  String get openSessionsEventsLoading => 'Загружаем события…';
 }

@@ -413,5 +413,6 @@
   "planTooFar": "Место дальше {meters} м от площадки события",
   "planSuggestLimit": "Можно предложить не больше 5 мест в час",
   "planSaveFailed": "Не удалось сохранить план. Попробуйте ещё раз.",
-  "planProposedBy": "от {name}"
+  "planProposedBy": "от {name}",
+  "openSessionsEventsLoading": "Загружаем события…"
 }

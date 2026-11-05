@@ -2461,6 +2461,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'from {name}'**
   String planProposedBy(Object name);
+
+  /// No description provided for @openSessionsEventsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading events…'**
+  String get openSessionsEventsLoading;
 }
 
 class _AppLocalizationsDelegate

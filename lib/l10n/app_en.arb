@@ -639,5 +639,6 @@
   "planTooFar": "The place is farther than {meters} m from the event venue",
   "planSuggestLimit": "You can suggest at most 5 places per hour",
   "planSaveFailed": "Could not save the plan. Try again.",
-  "planProposedBy": "from {name}"
+  "planProposedBy": "from {name}",
+  "openSessionsEventsLoading": "Loading events…"
 }

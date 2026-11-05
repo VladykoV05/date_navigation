@@ -1335,4 +1335,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String planProposedBy(Object name) {
     return 'from $name';
   }
+
+  @override
+  String get openSessionsEventsLoading => 'Loading events…';
 }

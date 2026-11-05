@@ -25,7 +25,10 @@ const _venueHtml = '''
 
 void main() {
   test('parses JSON-LD event fields like the proxy did', () {
-    final parsed = parseEventPage(_eventHtml, 'https://ticketpro.by/ru/event/first-event');
+    final parsed = parseEventPage(
+      _eventHtml,
+      'https://ticketpro.by/ru/event/first-event',
+    );
 
     expect(parsed, isNotNull);
     final event = parsed!.event;
@@ -52,7 +55,10 @@ void main() {
   });
 
   test('page without Event node yields nothing', () {
-    expect(parseEventPage('<html></html>', 'https://ticketpro.by/ru/event/x'), isNull);
+    expect(
+      parseEventPage('<html></html>', 'https://ticketpro.by/ru/event/x'),
+      isNull,
+    );
   });
 
   test('ticketpro url check accepts only https ticketpro hosts', () {
