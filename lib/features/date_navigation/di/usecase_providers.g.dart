@@ -315,6 +315,53 @@ final class SetNextStepProvider
 
 String _$setNextStepHash() => r'e2dc8785cc89d49532fc7a395a24db9e8c74b515';
 
+@ProviderFor(fetchWalkingRoute)
+final fetchWalkingRouteProvider = FetchWalkingRouteProvider._();
+
+final class FetchWalkingRouteProvider
+    extends
+        $FunctionalProvider<
+          FetchWalkingRoute,
+          FetchWalkingRoute,
+          FetchWalkingRoute
+        >
+    with $Provider<FetchWalkingRoute> {
+  FetchWalkingRouteProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchWalkingRouteProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchWalkingRouteHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchWalkingRoute> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  FetchWalkingRoute create(Ref ref) {
+    return fetchWalkingRoute(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchWalkingRoute value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchWalkingRoute>(value),
+    );
+  }
+}
+
+String _$fetchWalkingRouteHash() => r'f45f9302d0d555d123b35624b07a136ad70d0535';
+
 @ProviderFor(setPlanRadius)
 final setPlanRadiusProvider = SetPlanRadiusProvider._();
 

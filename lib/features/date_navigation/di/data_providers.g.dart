@@ -8,6 +8,55 @@ part of 'data_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+
+@ProviderFor(walkingRouteSource)
+final walkingRouteSourceProvider = WalkingRouteSourceProvider._();
+
+final class WalkingRouteSourceProvider
+    extends
+        $FunctionalProvider<
+          WalkingRouteSource,
+          WalkingRouteSource,
+          WalkingRouteSource
+        >
+    with $Provider<WalkingRouteSource> {
+  WalkingRouteSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'walkingRouteSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$walkingRouteSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<WalkingRouteSource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  WalkingRouteSource create(Ref ref) {
+    return walkingRouteSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(WalkingRouteSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<WalkingRouteSource>(value),
+    );
+  }
+}
+
+String _$walkingRouteSourceHash() =>
+    r'30b2f2a4b5e177645ca90c2bcfd77147b2b29ea9';
+
 /// Источник событий TicketPro (на устройстве, без прокси).
 
 @ProviderFor(eventsProxyDataSource)

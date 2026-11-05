@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../../../core/error/result.dart';
 import '../../domain/entities/date_vibe.dart';
@@ -100,3 +101,27 @@ Future<Result<void>> openPlanSetNextStep(
         hostUid: hostUid,
       );
 }
+
+/// Линия пешего маршрута от площадки события до следующего места.
+/// Без ключа или при ошибке — прямая линия (запасной вариант, design 11.4).
+final openPlanWalkingRouteProvider = FutureProvider.autoDispose
+    .family<
+      List<LatLng>,
+      ({double fromLat, double fromLon, double toLat, double toLon})
+    >((ref, key) async {
+      final straight = [
+        LatLng(key.fromLat, key.fromLon),
+        LatLng(key.toLat, key.toLon),
+      ];
+      final result = await ref
+          .read(fetchWalkingRouteProvider)
+          .call(
+            from: (lat: key.fromLat, lon: key.fromLon),
+            to: (lat: key.toLat, lon: key.toLon),
+          );
+      return switch (result) {
+        Ok(:final value) =>
+          value.map((p) => LatLng(p.lat, p.lon)).toList(growable: false),
+        Err() => straight,
+      };
+    });

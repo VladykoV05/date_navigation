@@ -8,7 +8,10 @@ import '../../../core/search/search_region.dart';
 import '../../../core/search/search_region_preferences.dart';
 import '../data/datasources/local/cache_service.dart';
 import '../data/datasources/remote/chat_remote_data_source.dart';
+import '../data/datasources/remote/ors_walking_route_data_source.dart';
 import '../data/datasources/remote/ticketpro_events_data_source.dart';
+import '../domain/ports/walking_route_source.dart';
+import '../config/date_navigation_config.dart';
 import '../domain/ports/event_source.dart';
 import '../data/datasources/remote/geocoding_remote_data_source.dart';
 import '../data/datasources/remote/osrm_remote_data_source.dart';
@@ -17,6 +20,14 @@ import '../data/datasources/remote/room_remote_data_source.dart';
 import 'infra_providers.dart';
 
 part 'data_providers.g.dart';
+
+@Riverpod(keepAlive: true)
+WalkingRouteSource walkingRouteSource(Ref ref) {
+  return OrsWalkingRouteDataSource(
+    client: ref.watch(httpClientProvider),
+    apiKey: DateNavigationConfig.orsApiKey,
+  );
+}
 
 /// Источник событий TicketPro (на устройстве, без прокси).
 @Riverpod(keepAlive: true)

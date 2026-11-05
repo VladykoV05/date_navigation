@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart' as latlong;
 
 import '../mappers/place_view_mapper.dart';
 import '../view_data/place_view_data.dart';
 import '../providers/date_navigation_provider.dart';
+import '../providers/open_plan_providers.dart';
 import './map_section.dart';
 
 typedef LoadingMessageBuilder =
@@ -29,6 +31,22 @@ class DateNavigationMapConsumerSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(dateNavigationMapViewProvider);
+    final venue = view.event;
+    final next = view.nextStep;
+    final openRoute =
+        view.isOpen && next != null && venue?.lat != null && venue?.lon != null
+        ? ref
+                  .watch(
+                    openPlanWalkingRouteProvider((
+                      fromLat: venue!.lat!,
+                      fromLon: venue.lon!,
+                      toLat: next.lat,
+                      toLon: next.lon,
+                    )),
+                  )
+                  .value ??
+              const <latlong.LatLng>[]
+        : const <latlong.LatLng>[];
     final places = view.filteredPlaces;
     final venueLocked = view.venueLocked;
     final finalChoicePlace = view.finalChoicePlace;
@@ -58,6 +76,7 @@ class DateNavigationMapConsumerSection extends ConsumerWidget {
       isOpenRoom: view.isOpen,
       openOwnPoint: view.openOwnPoint,
       openSelfUid: view.openSelfUid,
+      openRoute: openRoute,
       openParticipantPoints: view.openParticipantPoints,
       foundPlaces: mapPlaces,
       onPlaceTap: onPlaceTap,

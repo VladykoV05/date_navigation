@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/l10n/locale_provider.dart';
 import '../domain/usecases/usecases.dart';
+import 'data_providers.dart';
 import '../application/l10n/app_scenario_copy_catalog.dart';
 import 'repository_providers.dart';
 
@@ -42,6 +43,11 @@ SearchNearbyPlaces searchNearbyPlaces(Ref ref) {
 @Riverpod(keepAlive: true)
 SetNextStep setNextStep(Ref ref) {
   return SetNextStep(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+FetchWalkingRoute fetchWalkingRoute(Ref ref) {
+  return FetchWalkingRoute(ref.watch(walkingRouteSourceProvider));
 }
 
 @Riverpod(keepAlive: true)

@@ -42,6 +42,14 @@ final dateNavigationMapViewProvider = Provider.autoDispose(
         event: s.room.event == null
             ? null
             : RoomEventViewData.fromSnapshot(s.room.event!),
+        nextStep: s.room.nextStep == null
+            ? null
+            : NextStepViewData(
+                name: s.room.nextStep!.name,
+                lat: s.room.nextStep!.lat,
+                lon: s.room.nextStep!.lon,
+                address: s.room.nextStep!.address,
+              ),
       ),
     ),
   ),

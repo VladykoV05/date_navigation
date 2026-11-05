@@ -21,6 +21,7 @@ class MapSection extends StatefulWidget {
   final GeoCoordinate? openOwnPoint;
   final List<OpenParticipantPoint> openParticipantPoints;
   final String? openSelfUid;
+  final List<latlong.LatLng> openRoute;
   final List<PlaceViewData> foundPlaces;
   final void Function(PlaceViewData) onPlaceTap;
   final bool isSearching;
@@ -41,6 +42,7 @@ class MapSection extends StatefulWidget {
     this.openOwnPoint,
     this.openParticipantPoints = const [],
     this.openSelfUid,
+    this.openRoute = const [],
     required this.foundPlaces,
     required this.onPlaceTap,
     required this.isSearching,
@@ -102,6 +104,16 @@ class _MapSectionState extends State<MapSection> {
                     color: colorScheme.primary.withValues(alpha: 0.12),
                     borderColor: colorScheme.primary.withValues(alpha: 0.35),
                     borderStrokeWidth: 2,
+                  ),
+                ],
+              ),
+            if (widget.openRoute.length >= 2)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: widget.openRoute,
+                    strokeWidth: 4.0,
+                    color: colorScheme.tertiary.withValues(alpha: 0.9),
                   ),
                 ],
               ),
