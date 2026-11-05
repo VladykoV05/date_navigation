@@ -37,6 +37,23 @@ class _FakeChatRepository implements ChatRepository {
   }
 
   @override
+  Future<Result<List<ChatMessage>>> fetchMessages({
+    required String roomId,
+    required int limit,
+    DateTime? before,
+  }) async {
+    return const Ok([]);
+  }
+
+  @override
+  Stream<DateTime?> watchLastRead({
+    required String roomId,
+    required String userId,
+  }) {
+    return Stream.value(null);
+  }
+
+  @override
   Future<Result<void>> sendMessage({
     required String roomId,
     required String senderUid,

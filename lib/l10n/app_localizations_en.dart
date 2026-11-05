@@ -1149,4 +1149,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatOpen => 'Chat';
+
+  @override
+  String get chatLoadOlder => 'Load older';
 }

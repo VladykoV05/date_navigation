@@ -2119,6 +2119,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chat'**
   String get chatOpen;
+
+  /// No description provided for @chatLoadOlder.
+  ///
+  /// In en, this message translates to:
+  /// **'Load older'**
+  String get chatLoadOlder;
 }
 
 class _AppLocalizationsDelegate

@@ -18,6 +18,7 @@ import './room_control_panel.dart';
 import './scenario_summary_sheet.dart';
 import './welcome_view.dart';
 import '../pages/chat_page.dart';
+import '../providers/chat_provider.dart';
 import '../pages/open_sessions_page.dart';
 
 class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
@@ -196,6 +197,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       );
     }
     final panelView = ref.watch(roomControlPanelViewProvider);
+    final unreadCount = ref.watch(chatUnreadCountProvider(roomId));
 
     return RoomControlPanel(
       roomId: panelView.roomId,
@@ -235,6 +237,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       ),
       isCreator: panelView.isCreator,
       event: panelView.event,
+      unreadCount: unreadCount,
       onOpenChat: () => Navigator.of(
         context,
       ).push(MaterialPageRoute<void>(builder: (_) => ChatPage(roomId: roomId))),

@@ -356,5 +356,6 @@
   "chatEmpty": "Сообщений пока нет",
   "chatLoadFailed": "Не удалось загрузить сообщения",
   "chatSendFailed": "Не удалось отправить сообщение",
-  "chatOpen": "Чат"
+  "chatOpen": "Чат",
+  "chatLoadOlder": "Загрузить старые"
 }
