@@ -8,22 +8,20 @@ import '../../../core/search/search_region.dart';
 import '../../../core/search/search_region_preferences.dart';
 import '../data/datasources/local/cache_service.dart';
 import '../data/datasources/remote/chat_remote_data_source.dart';
-import '../data/datasources/remote/events_proxy_data_source.dart';
+import '../data/datasources/remote/ticketpro_events_data_source.dart';
+import '../domain/ports/event_source.dart';
 import '../data/datasources/remote/geocoding_remote_data_source.dart';
 import '../data/datasources/remote/osrm_remote_data_source.dart';
 import '../data/datasources/remote/places_remote_data_source.dart';
 import '../data/datasources/remote/room_remote_data_source.dart';
-import '../config/date_navigation_config.dart';
 import 'infra_providers.dart';
 
 part 'data_providers.g.dart';
 
+/// Источник событий TicketPro (на устройстве, без прокси).
 @Riverpod(keepAlive: true)
-EventsProxyDataSource eventsProxyDataSource(Ref ref) {
-  return EventsProxyDataSource(
-    client: ref.watch(httpClientProvider),
-    baseUrl: DateNavigationConfig.eventsProxyUrl,
-  );
+EventSource eventsProxyDataSource(Ref ref) {
+  return TicketProEventsDataSource(client: ref.watch(httpClientProvider));
 }
 
 @Riverpod(keepAlive: true)
