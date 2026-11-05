@@ -462,7 +462,10 @@ class RoomSessionRemoteDataSource {
           }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
               .toString();
-          if (creatorUid == userId) {
+          final sessionClosed = SessionStatus.fromWireValue(
+            data['sessionStatus'],
+          ).isClosed;
+          if (creatorUid == userId && !sessionClosed) {
             throw FirebaseException(
               plugin: 'cloud_firestore',
               code: 'permission-denied',

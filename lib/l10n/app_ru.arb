@@ -382,5 +382,6 @@
   "openSessionCompleteBody": "Чат станет только для чтения, вход в сессию закроется.",
   "openSessionCompleteAction": "Завершить",
   "openSessionCancel": "Отмена",
-  "chatReadOnlyHint": "Сессия завершена: только чтение"
+  "chatReadOnlyHint": "Сессия завершена: только чтение",
+  "openSessionClosedHint": "Сессия завершена. Чат только для чтения, вход закрыт."
 }

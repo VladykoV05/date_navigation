@@ -166,12 +166,15 @@ class _SessionStatusBanner extends ConsumerWidget {
       dateNavigationControllerProvider.select(
         (s) => (
           sessionStatus: s.room.sessionStatus,
+          isOpen: s.room.isOpen,
           isLoadingRoomAction: s.ui.isLoadingRoomAction,
         ),
       ),
     );
     final sessionStatus = view.sessionStatus;
     if (sessionStatus.isActive) return const SizedBox.shrink();
+    // Open sessions show their own status in OpenSessionPanel.
+    if (view.isOpen) return const SizedBox.shrink();
     final controller = ref.read(dateNavigationControllerProvider.notifier);
     final l10n = context.l10n;
     final text = sessionStatus.isCompleted

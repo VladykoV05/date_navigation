@@ -120,7 +120,7 @@ service cloud.firestore {
     function isOpenLeaveUpdate() {
       return resource.data.type == 'open'
              && request.auth.uid in resource.data.participants
-             && request.auth.uid != resource.data.creatorUid
+             && (request.auth.uid != resource.data.creatorUid || resource.data.sessionStatus != 'active')
              && !(request.auth.uid in request.resource.data.participants)
              && request.resource.data.participants.size() == resource.data.participants.size() - 1
              && request.resource.data.participantCount == resource.data.participantCount - 1
@@ -239,7 +239,10 @@ service cloud.firestore {
                     && request.auth.uid in roomDoc(roomId).data.participants;
         allow create: if isSignedIn()
                       && request.auth.uid in roomDoc(roomId).data.participants
-                      && roomDoc(roomId).data.get('sessionStatus', 'active') == 'active'
+                      && (
+                        request.resource.data.kind == 'system'
+                        || roomDoc(roomId).data.get('sessionStatus', 'active') == 'active'
+                      )
                       && request.resource.data.senderUid == request.auth.uid
                       && request.resource.data.text is string
                       && request.resource.data.text.size() >= 1
@@ -287,8 +290,14 @@ service cloud.firestore {
                       ]);
         // Member docs exist only in open rooms (create requires type == 'open'),
         // so deleting one's own member doc is the leave path. Host doc stays.
+        // Host doc may be removed only after the session ended (host transfer comes later).
         allow delete: if isSelf(uid)
-                      && resource.data.role == 'member';
+                      && (
+                        resource.data.role == 'member'
+                        || (resource.data.role == 'host'
+                            && roomExists(roomId)
+                            && roomDoc(roomId).data.get('sessionStatus', 'active') != 'active')
+                      );
       }
     }
 

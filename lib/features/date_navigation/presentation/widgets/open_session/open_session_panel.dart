@@ -177,7 +177,7 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
         if (widget.isClosed) ...[
           const SizedBox(height: 8),
           Text(
-            l10n.sessionCompletedHint,
+            l10n.openSessionClosedHint,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),

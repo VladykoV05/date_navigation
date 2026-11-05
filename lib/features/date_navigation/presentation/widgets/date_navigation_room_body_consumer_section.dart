@@ -84,7 +84,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         },
         unreadCount: unread,
         event: view.event,
-        canLeave: !view.isCreator,
+        canLeave: !view.isCreator || view.isSessionClosed,
         isClosed: view.isSessionClosed,
         canComplete: view.isCreator && !view.isSessionClosed,
         onCompleteSession: () => unawaited(controller.completeSession()),

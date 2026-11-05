@@ -1245,4 +1245,8 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatReadOnlyHint => 'Сессия завершена: только чтение';
+
+  @override
+  String get openSessionClosedHint =>
+      'Сессия завершена. Чат только для чтения, вход закрыт.';
 }

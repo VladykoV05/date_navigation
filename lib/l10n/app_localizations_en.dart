@@ -1233,4 +1233,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatReadOnlyHint => 'Session ended: read-only';
+
+  @override
+  String get openSessionClosedHint =>
+      'Session ended. Chat is read-only, joining is closed.';
 }

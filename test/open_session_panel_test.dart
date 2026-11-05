@@ -189,10 +189,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('Сессия завершена. Можно создать новую комнату.'),
+      find.text('Сессия завершена. Чат только для чтения, вход закрыт.'),
       findsOneWidget,
     );
     expect(find.text('Завершить сессию'), findsNothing);
+    expect(find.text('Создать новую комнату'), findsNothing);
   });
 
   testWidgets('tabs: plan tab shows no-event text without event', (

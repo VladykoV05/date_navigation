@@ -2275,6 +2275,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session ended: read-only'**
   String get chatReadOnlyHint;
+
+  /// No description provided for @openSessionClosedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ended. Chat is read-only, joining is closed.'**
+  String get openSessionClosedHint;
 }
 
 class _AppLocalizationsDelegate

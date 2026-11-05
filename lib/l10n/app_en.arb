@@ -608,5 +608,6 @@
   "openSessionCompleteBody": "The chat becomes read-only and joining is closed.",
   "openSessionCompleteAction": "End",
   "openSessionCancel": "Cancel",
-  "chatReadOnlyHint": "Session ended: read-only"
+  "chatReadOnlyHint": "Session ended: read-only",
+  "openSessionClosedHint": "Session ended. Chat is read-only, joining is closed."
 }

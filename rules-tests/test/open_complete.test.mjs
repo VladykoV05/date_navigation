@@ -87,3 +87,35 @@ test('member can still leave a completed room', async () => {
   batch.delete(doc(db, 'rooms/open1/participants/guest'));
   await assertSucceeds(batch.commit());
 });
+
+test('host can leave a completed room (room update and host doc delete)', async () => {
+  await seed();
+  await assertSucceeds(completeUpdate(as('host')));
+  const db = as('host');
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'rooms/open1'), {
+    participants: ['guest'], participantCount: 1, updatedAt: serverTimestamp(),
+  });
+  batch.delete(doc(db, 'rooms/open1/participants/host'));
+  await assertSucceeds(batch.commit());
+});
+
+test('host cannot leave while the session is still active', async () => {
+  await seed();
+  const db = as('host');
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'rooms/open1'), {
+    participants: ['guest'], participantCount: 1, updatedAt: serverTimestamp(),
+  });
+  batch.delete(doc(db, 'rooms/open1/participants/host'));
+  await assertFails(batch.commit());
+});
+
+test('member can post the system leave message in a completed room', async () => {
+  await seed();
+  await assertSucceeds(completeUpdate(as('host')));
+  await assertSucceeds(addDoc(collection(as('guest'), 'rooms/open1/messages'), {
+    senderUid: 'guest', text: 'system.participant_left', kind: 'system',
+    clientId: 'c4', createdAt: serverTimestamp(),
+  }));
+});
