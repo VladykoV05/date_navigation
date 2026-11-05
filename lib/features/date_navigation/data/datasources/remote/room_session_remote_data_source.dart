@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
@@ -6,6 +8,18 @@ import '../../../../../core/error/failure_codes.dart';
 import '../../../../../core/error/result.dart';
 import '../../../domain/entities/room_status.dart';
 import 'firestore_error_guard.dart';
+
+/// Короткий код открытой сессии: 6 символов без похожих (0/O, 1/I).
+const String _openRoomCodeAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const int openRoomCodeLength = 6;
+
+String generateOpenRoomCode({Random? random}) {
+  final rnd = random ?? Random.secure();
+  return List.generate(
+    openRoomCodeLength,
+    (_) => _openRoomCodeAlphabet[rnd.nextInt(_openRoomCodeAlphabet.length)],
+  ).join();
+}
 
 class RoomSessionRemoteDataSource {
   const RoomSessionRemoteDataSource(this._firestore, this._mapFirestoreFailure);
@@ -446,6 +460,7 @@ class RoomSessionRemoteDataSource {
       final batch = _firestore.batch();
       batch.set(roomRef, {
         'schemaVersion': 2,
+        'inviteCode': generateOpenRoomCode(),
         'type': 'open',
         'visibility': 'public',
         'capacity': capacity,

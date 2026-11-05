@@ -215,6 +215,7 @@ class RoomSnapshotReducer {
 
     final nextState = currentState.copyWith(
       room: currentState.room.copyWith(
+        inviteCode: roomSnapshot.inviteCode ?? currentState.room.inviteCode,
         isCreator: isCreator,
         point1: nextPoint1,
         point2: nextPoint2,

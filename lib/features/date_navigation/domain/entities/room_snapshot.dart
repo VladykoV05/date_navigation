@@ -205,6 +205,7 @@ class RoomSnapshot {
     this.meetingRevoteRequest = const RoomRevoteRequestSnapshot(),
     this.finalChoice = const RoomFinalChoiceSnapshot(),
     this.schemaVersion = 1,
+    this.inviteCode,
     this.type = RoomType.private,
     this.visibility = RoomVisibility.invite,
     this.capacity = 2,
@@ -214,6 +215,7 @@ class RoomSnapshot {
   });
 
   final String id;
+  final String? inviteCode;
   final String creatorUid;
   final String? partnerUid;
   final GeoCoordinate? point1;

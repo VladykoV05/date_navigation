@@ -40,6 +40,7 @@ class RoomSnapshotMapper {
       id: id,
       creatorUid: creatorUid,
       partnerUid: _nonEmptyTrimmed(data['partnerUid']),
+      inviteCode: _nonEmptyTrimmed(data['inviteCode']),
       point1: _parseLatLng(data['point1']),
       point2: _parseLatLng(data['point2']),
       proposal: RoomProposalSnapshot(
