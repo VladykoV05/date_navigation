@@ -21,6 +21,7 @@ import 'firebase_options.dart';
 import 'features/auth/auth.dart';
 import 'features/date_navigation/date_navigation.dart';
 import 'features/date_navigation/presentation/providers/date_navigation_provider.dart';
+import 'features/date_navigation/presentation/widgets/chat_notifications_host.dart';
 import 'l10n/app_localizations.dart';
 
 void main() {
@@ -96,7 +97,7 @@ class MyApp extends ConsumerWidget {
       navigatorObservers: kReleaseMode
           ? <NavigatorObserver>[FirebaseAnalyticsObserver(analytics: analytics)]
           : const <NavigatorObserver>[],
-      home: const AuthGate(),
+      home: const ChatNotificationsHost(child: AuthGate()),
     );
   }
 }
