@@ -213,6 +213,7 @@ class RoomSnapshotReducer {
         point2: nextPoint2,
         partnerJoined: partnerJoined,
         sessionStatus: sessionStatus,
+        event: roomSnapshot.event,
       ),
       meeting: currentState.meeting.copyWith(
         finalChoiceName: finalChoiceName,

@@ -7,13 +7,23 @@ import '../../../core/l10n/locale_provider.dart';
 import '../../../core/search/search_region.dart';
 import '../../../core/search/search_region_preferences.dart';
 import '../data/datasources/local/cache_service.dart';
+import '../data/datasources/remote/events_proxy_data_source.dart';
 import '../data/datasources/remote/geocoding_remote_data_source.dart';
 import '../data/datasources/remote/osrm_remote_data_source.dart';
 import '../data/datasources/remote/places_remote_data_source.dart';
 import '../data/datasources/remote/room_remote_data_source.dart';
+import '../config/date_navigation_config.dart';
 import 'infra_providers.dart';
 
 part 'data_providers.g.dart';
+
+@Riverpod(keepAlive: true)
+EventsProxyDataSource eventsProxyDataSource(Ref ref) {
+  return EventsProxyDataSource(
+    client: ref.watch(httpClientProvider),
+    baseUrl: DateNavigationConfig.eventsProxyUrl,
+  );
+}
 
 @Riverpod(keepAlive: true)
 CacheService cacheService(Ref ref) => CacheService();

@@ -9,6 +9,54 @@ part of 'data_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(eventsProxyDataSource)
+final eventsProxyDataSourceProvider = EventsProxyDataSourceProvider._();
+
+final class EventsProxyDataSourceProvider
+    extends
+        $FunctionalProvider<
+          EventsProxyDataSource,
+          EventsProxyDataSource,
+          EventsProxyDataSource
+        >
+    with $Provider<EventsProxyDataSource> {
+  EventsProxyDataSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'eventsProxyDataSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$eventsProxyDataSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<EventsProxyDataSource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  EventsProxyDataSource create(Ref ref) {
+    return eventsProxyDataSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(EventsProxyDataSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<EventsProxyDataSource>(value),
+    );
+  }
+}
+
+String _$eventsProxyDataSourceHash() =>
+    r'e9d31df0179d8fd52108645b61990a21aca8105a';
+
 @ProviderFor(cacheService)
 final cacheServiceProvider = CacheServiceProvider._();
 
@@ -144,7 +192,7 @@ final class GeocodingRemoteDataSourceProvider
 }
 
 String _$geocodingRemoteDataSourceHash() =>
-    r'a4efc7a73656bbe9e5d81d971b513c223993435d';
+    r'b467bd58eeffc1152f554c90a36e46845b8cb0f6';
 
 @ProviderFor(osrmRemoteDataSource)
 final osrmRemoteDataSourceProvider = OsrmRemoteDataSourceProvider._();

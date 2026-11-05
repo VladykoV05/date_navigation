@@ -2053,6 +2053,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Full'**
   String get openSessionFull;
+
+  /// No description provided for @openSessionsEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get openSessionsEvent;
+
+  /// No description provided for @openSessionsEventNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No event'**
+  String get openSessionsEventNone;
+
+  /// No description provided for @openSessionsEventsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Event catalog is unavailable. Create a session without an event.'**
+  String get openSessionsEventsUnavailable;
+
+  /// No description provided for @openEventRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route to event'**
+  String get openEventRoute;
 }
 
 class _AppLocalizationsDelegate

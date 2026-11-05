@@ -4,9 +4,66 @@ import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core/theme/ui_tokens.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 import '../view_data/place_view_data.dart';
+import '../view_data/room_event_view_data.dart';
 import 'room_control/room_address_section.dart';
 import 'room_control/room_meeting_places_section.dart';
 import 'room_control_panel_header.dart';
+
+class _EventBanner extends StatelessWidget {
+  const _EventBanner({required this.event, this.onOpenRoute});
+
+  final RoomEventViewData event;
+  final VoidCallback? onOpenRoute;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final subtitle = [
+      if (event.venueName != null) event.venueName!,
+      if (event.address != null) event.address!,
+      if (event.category != null) event.category!,
+    ].join(' · ');
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.openSessionsEvent,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              event.title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            if (subtitle.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(subtitle, style: theme.textTheme.bodySmall),
+            ],
+            if (onOpenRoute != null) ...[
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: onOpenRoute,
+                  icon: const Icon(Icons.directions),
+                  label: Text(l10n.openEventRoute),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class RoomControlPanel extends StatelessWidget {
   static const double _waitingParticipantPadding = 30;
@@ -55,6 +112,8 @@ class RoomControlPanel extends StatelessWidget {
   final bool isSessionClosed;
   final SessionStatusView sessionStatus;
   final bool isCreator;
+  final RoomEventViewData? event;
+  final VoidCallback? onOpenEventRoute;
   final VoidCallback onLeaveRoom;
 
   const RoomControlPanel({
@@ -102,6 +161,8 @@ class RoomControlPanel extends StatelessWidget {
     required this.isSessionClosed,
     required this.sessionStatus,
     required this.isCreator,
+    required this.event,
+    this.onOpenEventRoute,
     required this.onLeaveRoom,
   });
 
@@ -128,6 +189,10 @@ class RoomControlPanel extends StatelessWidget {
               : l10n.sessionExpiredActionsDisabled,
           onLeaveRoom: onLeaveRoom,
         ),
+        if (event != null) ...[
+          _EventBanner(event: event!, onOpenRoute: onOpenEventRoute),
+          const SizedBox(height: UiSpace.md),
+        ],
         RoomAddressSection(
           addressController: addressController,
           canSubmitAddress: canSubmitAddress,

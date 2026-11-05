@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "cleanup:rooms": "node cleanup_rooms.mjs"
+    "cleanup:rooms": "node cleanup_rooms.mjs",
+    "migrate:rooms": "node migrate_rooms_v2.mjs"
   },
   "dependencies": {
     "firebase-admin": "^13.4.0"

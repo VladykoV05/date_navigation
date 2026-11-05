@@ -1126,4 +1126,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openSessionFull => 'Заполнено';
+
+  @override
+  String get openSessionsEvent => 'Событие';
+
+  @override
+  String get openSessionsEventNone => 'Без события';
+
+  @override
+  String get openSessionsEventsUnavailable =>
+      'Каталог событий недоступен. Можно создать сессию без события.';
+
+  @override
+  String get openEventRoute => 'Маршрут к событию';
 }

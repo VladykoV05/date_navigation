@@ -2,6 +2,10 @@ class DateNavigationConfig {
   static const String appUserAgent =
       'DateNavigationApp/1.0 (student@university.by)';
 
+  static const String eventsProxyUrl = String.fromEnvironment(
+    'EVENTS_PROXY_URL',
+  );
+
   static const int overpassTimeoutSeconds = 12;
   static const int nominatimTimeoutSeconds = 6;
 

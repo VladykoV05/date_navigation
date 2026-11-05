@@ -2,11 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/analytics_di.dart';
 import '../../../../core/di/app_services_di.dart';
+import '../../../../core/error/result.dart';
 import '../../../user_profile/user_profile.dart';
 import '../../di/date_navigation_di.dart';
 import '../../application/services/address_submission_service.dart';
 import '../../application/services/date_assistant_service.dart';
 import '../../application/services/location_submission_service.dart';
+import '../../domain/entities/room_snapshot.dart';
 import '../../application/services/meeting_execution_service.dart';
 import '../../application/services/room_interaction_service.dart';
 import '../../application/services/room_lifecycle_service.dart';
@@ -20,6 +22,18 @@ final addressSubmissionServiceProvider = Provider<AddressSubmissionService>(
     analytics: ref.watch(analyticsServiceProvider),
   ),
 );
+
+final eventsProvider = FutureProvider.autoDispose<List<RoomEventSnapshot>>((
+  ref,
+) async {
+  final result = await ref
+      .watch(eventsProxyDataSourceProvider)
+      .searchEvents(limit: 10);
+  return switch (result) {
+    Ok(:final value) => value,
+    Err(:final failure) => throw failure,
+  };
+});
 
 final locationSubmissionServiceProvider = Provider<LocationSubmissionService>(
   (ref) => LocationSubmissionService(

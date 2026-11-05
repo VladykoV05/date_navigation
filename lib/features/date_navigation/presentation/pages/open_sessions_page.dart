@@ -53,48 +53,97 @@ class OpenSessionsPage extends ConsumerWidget {
   Future<void> _showCreateDialog(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
     var capacity = 4;
-    final created = await showDialog<int>(
-      context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(l10n.openSessionsCreate),
-          content: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.openSessionsCapacity),
-              const SizedBox(width: 12),
-              IconButton(
-                onPressed: capacity > 2
-                    ? () => setState(() => capacity--)
-                    : null,
-                icon: const Icon(Icons.remove_circle_outline),
+    RoomEventSnapshot? selectedEvent;
+    List<RoomEventSnapshot> events;
+    try {
+      events = await ref.read(eventsProvider.future);
+    } catch (_) {
+      events = const [];
+    }
+    if (!context.mounted) return;
+    final created =
+        await showDialog<({int capacity, RoomEventSnapshot? event})>(
+          context: context,
+          builder: (dialogContext) => StatefulBuilder(
+            builder: (context, setState) => AlertDialog(
+              title: Text(l10n.openSessionsCreate),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.openSessionsEvent),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<RoomEventSnapshot?>(
+                      initialValue: selectedEvent,
+                      isExpanded: true,
+                      items: [
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(l10n.openSessionsEventNone),
+                        ),
+                        for (final event in events)
+                          DropdownMenuItem(
+                            value: event,
+                            child: Text(
+                              event.title,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
+                      onChanged: (value) =>
+                          setState(() => selectedEvent = value),
+                    ),
+                    if (events.isEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.openSessionsEventsUnavailable,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(l10n.openSessionsCapacity),
+                        const SizedBox(width: 12),
+                        IconButton(
+                          onPressed: capacity > 2
+                              ? () => setState(() => capacity--)
+                              : null,
+                          icon: const Icon(Icons.remove_circle_outline),
+                        ),
+                        Text('$capacity'),
+                        IconButton(
+                          onPressed: capacity < 20
+                              ? () => setState(() => capacity++)
+                              : null,
+                          icon: const Icon(Icons.add_circle_outline),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Text('$capacity'),
-              IconButton(
-                onPressed: capacity < 20
-                    ? () => setState(() => capacity++)
-                    : null,
-                icon: const Icon(Icons.add_circle_outline),
-              ),
-            ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancelLabel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(
+                    dialogContext,
+                  ).pop((capacity: capacity, event: selectedEvent)),
+                  child: Text(l10n.openSessionsCreate),
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(l10n.cancelLabel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(capacity),
-              child: Text(l10n.openSessionsCreate),
-            ),
-          ],
-        ),
-      ),
-    );
+        );
     if (created == null) return;
     await ref
         .read(dateNavigationControllerProvider.notifier)
-        .createOpenRoom(capacity: created);
+        .createOpenRoom(capacity: created.capacity, event: created.event);
     if (context.mounted) Navigator.of(context).maybePop();
   }
 }

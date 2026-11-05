@@ -12,11 +12,11 @@
 | FR-1.5 | Выбор региона | R1 | `search_region.dart`, `search_region_preferences.dart` | `search_region_test.dart` | `theory/global-geocoding.md` | done |
 | FR-1.6 | Ошибки геокодинга | R1 | `failure_codes.dart` | `failure_retry_policy_test.dart` | `theory/global-geocoding.md` | частично |
 | FR-1.7 | Кэш с локалью/регионом | R1 | `cache_service.dart` | `geocoding_region_test.dart` | `theory/global-geocoding.md` | done |
-| FR-2.1 | Private/open room | R2 | `room_session_remote_data_source.dart` | TODO | `theory/open-sessions.md` | planned |
+| FR-2.1 | Private/open room | R2 | `room_session_remote_data_source.dart` | `room_snapshot_mapper_test.dart` | `theory/open-sessions.md` | done |
 | FR-2.2 | Метаданные open room | R2 | TODO | TODO | `adr/0002-room-schema-v2.md` | planned |
-| FR-2.3 | Список открытых | R2 | TODO `room_discovery_remote_data_source.dart` | TODO | `theory/open-sessions.md` | planned |
-| FR-2.4 | Join open | R2 | `room_session_remote_data_source.dart` | `room_remote_data_source_test.dart` | `theory/open-sessions.md` | planned |
-| FR-2.5 | Capacity race | R2 | TODO transaction | TODO | `theory/open-sessions.md` | planned |
+| FR-2.3 | Список открытых | R2 | `room_session_remote_data_source.dart`, `open_sessions_page.dart` | `open_sessions_page_test.dart` | `theory/open-sessions.md` | done |
+| FR-2.4 | Join open | R2 | `room_session_remote_data_source.dart` | rules emulator | `theory/open-sessions.md` | done |
+| FR-2.5 | Capacity race | R2 | `joinOpenRoom` transaction | rules emulator | `theory/open-sessions.md` | done |
 | FR-2.6 | Private invite/roomFull | R2 | `room_session_remote_data_source.dart:204` | `room_remote_data_source_test.dart` | `theory/realtime-sync.md` | planned |
 | FR-2.7 | End/leave | R2 | `complete_session.dart` | `session_lifecycle_test.dart` | `theory/open-sessions.md` | planned |
 | FR-2.8 | Приватность точек | R2 | TODO rules/mapper | TODO | `theory/open-sessions.md` | planned |
@@ -49,11 +49,11 @@
 | FR-6.5 | Fallback | R6 | `date_assistant_service.dart` | TODO | `theory/ai-concierge.md` | planned |
 | FR-6.6 | Ключ на сервере | R6 | TODO proxy | TODO | `adr/0003-ai-proxy.md` | planned |
 | FR-6.7 | Rate limit | R6 | TODO proxy | TODO | `theory/ai-concierge.md` | planned |
-| FR-7.1 | Поиск событий TicketPro | R2 | `proxy/src/events/ticketpro.ts` | `proxy` tests | `theory/events.md` | прототип |
+| FR-7.1 | Поиск событий TicketPro | R2 | `proxy/src/events/ticketpro.ts`, `events_proxy_data_source.dart` | `events_proxy_data_source_test.dart` | `theory/events.md` | done |
 | FR-7.2 | Импорт по ссылке | R2 | `proxy/src/events/ticketpro.ts` | `proxy` tests | `theory/events.md` | прототип |
-| FR-7.3 | Карточка события | R2 | TODO `event_card.dart` | TODO | `theory/events.md` | planned |
+| FR-7.3 | Карточка события | R2 | `open_sessions_page.dart`, `room_control_panel.dart` | `open_sessions_page_test.dart` | `theory/events.md` | done |
 | FR-7.4 | Координаты площадки | R2 | `parseVenuePage` | `proxy` tests | `theory/events.md` | прототип |
-| FR-7.5 | Сессия из события | R2 | TODO | TODO | `theory/events.md` | planned |
+| FR-7.5 | Сессия из события | R2 | `createOpenRoom(event:)` | `room_snapshot_mapper_test.dart` | `theory/events.md` | done |
 | FR-7.6 | Ручной fallback | R2 | TODO | TODO | `theory/events.md` | planned |
 | FR-7.7 | Атрибуция TicketPro | R2 | TODO | TODO | `theory/events.md` | planned |
 | FR-7.8 | Кэш/rate limit | R2 | `proxy/src/events/ticketpro.ts` | TODO | `theory/events.md` | прототип |
