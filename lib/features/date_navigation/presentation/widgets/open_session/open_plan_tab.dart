@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/error/failure_codes.dart';
 import '../../../../../core/error/result.dart';
@@ -192,25 +191,6 @@ class _OpenPlanTabState extends ConsumerState<OpenPlanTab> {
     );
   }
 
-  Future<void> _openRouteInMaps(
-    NextStepViewData next,
-    RoomEventViewData venue,
-  ) async {
-    final from = venue.lat;
-    final fromLon = venue.lon;
-    if (from == null || fromLon == null) {
-      _showMessage(context.l10n.planSearchNoCoords);
-      return;
-    }
-    final uri = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1'
-      '&origin=$from,$fromLon'
-      '&destination=${next.lat},${next.lon}'
-      '&travelmode=walking',
-    );
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -280,11 +260,6 @@ class _OpenPlanTabState extends ConsumerState<OpenPlanTab> {
                           ).round(),
                         ),
                         style: textTheme.bodySmall,
-                      ),
-                      TextButton.icon(
-                        onPressed: () => _openRouteInMaps(next, venue),
-                        icon: const Icon(Icons.directions_walk),
-                        label: Text(l10n.planOpenInMaps),
                       ),
                     ],
                   ],
