@@ -12,15 +12,20 @@ class AuthSignInService {
   final GoogleSignIn _googleSignIn;
 
   Future<void> signInWithGoogle() async {
-    final googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return;
+    try {
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return;
 
-    final googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    await _firebaseAuth.signInWithCredential(credential);
+      await _firebaseAuth.signInWithCredential(credential);
+    } catch (_) {
+      if (_firebaseAuth.currentUser != null) return;
+      rethrow;
+    }
   }
 }
