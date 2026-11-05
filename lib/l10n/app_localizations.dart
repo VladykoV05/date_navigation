@@ -2125,6 +2125,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Place selected'**
   String get systemPlaceSelected;
+
+  /// No description provided for @openSessionTabParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get openSessionTabParticipants;
+
+  /// No description provided for @openSessionTabPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get openSessionTabPlan;
+
+  /// No description provided for @openSessionTabChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get openSessionTabChat;
+
+  /// No description provided for @openSessionEnterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter address'**
+  String get openSessionEnterAddress;
+
+  /// No description provided for @openSessionAddressSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your address'**
+  String get openSessionAddressSheetTitle;
+
+  /// No description provided for @openSessionAddressSheetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The address is needed so participants can see your point'**
+  String get openSessionAddressSheetHint;
+
+  /// No description provided for @openSessionParticipantSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get openSessionParticipantSelf;
+
+  /// No description provided for @openSessionParticipantHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Host'**
+  String get openSessionParticipantHost;
+
+  /// No description provided for @openSessionParticipantNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant {number}'**
+  String openSessionParticipantNumber(Object number);
+
+  /// No description provided for @openSessionAddressSet.
+  ///
+  /// In en, this message translates to:
+  /// **'address set'**
+  String get openSessionAddressSet;
+
+  /// No description provided for @openSessionAddressNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'address not set'**
+  String get openSessionAddressNotSet;
+
+  /// No description provided for @openSessionLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get openSessionLeave;
+
+  /// No description provided for @openSessionPlanFromEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get openSessionPlanFromEvent;
+
+  /// No description provided for @openSessionEmptyParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody here yet'**
+  String get openSessionEmptyParticipants;
 }
 
 class _AppLocalizationsDelegate

@@ -219,6 +219,10 @@ class RoomSnapshotReducer {
         point1: nextPoint1,
         point2: nextPoint2,
         isOpen: roomSnapshot.isOpen,
+        selfUid: userId,
+        openParticipants: roomSnapshot.isOpen
+            ? roomSnapshot.participants
+            : const [],
         openOwnPoint: roomSnapshot.isOpen
             ? _openPointOf(roomSnapshot, userId)
             : null,

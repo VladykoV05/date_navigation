@@ -357,5 +357,19 @@
   "chatLoadOlder": "Загрузить старые",
   "systemParticipantJoined": "Участник присоединился",
   "systemFormatConfirmed": "Формат встречи подтверждён",
-  "systemPlaceSelected": "Место выбрано"
+  "systemPlaceSelected": "Место выбрано",
+  "openSessionTabParticipants": "Участники",
+  "openSessionTabPlan": "План",
+  "openSessionTabChat": "Чат",
+  "openSessionEnterAddress": "Ввести адрес",
+  "openSessionAddressSheetTitle": "Ваш адрес",
+  "openSessionAddressSheetHint": "Адрес нужен, чтобы участники увидели вашу точку",
+  "openSessionParticipantSelf": "Вы",
+  "openSessionParticipantHost": "Хост",
+  "openSessionParticipantNumber": "Участник {number}",
+  "openSessionAddressSet": "адрес указан",
+  "openSessionAddressNotSet": "адрес не указан",
+  "openSessionLeave": "Выйти",
+  "openSessionPlanFromEvent": "Событие",
+  "openSessionEmptyParticipants": "Пока никого нет"
 }

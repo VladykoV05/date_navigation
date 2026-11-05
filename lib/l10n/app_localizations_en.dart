@@ -1152,4 +1152,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemPlaceSelected => 'Place selected';
+
+  @override
+  String get openSessionTabParticipants => 'Participants';
+
+  @override
+  String get openSessionTabPlan => 'Plan';
+
+  @override
+  String get openSessionTabChat => 'Chat';
+
+  @override
+  String get openSessionEnterAddress => 'Enter address';
+
+  @override
+  String get openSessionAddressSheetTitle => 'Your address';
+
+  @override
+  String get openSessionAddressSheetHint =>
+      'The address is needed so participants can see your point';
+
+  @override
+  String get openSessionParticipantSelf => 'You';
+
+  @override
+  String get openSessionParticipantHost => 'Host';
+
+  @override
+  String openSessionParticipantNumber(Object number) {
+    return 'Participant $number';
+  }
+
+  @override
+  String get openSessionAddressSet => 'address set';
+
+  @override
+  String get openSessionAddressNotSet => 'address not set';
+
+  @override
+  String get openSessionLeave => 'Leave';
+
+  @override
+  String get openSessionPlanFromEvent => 'Event';
+
+  @override
+  String get openSessionEmptyParticipants => 'Nobody here yet';
 }

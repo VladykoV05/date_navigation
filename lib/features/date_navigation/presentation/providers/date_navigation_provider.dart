@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/di/auth_di.dart';
 import '../../application/state/date_navigation_state.dart';
 import '../mappers/place_view_mapper.dart';
+import '../view_data/open_participant_view_data.dart';
 import '../view_data/room_control_panel_data.dart';
 import '../view_data/room_event_view_data.dart';
 import '../controllers/date_navigation_controller.dart';
@@ -79,6 +80,15 @@ final dateNavigationRoomBodyViewProvider = Provider.autoDispose(
         searchRadius: s.meeting.searchRadius,
         voteCounts: s.voting.voteCounts,
         votesByUser: s.voting.votesByUser,
+        isOpen: s.room.isOpen,
+        selfUid: s.room.selfUid,
+        openParticipants: s.room.openParticipants
+            .map(OpenParticipantViewData.fromParticipant)
+            .toList(growable: false),
+        openOwnPoint: s.room.openOwnPoint,
+        event: s.room.event == null
+            ? null
+            : RoomEventViewData.fromSnapshot(s.room.event!),
       ),
     ),
   ),

@@ -23,6 +23,12 @@ abstract class RoomSessionState with _$RoomSessionState {
 
     @Default(false) bool isOpen,
 
+    /// Uid of the current user (set by the reducer for the open-session screen).
+    String? selfUid,
+
+    /// All participants of an open session, including self.
+    @Default([]) List<RoomParticipant> openParticipants,
+
     /// Own point of an open session (from participants/{uid}).
     GeoCoordinate? openOwnPoint,
 

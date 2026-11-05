@@ -1163,4 +1163,49 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get systemPlaceSelected => 'Место выбрано';
+
+  @override
+  String get openSessionTabParticipants => 'Участники';
+
+  @override
+  String get openSessionTabPlan => 'План';
+
+  @override
+  String get openSessionTabChat => 'Чат';
+
+  @override
+  String get openSessionEnterAddress => 'Ввести адрес';
+
+  @override
+  String get openSessionAddressSheetTitle => 'Ваш адрес';
+
+  @override
+  String get openSessionAddressSheetHint =>
+      'Адрес нужен, чтобы участники увидели вашу точку';
+
+  @override
+  String get openSessionParticipantSelf => 'Вы';
+
+  @override
+  String get openSessionParticipantHost => 'Хост';
+
+  @override
+  String openSessionParticipantNumber(Object number) {
+    return 'Участник $number';
+  }
+
+  @override
+  String get openSessionAddressSet => 'адрес указан';
+
+  @override
+  String get openSessionAddressNotSet => 'адрес не указан';
+
+  @override
+  String get openSessionLeave => 'Выйти';
+
+  @override
+  String get openSessionPlanFromEvent => 'Событие';
+
+  @override
+  String get openSessionEmptyParticipants => 'Пока никого нет';
 }

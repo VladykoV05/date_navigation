@@ -583,5 +583,19 @@
   "chatLoadOlder": "Load older",
   "systemParticipantJoined": "Participant joined",
   "systemFormatConfirmed": "Meeting format confirmed",
-  "systemPlaceSelected": "Place selected"
+  "systemPlaceSelected": "Place selected",
+  "openSessionTabParticipants": "Participants",
+  "openSessionTabPlan": "Plan",
+  "openSessionTabChat": "Chat",
+  "openSessionEnterAddress": "Enter address",
+  "openSessionAddressSheetTitle": "Your address",
+  "openSessionAddressSheetHint": "The address is needed so participants can see your point",
+  "openSessionParticipantSelf": "You",
+  "openSessionParticipantHost": "Host",
+  "openSessionParticipantNumber": "Participant {number}",
+  "openSessionAddressSet": "address set",
+  "openSessionAddressNotSet": "address not set",
+  "openSessionLeave": "Leave",
+  "openSessionPlanFromEvent": "Event",
+  "openSessionEmptyParticipants": "Nobody here yet"
 }
