@@ -18,7 +18,7 @@ mixin _$RoomSessionState {
  String? get selfUid;/// All participants of an open session, including self.
  List<RoomParticipant> get openParticipants;/// Own point of an open session (from participants/{uid}).
  GeoCoordinate? get openOwnPoint;/// Points of other participants of an open session (point1/point2 are unused there).
- List<GeoCoordinate> get openParticipantPoints;/// True when partnerUid is set on the room document (joined, address optional).
+ List<OpenParticipantPoint> get openParticipantPoints;/// True when partnerUid is set on the room document (joined, address optional).
  bool get partnerJoined; SessionStatus get sessionStatus; RoomEventSnapshot? get event;
 /// Create a copy of RoomSessionState
 /// with the given fields replaced by the non-null parameter values.
@@ -50,7 +50,7 @@ abstract mixin class $RoomSessionStateCopyWith<$Res>  {
   factory $RoomSessionStateCopyWith(RoomSessionState value, $Res Function(RoomSessionState) _then) = _$RoomSessionStateCopyWithImpl;
 @useResult
 $Res call({
- String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool isOpen, String? selfUid, List<RoomParticipant> openParticipants, GeoCoordinate? openOwnPoint, List<GeoCoordinate> openParticipantPoints, bool partnerJoined, SessionStatus sessionStatus, RoomEventSnapshot? event
+ String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool isOpen, String? selfUid, List<RoomParticipant> openParticipants, GeoCoordinate? openOwnPoint, List<OpenParticipantPoint> openParticipantPoints, bool partnerJoined, SessionStatus sessionStatus, RoomEventSnapshot? event
 });
 
 
@@ -79,7 +79,7 @@ as bool,selfUid: freezed == selfUid ? _self.selfUid : selfUid // ignore: cast_nu
 as String?,openParticipants: null == openParticipants ? _self.openParticipants : openParticipants // ignore: cast_nullable_to_non_nullable
 as List<RoomParticipant>,openOwnPoint: freezed == openOwnPoint ? _self.openOwnPoint : openOwnPoint // ignore: cast_nullable_to_non_nullable
 as GeoCoordinate?,openParticipantPoints: null == openParticipantPoints ? _self.openParticipantPoints : openParticipantPoints // ignore: cast_nullable_to_non_nullable
-as List<GeoCoordinate>,partnerJoined: null == partnerJoined ? _self.partnerJoined : partnerJoined // ignore: cast_nullable_to_non_nullable
+as List<OpenParticipantPoint>,partnerJoined: null == partnerJoined ? _self.partnerJoined : partnerJoined // ignore: cast_nullable_to_non_nullable
 as bool,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
 as SessionStatus,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as RoomEventSnapshot?,
@@ -167,7 +167,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool isOpen,  String? selfUid,  List<RoomParticipant> openParticipants,  GeoCoordinate? openOwnPoint,  List<GeoCoordinate> openParticipantPoints,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool isOpen,  String? selfUid,  List<RoomParticipant> openParticipants,  GeoCoordinate? openOwnPoint,  List<OpenParticipantPoint> openParticipantPoints,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RoomSessionState() when $default != null:
 return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.isOpen,_that.selfUid,_that.openParticipants,_that.openOwnPoint,_that.openParticipantPoints,_that.partnerJoined,_that.sessionStatus,_that.event);case _:
@@ -188,7 +188,7 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool isOpen,  String? selfUid,  List<RoomParticipant> openParticipants,  GeoCoordinate? openOwnPoint,  List<GeoCoordinate> openParticipantPoints,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool isOpen,  String? selfUid,  List<RoomParticipant> openParticipants,  GeoCoordinate? openOwnPoint,  List<OpenParticipantPoint> openParticipantPoints,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)  $default,) {final _that = this;
 switch (_that) {
 case _RoomSessionState():
 return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.isOpen,_that.selfUid,_that.openParticipants,_that.openOwnPoint,_that.openParticipantPoints,_that.partnerJoined,_that.sessionStatus,_that.event);case _:
@@ -208,7 +208,7 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool isOpen,  String? selfUid,  List<RoomParticipant> openParticipants,  GeoCoordinate? openOwnPoint,  List<GeoCoordinate> openParticipantPoints,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool isOpen,  String? selfUid,  List<RoomParticipant> openParticipants,  GeoCoordinate? openOwnPoint,  List<OpenParticipantPoint> openParticipantPoints,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)?  $default,) {final _that = this;
 switch (_that) {
 case _RoomSessionState() when $default != null:
 return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.isOpen,_that.selfUid,_that.openParticipants,_that.openOwnPoint,_that.openParticipantPoints,_that.partnerJoined,_that.sessionStatus,_that.event);case _:
@@ -223,7 +223,7 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 
 
 class _RoomSessionState extends RoomSessionState {
-  const _RoomSessionState({this.roomId, this.inviteCode, this.isCreator = false, this.point1, this.point2, this.isOpen = false, this.selfUid, final  List<RoomParticipant> openParticipants = const [], this.openOwnPoint, final  List<GeoCoordinate> openParticipantPoints = const [], this.partnerJoined = false, this.sessionStatus = SessionStatus.active, this.event}): _openParticipants = openParticipants,_openParticipantPoints = openParticipantPoints,super._();
+  const _RoomSessionState({this.roomId, this.inviteCode, this.isCreator = false, this.point1, this.point2, this.isOpen = false, this.selfUid, final  List<RoomParticipant> openParticipants = const [], this.openOwnPoint, final  List<OpenParticipantPoint> openParticipantPoints = const [], this.partnerJoined = false, this.sessionStatus = SessionStatus.active, this.event}): _openParticipants = openParticipants,_openParticipantPoints = openParticipantPoints,super._();
   
 
 @override final  String? roomId;
@@ -246,9 +246,9 @@ class _RoomSessionState extends RoomSessionState {
 /// Own point of an open session (from participants/{uid}).
 @override final  GeoCoordinate? openOwnPoint;
 /// Points of other participants of an open session (point1/point2 are unused there).
- final  List<GeoCoordinate> _openParticipantPoints;
+ final  List<OpenParticipantPoint> _openParticipantPoints;
 /// Points of other participants of an open session (point1/point2 are unused there).
-@override@JsonKey() List<GeoCoordinate> get openParticipantPoints {
+@override@JsonKey() List<OpenParticipantPoint> get openParticipantPoints {
   if (_openParticipantPoints is EqualUnmodifiableListView) return _openParticipantPoints;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_openParticipantPoints);
@@ -289,7 +289,7 @@ abstract mixin class _$RoomSessionStateCopyWith<$Res> implements $RoomSessionSta
   factory _$RoomSessionStateCopyWith(_RoomSessionState value, $Res Function(_RoomSessionState) _then) = __$RoomSessionStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool isOpen, String? selfUid, List<RoomParticipant> openParticipants, GeoCoordinate? openOwnPoint, List<GeoCoordinate> openParticipantPoints, bool partnerJoined, SessionStatus sessionStatus, RoomEventSnapshot? event
+ String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool isOpen, String? selfUid, List<RoomParticipant> openParticipants, GeoCoordinate? openOwnPoint, List<OpenParticipantPoint> openParticipantPoints, bool partnerJoined, SessionStatus sessionStatus, RoomEventSnapshot? event
 });
 
 
@@ -318,7 +318,7 @@ as bool,selfUid: freezed == selfUid ? _self.selfUid : selfUid // ignore: cast_nu
 as String?,openParticipants: null == openParticipants ? _self._openParticipants : openParticipants // ignore: cast_nullable_to_non_nullable
 as List<RoomParticipant>,openOwnPoint: freezed == openOwnPoint ? _self.openOwnPoint : openOwnPoint // ignore: cast_nullable_to_non_nullable
 as GeoCoordinate?,openParticipantPoints: null == openParticipantPoints ? _self._openParticipantPoints : openParticipantPoints // ignore: cast_nullable_to_non_nullable
-as List<GeoCoordinate>,partnerJoined: null == partnerJoined ? _self.partnerJoined : partnerJoined // ignore: cast_nullable_to_non_nullable
+as List<OpenParticipantPoint>,partnerJoined: null == partnerJoined ? _self.partnerJoined : partnerJoined // ignore: cast_nullable_to_non_nullable
 as bool,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
 as SessionStatus,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as RoomEventSnapshot?,

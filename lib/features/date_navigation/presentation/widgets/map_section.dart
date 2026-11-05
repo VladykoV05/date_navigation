@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core_ui/core_ui.dart';
+import '../../application/state/date_navigation_state.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 import '../mappers/geo_map_mapper.dart';
 import '../mappers/place_visual_mapper.dart';
@@ -17,7 +19,8 @@ class MapSection extends StatefulWidget {
   final GeoCoordinate? point2;
   final bool isOpenRoom;
   final GeoCoordinate? openOwnPoint;
-  final List<GeoCoordinate> openParticipantPoints;
+  final List<OpenParticipantPoint> openParticipantPoints;
+  final String? openSelfUid;
   final List<PlaceViewData> foundPlaces;
   final void Function(PlaceViewData) onPlaceTap;
   final bool isSearching;
@@ -37,6 +40,7 @@ class MapSection extends StatefulWidget {
     this.isOpenRoom = false,
     this.openOwnPoint,
     this.openParticipantPoints = const [],
+    this.openSelfUid,
     required this.foundPlaces,
     required this.onPlaceTap,
     required this.isSearching,
@@ -117,13 +121,18 @@ class _MapSectionState extends State<MapSection> {
     final markers = <Marker>[];
     if (widget.isOpenRoom) {
       final ownPoint = GeoMapMapper.toLatLngOrNull(widget.openOwnPoint);
-      if (ownPoint != null) {
-        markers.add(_marker(ownPoint, Icons.my_location, colorScheme.primary));
+      final selfUid = widget.openSelfUid;
+      if (ownPoint != null && selfUid != null) {
+        markers.add(_avatarMarker(ownPoint, selfUid, colorScheme.primary));
       }
-      for (final point in GeoMapMapper.toLatLngList(
-        widget.openParticipantPoints,
-      )) {
-        markers.add(_marker(point, Icons.location_on, colorScheme.tertiary));
+      for (final marker in widget.openParticipantPoints) {
+        markers.add(
+          _avatarMarker(
+            GeoMapMapper.toLatLng(marker.point),
+            marker.uid,
+            colorScheme.tertiary,
+          ),
+        );
       }
     } else {
       final myPoint = GeoMapMapper.toLatLngOrNull(
@@ -148,6 +157,20 @@ class _MapSectionState extends State<MapSection> {
       markers.add(_buildPlaceMarker(place));
     }
     return markers;
+  }
+
+  /// Маркер участника открытой сессии: фото из профиля в цветной рамке.
+  Marker _avatarMarker(latlong.LatLng point, String uid, Color borderColor) {
+    return Marker(
+      point: point,
+      width: 44,
+      height: 44,
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(shape: BoxShape.circle, color: borderColor),
+        child: PublicAvatar(uid: uid, radius: 19),
+      ),
+    );
   }
 
   Marker _marker(latlong.LatLng point, IconData icon, Color color) {

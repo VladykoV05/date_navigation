@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/di/auth_di.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core/profile/profile_providers.dart';
+import '../../../../core_ui/core_ui.dart';
 import '../../domain/entities/chat_message.dart';
 import '../../di/date_navigation_di.dart';
 
@@ -212,14 +214,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   }
 }
 
-class _MessageBubble extends StatelessWidget {
+class _MessageBubble extends ConsumerWidget {
   const _MessageBubble({required this.message, required this.isMine});
 
   final ChatMessage message;
   final bool isMine;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (message.kind == ChatMessageKind.system) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
@@ -235,20 +237,49 @@ class _MessageBubble extends StatelessWidget {
       );
     }
     final colorScheme = Theme.of(context).colorScheme;
+    final bubble = Container(
+      constraints: const BoxConstraints(maxWidth: 280),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isMine
+            ? colorScheme.primaryContainer
+            : colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!isMine)
+            Text(
+              ref
+                      .watch(publicProfileViewProvider(message.senderUid))
+                      .value
+                      ?.shownName ??
+                  '',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          Text(message.text),
+        ],
+      ),
+    );
     return Align(
       alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 320),
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isMine
-              ? colorScheme.primaryContainer
-              : colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(message.text),
-      ),
+      child: isMine
+          ? bubble
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                PublicAvatar(uid: message.senderUid, radius: 14),
+                const SizedBox(width: 8),
+                Flexible(child: bubble),
+              ],
+            ),
     );
   }
 }

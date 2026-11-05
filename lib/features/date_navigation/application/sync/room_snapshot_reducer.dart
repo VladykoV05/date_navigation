@@ -244,8 +244,13 @@ class RoomSnapshotReducer {
         openParticipantPoints: roomSnapshot.isOpen
             ? roomSnapshot.participants
                   .where((participant) => participant.uid != userId)
-                  .map((participant) => participant.point)
-                  .whereType<GeoCoordinate>()
+                  .where((participant) => participant.point != null)
+                  .map(
+                    (participant) => OpenParticipantPoint(
+                      uid: participant.uid,
+                      point: participant.point!,
+                    ),
+                  )
                   .toList(growable: false)
             : const [],
         partnerJoined: partnerJoined,

@@ -10,6 +10,14 @@ import '../../domain/value_objects/geo_coordinate.dart';
 
 part 'date_navigation_state.freezed.dart';
 
+/// Точка другого участника открытой сессии: uid нужен, чтобы показать его фото на карте.
+class OpenParticipantPoint {
+  const OpenParticipantPoint({required this.uid, required this.point});
+
+  final String uid;
+  final GeoCoordinate point;
+}
+
 @freezed
 abstract class RoomSessionState with _$RoomSessionState {
   const RoomSessionState._();
@@ -33,7 +41,7 @@ abstract class RoomSessionState with _$RoomSessionState {
     GeoCoordinate? openOwnPoint,
 
     /// Points of other participants of an open session (point1/point2 are unused there).
-    @Default([]) List<GeoCoordinate> openParticipantPoints,
+    @Default([]) List<OpenParticipantPoint> openParticipantPoints,
 
     /// True when partnerUid is set on the room document (joined, address optional).
     @Default(false) bool partnerJoined,
