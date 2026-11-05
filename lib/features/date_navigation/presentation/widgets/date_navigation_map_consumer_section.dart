@@ -77,6 +77,13 @@ class DateNavigationMapConsumerSection extends ConsumerWidget {
       openOwnPoint: view.openOwnPoint,
       openSelfUid: view.openSelfUid,
       openRoute: openRoute,
+      openEventPoint: venue?.lat != null && venue?.lon != null
+          ? latlong.LatLng(venue!.lat!, venue.lon!)
+          : null,
+      openNextStepPoint: next == null
+          ? null
+          : latlong.LatLng(next.lat, next.lon),
+      openNextStepName: next?.name,
       openParticipantPoints: view.openParticipantPoints,
       foundPlaces: mapPlaces,
       onPlaceTap: onPlaceTap,
