@@ -15,12 +15,12 @@
 |---|---|---|---|
 | FR-1.1–1.3 | permission/current location | TODO | planned |
 | FR-1.4–1.7 | global geocoding/cache | `geocoding_region_test.dart`, `search_region_test.dart` | done |
-| FR-2.1–2.8 | room v2/join/capacity | `test/room_remote_data_source_test.dart` + новые | planned |
+| FR-2.1–2.8 | room v2/join/capacity | `room_snapshot_mapper_test.dart`, rules emulator | частично |
 | FR-3.1–3.8 | chat/order/dedupe/unread | TODO | planned |
 | FR-4.1–4.7 | formats/custom/validation | TODO | planned |
 | FR-5.1–5.7 | next step/route/fallback | `test/meeting_repository_degraded_routing_test.dart` + новые | planned |
 | FR-6.1–6.7 | AI fallback/validation/rate | TODO | planned |
-| FR-7.1–7.8 | TicketPro JSON-LD/import/fallback | `proxy` tests + новые | прототип проверен |
+| FR-7.1–7.8 | TicketPro JSON-LD/import/fallback | `events_proxy_data_source_test.dart`, `open_sessions_page_test.dart` | частично |
 | FR-8.1–8.9 | live location/expiry/rules | TODO | planned |
 
 ## 3. Rules-тесты (минимум)

@@ -73,6 +73,7 @@ curl -X POST http://127.0.0.1:8080/aiSuggest \
 
 ### События TicketPro
 - `GET /events/search?limit=5&category=concerts` — каталог событий.
+- Приложение ходит в прокси через `--dart-define=EVENTS_PROXY_URL=https://...`.
 - `POST /events/import` с `{"url":"https://ticketpro.by/ru/event/..."}`.
 - Парсинг schema.org JSON-LD: `Event` + `Place.geo`.
 - Кэш 15 минут, задержка 300 мс, User-Agent, таймауты.
