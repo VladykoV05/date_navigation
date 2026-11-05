@@ -4,6 +4,7 @@ import '../../../../core/error/failure.dart';
 import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
+import '../../domain/entities/room_snapshot.dart';
 import '../../domain/entities/room_status.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 
@@ -23,6 +24,7 @@ abstract class RoomSessionState with _$RoomSessionState {
     /// True when partnerUid is set on the room document (joined, address optional).
     @Default(false) bool partnerJoined,
     @Default(SessionStatus.active) SessionStatus sessionStatus,
+    RoomEventSnapshot? event,
   }) = _RoomSessionState;
 
   bool get isCompleted => sessionStatus.isCompleted;

@@ -232,6 +232,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         lon: place.lon,
       ),
       isCreator: panelView.isCreator,
+      event: panelView.event,
       creatorMeetingFormats: panelView.creatorMeetingFormats,
       partnerMeetingFormats: panelView.partnerMeetingFormats,
       commonMeetingFormats: panelView.commonMeetingFormats,

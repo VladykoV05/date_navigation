@@ -1,6 +1,7 @@
 import 'package:date_navigation/core/search/search_region.dart';
 import 'package:date_navigation/core/search/search_region_preferences.dart';
 import 'package:date_navigation/features/date_navigation/presentation/view_data/place_view_data.dart';
+import 'package:date_navigation/features/date_navigation/presentation/view_data/room_event_view_data.dart';
 import 'package:date_navigation/features/date_navigation/presentation/widgets/room_control_panel.dart';
 import 'package:date_navigation/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ void main() {
     MeetingFormatView? selectedMeetingFormat,
     MeetingFormatView? lastAgreedMeetingFormat,
     VoidCallback? onUseCurrentLocation,
+    RoomEventViewData? event,
   }) {
     return ProviderScope(
       overrides: [
@@ -87,6 +89,7 @@ void main() {
               isSessionClosed: false,
               sessionStatus: SessionStatusView.active,
               isCreator: true,
+              event: event,
               onLeaveRoom: () {},
             ),
           ),
@@ -94,6 +97,23 @@ void main() {
       ),
     );
   }
+
+  testWidgets('shows event banner when room has event', (tester) async {
+    await tester.pumpWidget(
+      buildPanel(
+        onMeetingFormatsChanged: (_) {},
+        onMeetingFormatConfirmed: (_) {},
+        event: const RoomEventViewData(
+          title: 'Zoloto',
+          venueName: 'Дворец спорта',
+          category: 'Концерты',
+        ),
+      ),
+    );
+
+    expect(find.text('Zoloto'), findsOneWidget);
+    expect(find.textContaining('Дворец спорта'), findsOneWidget);
+  });
 
   testWidgets('invokes current location callback', (tester) async {
     var tapped = false;

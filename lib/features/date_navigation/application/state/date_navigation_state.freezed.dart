@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 mixin _$RoomSessionState {
 
  String? get roomId; String? get inviteCode; bool get isCreator; GeoCoordinate? get point1; GeoCoordinate? get point2;/// True when partnerUid is set on the room document (joined, address optional).
- bool get partnerJoined; SessionStatus get sessionStatus;
+ bool get partnerJoined; SessionStatus get sessionStatus; RoomEventSnapshot? get event;
 /// Create a copy of RoomSessionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $RoomSessionStateCopyWith<RoomSessionState> get copyWith => _$RoomSessionStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomSessionState&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.inviteCode, inviteCode) || other.inviteCode == inviteCode)&&(identical(other.isCreator, isCreator) || other.isCreator == isCreator)&&(identical(other.point1, point1) || other.point1 == point1)&&(identical(other.point2, point2) || other.point2 == point2)&&(identical(other.partnerJoined, partnerJoined) || other.partnerJoined == partnerJoined)&&(identical(other.sessionStatus, sessionStatus) || other.sessionStatus == sessionStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomSessionState&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.inviteCode, inviteCode) || other.inviteCode == inviteCode)&&(identical(other.isCreator, isCreator) || other.isCreator == isCreator)&&(identical(other.point1, point1) || other.point1 == point1)&&(identical(other.point2, point2) || other.point2 == point2)&&(identical(other.partnerJoined, partnerJoined) || other.partnerJoined == partnerJoined)&&(identical(other.sessionStatus, sessionStatus) || other.sessionStatus == sessionStatus)&&(identical(other.event, event) || other.event == event));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,roomId,inviteCode,isCreator,point1,point2,partnerJoined,sessionStatus);
+int get hashCode => Object.hash(runtimeType,roomId,inviteCode,isCreator,point1,point2,partnerJoined,sessionStatus,event);
 
 @override
 String toString() {
-  return 'RoomSessionState(roomId: $roomId, inviteCode: $inviteCode, isCreator: $isCreator, point1: $point1, point2: $point2, partnerJoined: $partnerJoined, sessionStatus: $sessionStatus)';
+  return 'RoomSessionState(roomId: $roomId, inviteCode: $inviteCode, isCreator: $isCreator, point1: $point1, point2: $point2, partnerJoined: $partnerJoined, sessionStatus: $sessionStatus, event: $event)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $RoomSessionStateCopyWith<$Res>  {
   factory $RoomSessionStateCopyWith(RoomSessionState value, $Res Function(RoomSessionState) _then) = _$RoomSessionStateCopyWithImpl;
 @useResult
 $Res call({
- String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool partnerJoined, SessionStatus sessionStatus
+ String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool partnerJoined, SessionStatus sessionStatus, RoomEventSnapshot? event
 });
 
 
@@ -63,7 +63,7 @@ class _$RoomSessionStateCopyWithImpl<$Res>
 
 /// Create a copy of RoomSessionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? roomId = freezed,Object? inviteCode = freezed,Object? isCreator = null,Object? point1 = freezed,Object? point2 = freezed,Object? partnerJoined = null,Object? sessionStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? roomId = freezed,Object? inviteCode = freezed,Object? isCreator = null,Object? point1 = freezed,Object? point2 = freezed,Object? partnerJoined = null,Object? sessionStatus = null,Object? event = freezed,}) {
   return _then(_self.copyWith(
 roomId: freezed == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
 as String?,inviteCode: freezed == inviteCode ? _self.inviteCode : inviteCode // ignore: cast_nullable_to_non_nullable
@@ -72,7 +72,8 @@ as bool,point1: freezed == point1 ? _self.point1 : point1 // ignore: cast_nullab
 as GeoCoordinate?,point2: freezed == point2 ? _self.point2 : point2 // ignore: cast_nullable_to_non_nullable
 as GeoCoordinate?,partnerJoined: null == partnerJoined ? _self.partnerJoined : partnerJoined // ignore: cast_nullable_to_non_nullable
 as bool,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
-as SessionStatus,
+as SessionStatus,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
+as RoomEventSnapshot?,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool partnerJoined,  SessionStatus sessionStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RoomSessionState() when $default != null:
-return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.partnerJoined,_that.sessionStatus);case _:
+return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.partnerJoined,_that.sessionStatus,_that.event);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool partnerJoined,  SessionStatus sessionStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)  $default,) {final _that = this;
 switch (_that) {
 case _RoomSessionState():
-return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.partnerJoined,_that.sessionStatus);case _:
+return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.partnerJoined,_that.sessionStatus,_that.event);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool partnerJoined,  SessionStatus sessionStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? roomId,  String? inviteCode,  bool isCreator,  GeoCoordinate? point1,  GeoCoordinate? point2,  bool partnerJoined,  SessionStatus sessionStatus,  RoomEventSnapshot? event)?  $default,) {final _that = this;
 switch (_that) {
 case _RoomSessionState() when $default != null:
-return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.partnerJoined,_that.sessionStatus);case _:
+return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that.point2,_that.partnerJoined,_that.sessionStatus,_that.event);case _:
   return null;
 
 }
@@ -213,7 +214,7 @@ return $default(_that.roomId,_that.inviteCode,_that.isCreator,_that.point1,_that
 
 
 class _RoomSessionState extends RoomSessionState {
-  const _RoomSessionState({this.roomId, this.inviteCode, this.isCreator = false, this.point1, this.point2, this.partnerJoined = false, this.sessionStatus = SessionStatus.active}): super._();
+  const _RoomSessionState({this.roomId, this.inviteCode, this.isCreator = false, this.point1, this.point2, this.partnerJoined = false, this.sessionStatus = SessionStatus.active, this.event}): super._();
   
 
 @override final  String? roomId;
@@ -224,6 +225,7 @@ class _RoomSessionState extends RoomSessionState {
 /// True when partnerUid is set on the room document (joined, address optional).
 @override@JsonKey() final  bool partnerJoined;
 @override@JsonKey() final  SessionStatus sessionStatus;
+@override final  RoomEventSnapshot? event;
 
 /// Create a copy of RoomSessionState
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +237,16 @@ _$RoomSessionStateCopyWith<_RoomSessionState> get copyWith => __$RoomSessionStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomSessionState&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.inviteCode, inviteCode) || other.inviteCode == inviteCode)&&(identical(other.isCreator, isCreator) || other.isCreator == isCreator)&&(identical(other.point1, point1) || other.point1 == point1)&&(identical(other.point2, point2) || other.point2 == point2)&&(identical(other.partnerJoined, partnerJoined) || other.partnerJoined == partnerJoined)&&(identical(other.sessionStatus, sessionStatus) || other.sessionStatus == sessionStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomSessionState&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.inviteCode, inviteCode) || other.inviteCode == inviteCode)&&(identical(other.isCreator, isCreator) || other.isCreator == isCreator)&&(identical(other.point1, point1) || other.point1 == point1)&&(identical(other.point2, point2) || other.point2 == point2)&&(identical(other.partnerJoined, partnerJoined) || other.partnerJoined == partnerJoined)&&(identical(other.sessionStatus, sessionStatus) || other.sessionStatus == sessionStatus)&&(identical(other.event, event) || other.event == event));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,roomId,inviteCode,isCreator,point1,point2,partnerJoined,sessionStatus);
+int get hashCode => Object.hash(runtimeType,roomId,inviteCode,isCreator,point1,point2,partnerJoined,sessionStatus,event);
 
 @override
 String toString() {
-  return 'RoomSessionState(roomId: $roomId, inviteCode: $inviteCode, isCreator: $isCreator, point1: $point1, point2: $point2, partnerJoined: $partnerJoined, sessionStatus: $sessionStatus)';
+  return 'RoomSessionState(roomId: $roomId, inviteCode: $inviteCode, isCreator: $isCreator, point1: $point1, point2: $point2, partnerJoined: $partnerJoined, sessionStatus: $sessionStatus, event: $event)';
 }
 
 
@@ -255,7 +257,7 @@ abstract mixin class _$RoomSessionStateCopyWith<$Res> implements $RoomSessionSta
   factory _$RoomSessionStateCopyWith(_RoomSessionState value, $Res Function(_RoomSessionState) _then) = __$RoomSessionStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool partnerJoined, SessionStatus sessionStatus
+ String? roomId, String? inviteCode, bool isCreator, GeoCoordinate? point1, GeoCoordinate? point2, bool partnerJoined, SessionStatus sessionStatus, RoomEventSnapshot? event
 });
 
 
@@ -272,7 +274,7 @@ class __$RoomSessionStateCopyWithImpl<$Res>
 
 /// Create a copy of RoomSessionState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? roomId = freezed,Object? inviteCode = freezed,Object? isCreator = null,Object? point1 = freezed,Object? point2 = freezed,Object? partnerJoined = null,Object? sessionStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? roomId = freezed,Object? inviteCode = freezed,Object? isCreator = null,Object? point1 = freezed,Object? point2 = freezed,Object? partnerJoined = null,Object? sessionStatus = null,Object? event = freezed,}) {
   return _then(_RoomSessionState(
 roomId: freezed == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
 as String?,inviteCode: freezed == inviteCode ? _self.inviteCode : inviteCode // ignore: cast_nullable_to_non_nullable
@@ -281,7 +283,8 @@ as bool,point1: freezed == point1 ? _self.point1 : point1 // ignore: cast_nullab
 as GeoCoordinate?,point2: freezed == point2 ? _self.point2 : point2 // ignore: cast_nullable_to_non_nullable
 as GeoCoordinate?,partnerJoined: null == partnerJoined ? _self.partnerJoined : partnerJoined // ignore: cast_nullable_to_non_nullable
 as bool,sessionStatus: null == sessionStatus ? _self.sessionStatus : sessionStatus // ignore: cast_nullable_to_non_nullable
-as SessionStatus,
+as SessionStatus,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
+as RoomEventSnapshot?,
   ));
 }
 

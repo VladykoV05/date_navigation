@@ -1,5 +1,6 @@
 import '../../domain/value_objects/geo_coordinate.dart';
 import 'place_view_data.dart';
+import 'room_event_view_data.dart';
 
 class RoomControlPanelData {
   const RoomControlPanelData({
@@ -28,6 +29,7 @@ class RoomControlPanelData {
     required this.myVotePlaceName,
     required this.isSessionClosed,
     required this.sessionStatus,
+    this.event,
   });
 
   final String roomId;
@@ -55,4 +57,5 @@ class RoomControlPanelData {
   final String? myVotePlaceName;
   final bool isSessionClosed;
   final SessionStatusView sessionStatus;
+  final RoomEventViewData? event;
 }
