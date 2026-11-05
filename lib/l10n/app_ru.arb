@@ -376,5 +376,11 @@
   "failureLeaveRoom": "Не удалось выйти из сессии. Попробуйте ещё раз.",
   "failureHostCannotLeave": "Хост не может выйти, пока передача хоста не готова.",
   "systemParticipantLeft": "Участник вышел",
-  "openSessionHostCannotLeave": "Хост не может выйти: передача хоста появится позже"
+  "openSessionHostCannotLeave": "Хост не может выйти: передача хоста появится позже",
+  "openSessionComplete": "Завершить сессию",
+  "openSessionCompleteTitle": "Завершить сессию?",
+  "openSessionCompleteBody": "Чат станет только для чтения, вход в сессию закроется.",
+  "openSessionCompleteAction": "Завершить",
+  "openSessionCancel": "Отмена",
+  "chatReadOnlyHint": "Сессия завершена: только чтение"
 }

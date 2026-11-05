@@ -2239,6 +2239,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The host cannot leave yet: host transfer is coming later'**
   String get openSessionHostCannotLeave;
+
+  /// No description provided for @openSessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'End session'**
+  String get openSessionComplete;
+
+  /// No description provided for @openSessionCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End the session?'**
+  String get openSessionCompleteTitle;
+
+  /// No description provided for @openSessionCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The chat becomes read-only and joining is closed.'**
+  String get openSessionCompleteBody;
+
+  /// No description provided for @openSessionCompleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get openSessionCompleteAction;
+
+  /// No description provided for @openSessionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get openSessionCancel;
+
+  /// No description provided for @chatReadOnlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ended: read-only'**
+  String get chatReadOnlyHint;
 }
 
 class _AppLocalizationsDelegate

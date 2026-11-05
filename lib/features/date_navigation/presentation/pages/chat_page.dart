@@ -10,9 +10,10 @@ import '../../domain/entities/chat_message.dart';
 import '../../di/date_navigation_di.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
-  const ChatPage({super.key, required this.roomId});
+  const ChatPage({super.key, required this.roomId, this.readOnly = false});
 
   final String roomId;
+  final bool readOnly;
 
   @override
   ConsumerState<ChatPage> createState() => _ChatPageState();
@@ -181,10 +182,13 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
+                      enabled: !widget.readOnly,
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => unawaited(_send()),
                       decoration: InputDecoration(
-                        hintText: l10n.chatInputHint,
+                        hintText: widget.readOnly
+                            ? l10n.chatReadOnlyHint
+                            : l10n.chatInputHint,
                         border: const OutlineInputBorder(),
                         isDense: true,
                       ),
@@ -192,7 +196,9 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                   ),
                   const SizedBox(width: 8),
                   IconButton.filled(
-                    onPressed: _sending ? null : () => unawaited(_send()),
+                    onPressed: _sending || widget.readOnly
+                        ? null
+                        : () => unawaited(_send()),
                     icon: const Icon(Icons.send),
                     tooltip: l10n.chatSend,
                   ),

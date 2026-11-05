@@ -602,5 +602,11 @@
   "failureLeaveRoom": "Could not leave the session. Try again.",
   "failureHostCannotLeave": "The host cannot leave until host transfer is ready.",
   "systemParticipantLeft": "Participant left",
-  "openSessionHostCannotLeave": "The host cannot leave yet: host transfer is coming later"
+  "openSessionHostCannotLeave": "The host cannot leave yet: host transfer is coming later",
+  "openSessionComplete": "End session",
+  "openSessionCompleteTitle": "End the session?",
+  "openSessionCompleteBody": "The chat becomes read-only and joining is closed.",
+  "openSessionCompleteAction": "End",
+  "openSessionCancel": "Cancel",
+  "chatReadOnlyHint": "Session ended: read-only"
 }

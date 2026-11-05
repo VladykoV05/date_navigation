@@ -23,6 +23,9 @@ class OpenSessionPanel extends StatefulWidget {
     required this.unreadCount,
     required this.event,
     required this.canLeave,
+    required this.isClosed,
+    required this.canComplete,
+    required this.onCompleteSession,
   });
 
   final String displayCode;
@@ -37,6 +40,9 @@ class OpenSessionPanel extends StatefulWidget {
   final int unreadCount;
   final RoomEventViewData? event;
   final bool canLeave;
+  final bool isClosed;
+  final bool canComplete;
+  final VoidCallback onCompleteSession;
 
   @override
   State<OpenSessionPanel> createState() => _OpenSessionPanelState();
@@ -44,6 +50,28 @@ class OpenSessionPanel extends StatefulWidget {
 
 class _OpenSessionPanelState extends State<OpenSessionPanel> {
   OpenSessionTab _tab = OpenSessionTab.participants;
+
+  Future<void> _confirmComplete() async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.openSessionCompleteTitle),
+        content: Text(l10n.openSessionCompleteBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.openSessionCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.openSessionCompleteAction),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) widget.onCompleteSession();
+  }
 
   void _onTabSelected(Set<OpenSessionTab> selection) {
     final tab = selection.first;
@@ -146,6 +174,23 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
             ),
           ],
         ),
+        if (widget.isClosed) ...[
+          const SizedBox(height: 8),
+          Text(
+            l10n.sessionCompletedHint,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+        ],
+        if (widget.canComplete) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: _confirmComplete,
+            icon: const Icon(Icons.flag_outlined),
+            label: Text(l10n.openSessionComplete),
+          ),
+        ],
         if (!widget.canLeave) ...[
           const SizedBox(height: 4),
           Text(

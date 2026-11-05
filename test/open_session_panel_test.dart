@@ -26,6 +26,9 @@ Widget _host0({
   required bool hasOwnPoint,
   VoidCallback? onLeave,
   bool canLeave = true,
+  bool isClosed = false,
+  bool canComplete = false,
+  VoidCallback? onComplete,
 }) {
   return MaterialApp(
     locale: const Locale('ru'),
@@ -51,6 +54,9 @@ Widget _host0({
           unreadCount: 0,
           event: null,
           canLeave: canLeave,
+          isClosed: isClosed,
+          canComplete: canComplete,
+          onCompleteSession: onComplete ?? () {},
         ),
       ),
     ),
@@ -141,6 +147,52 @@ void main() {
     await tester.tap(find.text('Выйти'));
     await tester.pump();
     expect(left, isFalse);
+  });
+
+  testWidgets('UC-13: host confirms before ending the session', (tester) async {
+    var completed = false;
+    await tester.pumpWidget(
+      _host0(
+        participants: const [_host, _other],
+        hasOwnPoint: true,
+        canComplete: true,
+        onComplete: () => completed = true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Завершить сессию'));
+    await tester.pumpAndSettle();
+    expect(find.text('Завершить сессию?'), findsOneWidget);
+    await tester.tap(find.text('Отмена'));
+    await tester.pumpAndSettle();
+    expect(completed, isFalse);
+
+    await tester.tap(find.text('Завершить сессию'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Завершить'));
+    await tester.pumpAndSettle();
+    expect(completed, isTrue);
+  });
+
+  testWidgets('UC-13: closed session shows status and hides complete action', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _host0(
+        participants: const [_host, _other],
+        hasOwnPoint: true,
+        isClosed: true,
+        canComplete: false,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Сессия завершена. Можно создать новую комнату.'),
+      findsOneWidget,
+    );
+    expect(find.text('Завершить сессию'), findsNothing);
   });
 
   testWidgets('tabs: plan tab shows no-event text without event', (

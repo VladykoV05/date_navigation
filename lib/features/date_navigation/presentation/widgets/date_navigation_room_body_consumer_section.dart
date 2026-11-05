@@ -73,7 +73,10 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         addressController: addressController,
         onAddressSubmit: onSubmitAddress,
         onOpenChat: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => ChatPage(roomId: roomId)),
+          MaterialPageRoute<void>(
+            builder: (_) =>
+                ChatPage(roomId: roomId, readOnly: view.isSessionClosed),
+          ),
         ),
         onLeaveRoom: () {
           controller.leaveRoom();
@@ -82,6 +85,9 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
         unreadCount: unread,
         event: view.event,
         canLeave: !view.isCreator,
+        isClosed: view.isSessionClosed,
+        canComplete: view.isCreator && !view.isSessionClosed,
+        onCompleteSession: () => unawaited(controller.completeSession()),
       );
     }
     final venueLocked = view.venueLocked;

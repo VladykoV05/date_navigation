@@ -1226,4 +1226,23 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get openSessionHostCannotLeave =>
       'Хост не может выйти: передача хоста появится позже';
+
+  @override
+  String get openSessionComplete => 'Завершить сессию';
+
+  @override
+  String get openSessionCompleteTitle => 'Завершить сессию?';
+
+  @override
+  String get openSessionCompleteBody =>
+      'Чат станет только для чтения, вход в сессию закроется.';
+
+  @override
+  String get openSessionCompleteAction => 'Завершить';
+
+  @override
+  String get openSessionCancel => 'Отмена';
+
+  @override
+  String get chatReadOnlyHint => 'Сессия завершена: только чтение';
 }

@@ -130,9 +130,22 @@ service cloud.firestore {
              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'participantCount', 'updatedAt']);
     }
 
+    // Only the creator ends a session (active -> completed), touching nothing else.
+    // Applies to private and open rooms; participants cannot change the status.
+    function isCreatorCompleteUpdate() {
+      return resource.data.sessionStatus == 'active'
+             && request.auth.uid == resource.data.creatorUid
+             && request.resource.data.sessionStatus == 'completed'
+             && request.resource.data.creatorUid == resource.data.creatorUid
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['sessionStatus', 'completedAt', 'completedBy', 'updatedAt']);
+    }
+
     // Participants may only mutate their own address / format / radius fields.
     function roleScopedRoomFieldsOk() {
       return creatorIdentityUnchanged()
+             && unchanged('sessionStatus')
+             && unchanged('completedAt')
+             && unchanged('completedBy')
              && (
                isCreator()
                  ? unchanged('point2')
@@ -216,6 +229,7 @@ service cloud.firestore {
                       || isJoinUpdate()
                       || isOpenJoinUpdate()
                       || isOpenLeaveUpdate()
+                      || isCreatorCompleteUpdate()
                     );
 
       allow delete: if false;
@@ -225,6 +239,7 @@ service cloud.firestore {
                     && request.auth.uid in roomDoc(roomId).data.participants;
         allow create: if isSignedIn()
                       && request.auth.uid in roomDoc(roomId).data.participants
+                      && roomDoc(roomId).data.get('sessionStatus', 'active') == 'active'
                       && request.resource.data.senderUid == request.auth.uid
                       && request.resource.data.text is string
                       && request.resource.data.text.size() >= 1

@@ -1214,4 +1214,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get openSessionHostCannotLeave =>
       'The host cannot leave yet: host transfer is coming later';
+
+  @override
+  String get openSessionComplete => 'End session';
+
+  @override
+  String get openSessionCompleteTitle => 'End the session?';
+
+  @override
+  String get openSessionCompleteBody =>
+      'The chat becomes read-only and joining is closed.';
+
+  @override
+  String get openSessionCompleteAction => 'End';
+
+  @override
+  String get openSessionCancel => 'Cancel';
+
+  @override
+  String get chatReadOnlyHint => 'Session ended: read-only';
 }
