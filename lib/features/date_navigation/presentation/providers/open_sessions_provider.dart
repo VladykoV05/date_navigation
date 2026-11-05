@@ -9,7 +9,14 @@ final openSessionsProvider = FutureProvider.autoDispose<List<RoomSnapshot>>((
 ) async {
   final result = await ref.watch(roomSessionRepositoryProvider).listOpenRooms();
   return switch (result) {
-    Ok(:final value) => value,
+    Ok(:final value) =>
+      value
+          .where(
+            (room) =>
+                room.expiresAt == null ||
+                room.expiresAt!.isAfter(DateTime.now()),
+          )
+          .toList(growable: false),
     Err(:final failure) => throw failure,
   };
 });

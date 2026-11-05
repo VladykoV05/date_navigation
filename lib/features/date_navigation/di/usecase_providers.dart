@@ -30,6 +30,11 @@ LeaveOpenRoom leaveOpenRoom(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+MarkOpenRoomExpired markOpenRoomExpired(Ref ref) {
+  return MarkOpenRoomExpired(ref.watch(roomSessionRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
 WatchRoom watchRoom(Ref ref) {
   return WatchRoom(ref.watch(roomSessionRepositoryProvider));
 }

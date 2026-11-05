@@ -26,6 +26,7 @@ class OpenSessionPanel extends StatefulWidget {
     required this.isClosed,
     required this.canComplete,
     required this.onCompleteSession,
+    this.isExpired = false,
   });
 
   final String displayCode;
@@ -41,6 +42,7 @@ class OpenSessionPanel extends StatefulWidget {
   final RoomEventViewData? event;
   final bool canLeave;
   final bool isClosed;
+  final bool isExpired;
   final bool canComplete;
   final VoidCallback onCompleteSession;
 
@@ -177,7 +179,9 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
         if (widget.isClosed) ...[
           const SizedBox(height: 8),
           Text(
-            l10n.openSessionClosedHint,
+            widget.isExpired
+                ? l10n.openSessionExpiredHint
+                : l10n.openSessionClosedHint,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),

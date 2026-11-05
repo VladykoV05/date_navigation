@@ -203,6 +203,12 @@ class RoomSessionController {
     await createRoom();
   }
 
+  /// Persists expiry of an open room (once per room). Failure is ignored: the
+  /// rules reject it when the server already holds the final status.
+  Future<void> reportOpenRoomExpired(String roomId) async {
+    await _roomLifecycle.markOpenRoomExpired(roomId: roomId);
+  }
+
   /// Open room: writes the leave to Firestore first, then resets local state.
   Future<void> leaveOpenRoom() async {
     final uid = _requireUserId('room');

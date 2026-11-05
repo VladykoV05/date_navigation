@@ -610,5 +610,6 @@
   "openSessionClosedHint": "Session ended. Chat is read-only, joining is closed.",
   "failureHostAlone": "You are the only participant. End the session to leave.",
   "openSessionHostAlone": "To leave, end the session: you are the only participant",
-  "systemHostTransferred": "Host transferred to a participant"
+  "systemHostTransferred": "Host transferred to a participant",
+  "openSessionExpiredHint": "Session expired. Chat is read-only, joining is closed."
 }

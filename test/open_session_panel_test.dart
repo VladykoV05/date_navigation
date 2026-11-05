@@ -27,6 +27,7 @@ Widget _host0({
   VoidCallback? onLeave,
   bool canLeave = true,
   bool isClosed = false,
+  bool isExpired = false,
   bool canComplete = false,
   VoidCallback? onComplete,
 }) {
@@ -55,6 +56,7 @@ Widget _host0({
           event: null,
           canLeave: canLeave,
           isClosed: isClosed,
+          isExpired: isExpired,
           canComplete: canComplete,
           onCompleteSession: onComplete ?? () {},
         ),
@@ -207,5 +209,22 @@ void main() {
     await tester.tap(find.text('План'));
     await tester.pumpAndSettle();
     expect(find.text('Открытая сессия'), findsOneWidget);
+  });
+
+  testWidgets('UC-14: expired session shows expiry text', (tester) async {
+    await tester.pumpWidget(
+      _host0(
+        participants: const [_host, _other],
+        hasOwnPoint: true,
+        isClosed: true,
+        isExpired: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Сессия истекла. Чат только для чтения, вход закрыт.'),
+      findsOneWidget,
+    );
   });
 }

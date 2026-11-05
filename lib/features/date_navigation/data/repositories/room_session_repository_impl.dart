@@ -92,6 +92,11 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   }
 
   @override
+  Future<Result<void>> markOpenRoomExpired({required String roomId}) {
+    return _remote.markOpenRoomExpired(roomId: roomId);
+  }
+
+  @override
   Future<Result<void>> leaveOpenRoom({
     required String roomId,
     required String userId,

@@ -99,6 +99,11 @@ class _FakeRoomSessionRepository implements RoomSessionRepository {
   }
 
   @override
+  Future<Result<void>> markOpenRoomExpired({required String roomId}) {
+    throw UnimplementedError();
+  }
+
+  @override
   Stream<RoomSnapshot> watchRoom(String roomId) {
     throw UnimplementedError();
   }

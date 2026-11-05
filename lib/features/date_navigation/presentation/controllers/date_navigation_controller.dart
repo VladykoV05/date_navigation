@@ -71,6 +71,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
   late VotingController _votingController;
 
   int _geocodeRequestSeq = 0;
+  String? _expiryReportedFor;
   bool _disposed = false;
   String? _lastSubmittedAddress;
   static const _retryPolicy = FailureRetryPolicy();
@@ -448,6 +449,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
   }
 
   void _subscribeToRoom(String code) {
+    _expiryReportedFor = null;
     _roomStreamSubscription.bind(
       roomId: code,
       currentState: () => state,
@@ -467,6 +469,15 @@ class DateNavigationController extends Notifier<DateNavigationState> {
 
   void _applyRoomStreamApplication(RoomStreamApplicationResult application) {
     _writeState(application.nextState);
+    final room = application.nextState.room;
+    final roomId = room.roomId;
+    if (room.isOpen &&
+        room.sessionStatus.isExpired &&
+        roomId != null &&
+        _expiryReportedFor != roomId) {
+      _expiryReportedFor = roomId;
+      unawaited(_roomSessionController.reportOpenRoomExpired(roomId));
+    }
     if (application.matchedFormatToTrack != null) {
       unawaited(
         _analytics.meetingFormatMatched(

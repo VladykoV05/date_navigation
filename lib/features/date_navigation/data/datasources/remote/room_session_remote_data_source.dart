@@ -529,6 +529,24 @@ class RoomSessionRemoteDataSource {
     );
   }
 
+  /// Persists expiry of an open room once its time is up (rules check expiresAt).
+  Future<Result<void>> markOpenRoomExpired({
+    required String roomsCollection,
+    required String roomId,
+  }) async {
+    return FirestoreErrorGuard.runVoidWithFallback(
+      () async {
+        await _firestore.collection(roomsCollection).doc(roomId).update({
+          'sessionStatus': SessionStatus.expired.wireValue,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      },
+      mapper: _mapFirestoreFailure,
+      fallbackFor: (_) => FailureCodes.roomStreamFailed,
+      unknownFallback: FailureCodes.roomStreamFailed,
+    );
+  }
+
   static const int openRoomCapacityMax = 20;
 
   Future<Result<String>> createOpenRoom({

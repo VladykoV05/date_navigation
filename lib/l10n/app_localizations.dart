@@ -2287,6 +2287,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Host transferred to a participant'**
   String get systemHostTransferred;
+
+  /// No description provided for @openSessionExpiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Chat is read-only, joining is closed.'**
+  String get openSessionExpiredHint;
 }
 
 class _AppLocalizationsDelegate

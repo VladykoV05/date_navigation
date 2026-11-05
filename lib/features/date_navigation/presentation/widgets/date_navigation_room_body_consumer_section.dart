@@ -89,6 +89,7 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
             view.isSessionClosed ||
             view.openParticipants.length >= 2,
         isClosed: view.isSessionClosed,
+        isExpired: view.sessionStatus.isExpired,
         canComplete: view.isCreator && !view.isSessionClosed,
         onCompleteSession: () => unawaited(controller.completeSession()),
       );

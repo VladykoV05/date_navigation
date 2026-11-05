@@ -1252,4 +1252,8 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get systemHostTransferred => 'Хост передан участнику';
+
+  @override
+  String get openSessionExpiredHint =>
+      'Сессия истекла. Чат только для чтения, вход закрыт.';
 }

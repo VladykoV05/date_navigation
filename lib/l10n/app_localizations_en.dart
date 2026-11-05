@@ -1240,4 +1240,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemHostTransferred => 'Host transferred to a participant';
+
+  @override
+  String get openSessionExpiredHint =>
+      'Session expired. Chat is read-only, joining is closed.';
 }

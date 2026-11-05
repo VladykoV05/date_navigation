@@ -174,6 +174,54 @@ final class LeaveOpenRoomProvider
 
 String _$leaveOpenRoomHash() => r'73dacf40460cec72dc6a5e5d200fa4b62281efd1';
 
+@ProviderFor(markOpenRoomExpired)
+final markOpenRoomExpiredProvider = MarkOpenRoomExpiredProvider._();
+
+final class MarkOpenRoomExpiredProvider
+    extends
+        $FunctionalProvider<
+          MarkOpenRoomExpired,
+          MarkOpenRoomExpired,
+          MarkOpenRoomExpired
+        >
+    with $Provider<MarkOpenRoomExpired> {
+  MarkOpenRoomExpiredProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'markOpenRoomExpiredProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$markOpenRoomExpiredHash();
+
+  @$internal
+  @override
+  $ProviderElement<MarkOpenRoomExpired> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  MarkOpenRoomExpired create(Ref ref) {
+    return markOpenRoomExpired(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(MarkOpenRoomExpired value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<MarkOpenRoomExpired>(value),
+    );
+  }
+}
+
+String _$markOpenRoomExpiredHash() =>
+    r'c68f937844ba61d9a55b0471bf7a54f7dc7ef898';
+
 @ProviderFor(watchRoom)
 final watchRoomProvider = WatchRoomProvider._();
 
