@@ -9,6 +9,15 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    // Suggestion rate limit: 5 per hour per participant, counter in participants/{uid}.
+    function suggestionWindowActive(p) {
+      return 'suggestionWindowStart' in p && request.time < p.suggestionWindowStart + duration.value(1, 'h');
+    }
+
+    function suggestionAllowed(p) {
+      return !suggestionWindowActive(p) || p.suggestionCount < 5;
+    }
+
     function roomParticipants() {
       return resource.data.participants;
     }
@@ -148,6 +157,17 @@ service cloud.firestore {
              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'participantCount', 'creatorUid', 'createdBy', 'hostUid', 'updatedAt']);
     }
 
+    // Host sets the next step (venue after the event) and the search radius.
+    function isOpenPlanUpdate() {
+      return resource.data.type == 'open'
+             && resource.data.sessionStatus == 'active'
+             && request.auth.uid == resource.data.creatorUid
+             && request.resource.data.creatorUid == resource.data.creatorUid
+             && (request.resource.data.nextStep == null || request.resource.data.nextStep is map)
+             && (!('planRadiusMeters' in request.resource.data) || (request.resource.data.planRadiusMeters is int && request.resource.data.planRadiusMeters >= 300 && request.resource.data.planRadiusMeters <= 3000))
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nextStep', 'planRadiusMeters', 'updatedAt']);
+    }
+
     // A participant persists expiry once the time is up (active -> expired).
     function isOpenExpireUpdate() {
       return resource.data.type == 'open'
@@ -174,6 +194,8 @@ service cloud.firestore {
              && unchanged('sessionStatus')
              && unchanged('completedAt')
              && unchanged('completedBy')
+             && unchanged('nextStep')
+             && unchanged('planRadiusMeters')
              && (
                isCreator()
                  ? unchanged('point2')
@@ -260,6 +282,7 @@ service cloud.firestore {
                       || isCreatorCompleteUpdate()
                       || isOpenHostTransferUpdate()
                       || isOpenExpireUpdate()
+                      || isOpenPlanUpdate()
                     );
 
       allow delete: if false;
@@ -298,6 +321,35 @@ service cloud.firestore {
 
       // Participant docs: each user writes only their own doc.
       // Host doc is created with the room; members join an open room only.
+      // Place suggestions for the open-session plan (design 11.2).
+      // Any participant proposes (rate limited via participants/{uid} counter);
+      // only the host changes status. Suggestions are never deleted.
+      match /suggestions/{suggestionId} {
+        allow read: if isSignedIn()
+                    && request.auth.uid in roomDoc(roomId).data.participants;
+        allow create: if isSignedIn()
+                      && roomDoc(roomId).data.type == 'open'
+                      && roomDoc(roomId).data.sessionStatus == 'active'
+                      && roomDoc(roomId).data.expiresAt > request.time
+                      && request.auth.uid in roomDoc(roomId).data.participants
+                      && request.resource.data.proposedBy == request.auth.uid
+                      && request.resource.data.status == 'suggested'
+                      && request.resource.data.placeName is string
+                      && request.resource.data.placeName.size() >= 1
+                      && request.resource.data.placeName.size() <= 120
+                      && (request.resource.data.placeAddress == null || (request.resource.data.placeAddress is string && request.resource.data.placeAddress.size() <= 200))
+                      && request.resource.data.lat is number
+                      && request.resource.data.lon is number
+                      && request.resource.data.keys().hasOnly(['placeName', 'placeAddress', 'placeType', 'lat', 'lon', 'proposedBy', 'status', 'createdAt'])
+                      && suggestionAllowed(get(/databases/$(database)/documents/rooms/$(roomId)/participants/$(request.auth.uid)).data);
+        allow update: if isSignedIn()
+                      && roomDoc(roomId).data.creatorUid == request.auth.uid
+                      && roomDoc(roomId).data.sessionStatus == 'active'
+                      && request.resource.data.status in ['suggested', 'chosen', 'rejected']
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'chosenAt']);
+        allow delete: if false;
+      }
+
       match /participants/{uid} {
         allow read: if isSignedIn();
         allow create: if isSelf(uid)
@@ -315,15 +367,31 @@ service cloud.firestore {
         allow update: if isSelf(uid)
                       && roomExists(roomId)
                       && request.auth.uid in roomDoc(roomId).data.participants
-                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-                        'point',
-                        'searchRadius',
-                        'meetingFormats',
-                        'meetingFormat',
-                        'selectedMeetingFormat',
-                        'lastReadAt',
-                        'updatedAt'
-                      ]);
+                      && (
+                        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                          'point',
+                          'searchRadius',
+                          'meetingFormats',
+                          'meetingFormat',
+                          'selectedMeetingFormat',
+                          'lastReadAt',
+                          'updatedAt'
+                        ])
+                        || (
+                          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['suggestionWindowStart', 'suggestionCount', 'updatedAt'])
+                          && (
+                            // Window still running: same start, exactly one more suggestion, max 5.
+                            (suggestionWindowActive(resource.data)
+                              && request.resource.data.suggestionWindowStart == resource.data.suggestionWindowStart
+                              && request.resource.data.suggestionCount == resource.data.suggestionCount + 1
+                              && request.resource.data.suggestionCount <= 5)
+                            // Window expired (or first suggestion): start a new window with count 1.
+                            || (!suggestionWindowActive(resource.data)
+                              && request.resource.data.suggestionWindowStart == request.time
+                              && request.resource.data.suggestionCount == 1)
+                          )
+                        )
+                      );
         // Member docs exist only in open rooms (create requires type == 'open'),
         // so deleting one's own member doc is the leave path. Host doc stays.
         // Host doc may be removed only after the session ended (host transfer comes later).
