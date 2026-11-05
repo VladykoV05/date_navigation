@@ -1993,6 +1993,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Permissions: Internet only. No continuous GPS tracking. Data safety: account + room sync via Firebase.'**
   String get storeReadyChecklistNote;
+
+  /// No description provided for @openSessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open sessions'**
+  String get openSessionsTitle;
+
+  /// No description provided for @openSessionsCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create session'**
+  String get openSessionsCreate;
+
+  /// No description provided for @openSessionsRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get openSessionsRefresh;
+
+  /// No description provided for @openSessionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No open sessions yet. Create one and invite people.'**
+  String get openSessionsEmpty;
+
+  /// No description provided for @openSessionsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load open sessions'**
+  String get openSessionsLoadFailed;
+
+  /// No description provided for @openSessionsCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Max people'**
+  String get openSessionsCapacity;
+
+  /// No description provided for @openSessionNoEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Open session'**
+  String get openSessionNoEvent;
+
+  /// No description provided for @openSessionMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {capacity}'**
+  String openSessionMembers(Object capacity, Object count);
+
+  /// No description provided for @openSessionJoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get openSessionJoin;
+
+  /// No description provided for @openSessionFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get openSessionFull;
 }
 
 class _AppLocalizationsDelegate

@@ -1093,4 +1093,37 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get storeReadyChecklistNote =>
       'Разрешения: только Интернет. Без постоянного GPS. Данные: аккаунт и sync комнат через Firebase.';
+
+  @override
+  String get openSessionsTitle => 'Открытые сессии';
+
+  @override
+  String get openSessionsCreate => 'Создать сессию';
+
+  @override
+  String get openSessionsRefresh => 'Обновить';
+
+  @override
+  String get openSessionsEmpty =>
+      'Открытых сессий пока нет. Создай свою и позови людей.';
+
+  @override
+  String get openSessionsLoadFailed => 'Не удалось загрузить открытые сессии';
+
+  @override
+  String get openSessionsCapacity => 'Максимум людей';
+
+  @override
+  String get openSessionNoEvent => 'Открытая сессия';
+
+  @override
+  String openSessionMembers(Object capacity, Object count) {
+    return '$count из $capacity';
+  }
+
+  @override
+  String get openSessionJoin => 'Войти';
+
+  @override
+  String get openSessionFull => 'Заполнено';
 }

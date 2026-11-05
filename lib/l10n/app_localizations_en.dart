@@ -1082,4 +1082,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get storeReadyChecklistNote =>
       'Permissions: Internet only. No continuous GPS tracking. Data safety: account + room sync via Firebase.';
+
+  @override
+  String get openSessionsTitle => 'Open sessions';
+
+  @override
+  String get openSessionsCreate => 'Create session';
+
+  @override
+  String get openSessionsRefresh => 'Refresh';
+
+  @override
+  String get openSessionsEmpty =>
+      'No open sessions yet. Create one and invite people.';
+
+  @override
+  String get openSessionsLoadFailed => 'Could not load open sessions';
+
+  @override
+  String get openSessionsCapacity => 'Max people';
+
+  @override
+  String get openSessionNoEvent => 'Open session';
+
+  @override
+  String openSessionMembers(Object capacity, Object count) {
+    return '$count of $capacity';
+  }
+
+  @override
+  String get openSessionJoin => 'Join';
+
+  @override
+  String get openSessionFull => 'Full';
 }
