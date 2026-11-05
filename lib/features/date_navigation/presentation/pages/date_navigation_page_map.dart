@@ -62,6 +62,9 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
     if (state.room.point2 != null) {
       points.add(GeoMapMapper.toLatLng(state.room.point2!));
     }
+    if (state.room.openOwnPoint != null) {
+      points.add(GeoMapMapper.toLatLng(state.room.openOwnPoint!));
+    }
     for (final point in state.room.openParticipantPoints) {
       points.add(GeoMapMapper.toLatLng(point));
     }

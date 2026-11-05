@@ -34,6 +34,13 @@ class RoomSyncOutcome {
 class RoomSnapshotReducer {
   const RoomSnapshotReducer();
 
+  static GeoCoordinate? _openPointOf(RoomSnapshot roomSnapshot, String userId) {
+    for (final participant in roomSnapshot.participants) {
+      if (participant.uid == userId) return participant.point;
+    }
+    return null;
+  }
+
   RoomSyncOutcome buildOutcome({
     required DateNavigationState currentState,
     required RoomSnapshot roomSnapshot,
@@ -211,8 +218,13 @@ class RoomSnapshotReducer {
         isCreator: isCreator,
         point1: nextPoint1,
         point2: nextPoint2,
+        isOpen: roomSnapshot.isOpen,
+        openOwnPoint: roomSnapshot.isOpen
+            ? _openPointOf(roomSnapshot, userId)
+            : null,
         openParticipantPoints: roomSnapshot.isOpen
             ? roomSnapshot.participants
+                  .where((participant) => participant.uid != userId)
                   .map((participant) => participant.point)
                   .whereType<GeoCoordinate>()
                   .toList(growable: false)

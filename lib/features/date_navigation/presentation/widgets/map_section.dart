@@ -15,6 +15,8 @@ class MapSection extends StatefulWidget {
   final GeoCoordinate? centerPoint;
   final GeoCoordinate? point1;
   final GeoCoordinate? point2;
+  final bool isOpenRoom;
+  final GeoCoordinate? openOwnPoint;
   final List<GeoCoordinate> openParticipantPoints;
   final List<PlaceViewData> foundPlaces;
   final void Function(PlaceViewData) onPlaceTap;
@@ -32,6 +34,8 @@ class MapSection extends StatefulWidget {
     required this.centerPoint,
     required this.point1,
     required this.point2,
+    this.isOpenRoom = false,
+    this.openOwnPoint,
     this.openParticipantPoints = const [],
     required this.foundPlaces,
     required this.onPlaceTap,
@@ -111,22 +115,31 @@ class _MapSectionState extends State<MapSection> {
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final markers = <Marker>[];
-    final myPoint = GeoMapMapper.toLatLngOrNull(
-      widget.isCreator ? widget.point1 : widget.point2,
-    );
-    final partnerPoint = GeoMapMapper.toLatLngOrNull(
-      widget.isCreator ? widget.point2 : widget.point1,
-    );
-    if (myPoint != null) {
-      markers.add(_marker(myPoint, Icons.my_location, colorScheme.primary));
-    }
-    if (partnerPoint != null) {
-      markers.add(_marker(partnerPoint, Icons.location_on, colorScheme.error));
-    }
-    for (final point in GeoMapMapper.toLatLngList(
-      widget.openParticipantPoints,
-    )) {
-      markers.add(_marker(point, Icons.location_on, colorScheme.primary));
+    if (widget.isOpenRoom) {
+      final ownPoint = GeoMapMapper.toLatLngOrNull(widget.openOwnPoint);
+      if (ownPoint != null) {
+        markers.add(_marker(ownPoint, Icons.my_location, colorScheme.primary));
+      }
+      for (final point in GeoMapMapper.toLatLngList(
+        widget.openParticipantPoints,
+      )) {
+        markers.add(_marker(point, Icons.location_on, colorScheme.tertiary));
+      }
+    } else {
+      final myPoint = GeoMapMapper.toLatLngOrNull(
+        widget.isCreator ? widget.point1 : widget.point2,
+      );
+      final partnerPoint = GeoMapMapper.toLatLngOrNull(
+        widget.isCreator ? widget.point2 : widget.point1,
+      );
+      if (myPoint != null) {
+        markers.add(_marker(myPoint, Icons.my_location, colorScheme.primary));
+      }
+      if (partnerPoint != null) {
+        markers.add(
+          _marker(partnerPoint, Icons.location_on, colorScheme.error),
+        );
+      }
     }
     if (widget.showMeetingRouteAndRadius && centerPoint != null) {
       markers.add(_buildCenterMarker(context, centerPoint));

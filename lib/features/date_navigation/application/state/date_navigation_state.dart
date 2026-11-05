@@ -21,7 +21,12 @@ abstract class RoomSessionState with _$RoomSessionState {
     GeoCoordinate? point1,
     GeoCoordinate? point2,
 
-    /// Points of all participants of an open session (point1/point2 are unused there).
+    @Default(false) bool isOpen,
+
+    /// Own point of an open session (from participants/{uid}).
+    GeoCoordinate? openOwnPoint,
+
+    /// Points of other participants of an open session (point1/point2 are unused there).
     @Default([]) List<GeoCoordinate> openParticipantPoints,
 
     /// True when partnerUid is set on the room document (joined, address optional).
@@ -34,7 +39,8 @@ abstract class RoomSessionState with _$RoomSessionState {
   bool get isExpired => sessionStatus.isExpired;
   bool get isClosed => sessionStatus.isClosed;
 
-  GeoCoordinate? myPoint() => isCreator ? point1 : point2;
+  GeoCoordinate? myPoint() =>
+      isOpen ? openOwnPoint : (isCreator ? point1 : point2);
   GeoCoordinate? partnerPoint() => isCreator ? point2 : point1;
 }
 
