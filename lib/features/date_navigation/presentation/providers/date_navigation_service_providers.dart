@@ -10,6 +10,7 @@ import '../../application/services/location_submission_service.dart';
 import '../../application/services/meeting_execution_service.dart';
 import '../../application/services/room_interaction_service.dart';
 import '../../application/services/room_lifecycle_service.dart';
+import '../../domain/usecases/open_room_usecases.dart';
 
 final addressSubmissionServiceProvider = Provider<AddressSubmissionService>(
   (ref) => AddressSubmissionService(
@@ -32,6 +33,8 @@ final roomLifecycleServiceProvider = Provider<RoomLifecycleService>(
     createRoom: ref.watch(createRoomProvider),
     completeSession: ref.watch(completeSessionProvider),
     joinRoom: ref.watch(joinRoomProvider),
+    createOpenRoom: CreateOpenRoom(ref.watch(roomSessionRepositoryProvider)),
+    joinOpenRoom: JoinOpenRoom(ref.watch(roomSessionRepositoryProvider)),
     analytics: ref.watch(analyticsServiceProvider),
   ),
 );
