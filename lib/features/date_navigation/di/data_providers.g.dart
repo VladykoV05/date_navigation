@@ -102,7 +102,7 @@ final class EventsProxyDataSourceProvider
 }
 
 String _$eventsProxyDataSourceHash() =>
-    r'e1eeec9f4b8a30006e1ab5479808c39df5fea064';
+    r'3a81db4ad1800f0803ae97b81a6a88e6a6b5b54d';
 
 @ProviderFor(cacheService)
 final cacheServiceProvider = CacheServiceProvider._();

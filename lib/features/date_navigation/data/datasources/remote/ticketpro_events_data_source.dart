@@ -16,6 +16,7 @@ import '../../../domain/ports/event_source.dart';
 class TicketProEventsDataSource implements EventSource {
   TicketProEventsDataSource({
     required http.Client client,
+    this.geocodeAddress,
     this.baseUrl = 'https://ticketpro.by',
     this.fetchDelay = const Duration(milliseconds: 300),
     this.cacheTtl = const Duration(minutes: 15),
@@ -23,6 +24,11 @@ class TicketProEventsDataSource implements EventSource {
   }) : _client = client;
 
   final http.Client _client;
+
+  /// Геокодер адреса площадки. Координаты из геокодера точнее, чем геометка TicketPro
+  /// (на сайте для некоторых площадок она неверна).
+  final Future<({double lat, double lon})?> Function(String query)?
+  geocodeAddress;
   final String baseUrl;
   final Duration fetchDelay;
   final Duration cacheTtl;
@@ -95,17 +101,36 @@ class TicketProEventsDataSource implements EventSource {
     if (parsed == null) return null;
 
     var event = parsed.event;
-    final venueUrl = parsed.venueUrl;
-    if (venueUrl != null && isTicketProUrl(venueUrl)) {
-      try {
-        final geo = parseVenueGeo(await _fetch(venueUrl));
-        event = _withGeo(event, geo.lat, geo.lon);
-      } catch (_) {
-        // Координаты площадки не обязательны: событие остаётся без них.
+    final geocoded = await _geocodeVenue(event.address);
+    if (geocoded != null) {
+      event = _withGeo(event, geocoded.lat, geocoded.lon);
+    } else {
+      final venueUrl = parsed.venueUrl;
+      if (venueUrl != null && isTicketProUrl(venueUrl)) {
+        try {
+          final geo = parseVenueGeo(await _fetch(venueUrl));
+          event = _withGeo(event, geo.lat, geo.lon);
+        } catch (_) {
+          // Координаты площадки не обязательны: событие остаётся без них.
+        }
       }
     }
     _cachePut(url, event);
     return event;
+  }
+
+  /// Адрес площадки → координаты через геокодер. Пауза 1,1 с: лимит Nominatim.
+  Future<({double lat, double lon})?> _geocodeVenue(String? address) async {
+    final geocode = geocodeAddress;
+    if (geocode == null || address == null || address.trim().isEmpty) {
+      return null;
+    }
+    try {
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+      return await geocode('$address, Минск');
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<String> _fetch(String url) async {

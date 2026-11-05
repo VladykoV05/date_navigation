@@ -22,6 +22,9 @@ class MapSection extends StatefulWidget {
   final List<OpenParticipantPoint> openParticipantPoints;
   final String? openSelfUid;
   final List<latlong.LatLng> openRoute;
+  final latlong.LatLng? openEventPoint;
+  final latlong.LatLng? openNextStepPoint;
+  final String? openNextStepName;
   final List<PlaceViewData> foundPlaces;
   final void Function(PlaceViewData) onPlaceTap;
   final bool isSearching;
@@ -43,6 +46,9 @@ class MapSection extends StatefulWidget {
     this.openParticipantPoints = const [],
     this.openSelfUid,
     this.openRoute = const [],
+    this.openEventPoint,
+    this.openNextStepPoint,
+    this.openNextStepName,
     required this.foundPlaces,
     required this.onPlaceTap,
     required this.isSearching,
@@ -132,6 +138,28 @@ class _MapSectionState extends State<MapSection> {
     final colorScheme = Theme.of(context).colorScheme;
     final markers = <Marker>[];
     if (widget.isOpenRoom) {
+      final eventPoint = widget.openEventPoint;
+      if (eventPoint != null) {
+        markers.add(
+          _placeMarker(
+            eventPoint,
+            Icons.celebration,
+            colorScheme.tertiary,
+            tooltip: null,
+          ),
+        );
+      }
+      final nextPoint = widget.openNextStepPoint;
+      if (nextPoint != null) {
+        markers.add(
+          _placeMarker(
+            nextPoint,
+            Icons.restaurant,
+            colorScheme.secondary,
+            tooltip: widget.openNextStepName,
+          ),
+        );
+      }
       final ownPoint = GeoMapMapper.toLatLngOrNull(widget.openOwnPoint);
       final selfUid = widget.openSelfUid;
       if (ownPoint != null && selfUid != null) {
@@ -181,6 +209,31 @@ class _MapSectionState extends State<MapSection> {
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(shape: BoxShape.circle, color: borderColor),
         child: PublicAvatar(uid: uid, radius: 19),
+      ),
+    );
+  }
+
+  /// Маркер площадки события или следующего места (иконка в круге).
+  Marker _placeMarker(
+    latlong.LatLng point,
+    IconData icon,
+    Color color, {
+    String? tooltip,
+  }) {
+    return Marker(
+      point: point,
+      width: 40,
+      height: 40,
+      child: Tooltip(
+        message: tooltip ?? '',
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
       ),
     );
   }
