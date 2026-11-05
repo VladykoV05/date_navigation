@@ -1136,4 +1136,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get openSessionsEventsUnavailable =>
       'Каталог событий недоступен. Можно создать сессию без события.';
+
+  @override
+  String get openEventRoute => 'Маршрут к событию';
 }

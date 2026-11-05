@@ -348,5 +348,6 @@
   },
   "openSessionsEvent": "Событие",
   "openSessionsEventNone": "Без события",
-  "openSessionsEventsUnavailable": "Каталог событий недоступен. Можно создать сессию без события."
+  "openSessionsEventsUnavailable": "Каталог событий недоступен. Можно создать сессию без события.",
+  "openEventRoute": "Маршрут к событию"
 }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../core/di/app_services_di.dart';
 import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core_ui/core_ui.dart';
 import '../mappers/place_view_mapper.dart';
@@ -233,6 +234,28 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       ),
       isCreator: panelView.isCreator,
       event: panelView.event,
+      onOpenEventRoute:
+          panelView.event?.lat != null && panelView.event?.lon != null
+          ? () {
+              final my = panelView.myLocation;
+              if (my == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(context.l10n.focusPointMissing)),
+                );
+                return;
+              }
+              unawaited(
+                ref
+                    .read(navigationServiceProvider)
+                    .openYandexMaps(
+                      startLat: my.latitude,
+                      startLon: my.longitude,
+                      endLat: panelView.event!.lat!,
+                      endLon: panelView.event!.lon!,
+                    ),
+              );
+            }
+          : null,
       creatorMeetingFormats: panelView.creatorMeetingFormats,
       partnerMeetingFormats: panelView.partnerMeetingFormats,
       commonMeetingFormats: panelView.commonMeetingFormats,

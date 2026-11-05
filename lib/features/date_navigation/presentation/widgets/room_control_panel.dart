@@ -10,9 +10,10 @@ import 'room_control/room_meeting_places_section.dart';
 import 'room_control_panel_header.dart';
 
 class _EventBanner extends StatelessWidget {
-  const _EventBanner({required this.event});
+  const _EventBanner({required this.event, this.onOpenRoute});
 
   final RoomEventViewData event;
+  final VoidCallback? onOpenRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,17 @@ class _EventBanner extends StatelessWidget {
             if (subtitle.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(subtitle, style: theme.textTheme.bodySmall),
+            ],
+            if (onOpenRoute != null) ...[
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: onOpenRoute,
+                  icon: const Icon(Icons.directions),
+                  label: Text(l10n.openEventRoute),
+                ),
+              ),
             ],
           ],
         ),
@@ -101,6 +113,7 @@ class RoomControlPanel extends StatelessWidget {
   final SessionStatusView sessionStatus;
   final bool isCreator;
   final RoomEventViewData? event;
+  final VoidCallback? onOpenEventRoute;
   final VoidCallback onLeaveRoom;
 
   const RoomControlPanel({
@@ -149,6 +162,7 @@ class RoomControlPanel extends StatelessWidget {
     required this.sessionStatus,
     required this.isCreator,
     required this.event,
+    this.onOpenEventRoute,
     required this.onLeaveRoom,
   });
 
@@ -176,7 +190,7 @@ class RoomControlPanel extends StatelessWidget {
           onLeaveRoom: onLeaveRoom,
         ),
         if (event != null) ...[
-          _EventBanner(event: event!),
+          _EventBanner(event: event!, onOpenRoute: onOpenEventRoute),
           const SizedBox(height: UiSpace.md),
         ],
         RoomAddressSection(

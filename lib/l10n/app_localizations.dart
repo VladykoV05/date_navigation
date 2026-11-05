@@ -2071,6 +2071,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Event catalog is unavailable. Create a session without an event.'**
   String get openSessionsEventsUnavailable;
+
+  /// No description provided for @openEventRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route to event'**
+  String get openEventRoute;
 }
 
 class _AppLocalizationsDelegate

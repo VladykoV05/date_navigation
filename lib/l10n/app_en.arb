@@ -574,5 +574,6 @@
   },
   "openSessionsEvent": "Event",
   "openSessionsEventNone": "No event",
-  "openSessionsEventsUnavailable": "Event catalog is unavailable. Create a session without an event."
+  "openSessionsEventsUnavailable": "Event catalog is unavailable. Create a session without an event.",
+  "openEventRoute": "Route to event"
 }

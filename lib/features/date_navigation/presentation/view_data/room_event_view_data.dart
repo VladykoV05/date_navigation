@@ -7,6 +7,9 @@ class RoomEventViewData {
     this.address,
     this.category,
     this.startsAt,
+    this.lat,
+    this.lon,
+    this.sourceUrl,
   });
 
   factory RoomEventViewData.fromSnapshot(RoomEventSnapshot event) {
@@ -16,6 +19,9 @@ class RoomEventViewData {
       address: event.address,
       category: event.category,
       startsAt: event.startsAt,
+      lat: event.lat,
+      lon: event.lon,
+      sourceUrl: event.sourceUrl,
     );
   }
 
@@ -24,4 +30,7 @@ class RoomEventViewData {
   final String? address;
   final String? category;
   final DateTime? startsAt;
+  final double? lat;
+  final double? lon;
+  final String? sourceUrl;
 }

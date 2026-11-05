@@ -1125,4 +1125,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get openSessionsEventsUnavailable =>
       'Event catalog is unavailable. Create a session without an event.';
+
+  @override
+  String get openEventRoute => 'Route to event';
 }
