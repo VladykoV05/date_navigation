@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/di/auth_di.dart';
 import '../../application/state/date_navigation_state.dart';
 import '../mappers/place_view_mapper.dart';
+import '../view_data/open_participant_view_data.dart';
+import '../view_data/open_plan_view_data.dart';
 import '../view_data/room_control_panel_data.dart';
 import '../view_data/room_event_view_data.dart';
 import '../controllers/date_navigation_controller.dart';
@@ -25,6 +27,10 @@ final dateNavigationMapViewProvider = Provider.autoDispose(
         centerPoint: s.meeting.centerPoint,
         point1: s.room.point1,
         point2: s.room.point2,
+        isOpen: s.room.isOpen,
+        openOwnPoint: s.room.openOwnPoint,
+        openSelfUid: s.room.selfUid,
+        openParticipantPoints: s.room.openParticipantPoints,
         filteredPlaces: s.meeting.filteredPlaces,
         isLoading: s.ui.isLoading,
         isGeocoding: s.ui.isGeocoding,
@@ -36,6 +42,14 @@ final dateNavigationMapViewProvider = Provider.autoDispose(
         event: s.room.event == null
             ? null
             : RoomEventViewData.fromSnapshot(s.room.event!),
+        nextStep: s.room.nextStep == null
+            ? null
+            : NextStepViewData(
+                name: s.room.nextStep!.name,
+                lat: s.room.nextStep!.lat,
+                lon: s.room.nextStep!.lon,
+                address: s.room.nextStep!.address,
+              ),
       ),
     ),
   ),
@@ -76,6 +90,24 @@ final dateNavigationRoomBodyViewProvider = Provider.autoDispose(
         searchRadius: s.meeting.searchRadius,
         voteCounts: s.voting.voteCounts,
         votesByUser: s.voting.votesByUser,
+        isOpen: s.room.isOpen,
+        selfUid: s.room.selfUid,
+        nextStep: s.room.nextStep == null
+            ? null
+            : NextStepViewData(
+                name: s.room.nextStep!.name,
+                lat: s.room.nextStep!.lat,
+                lon: s.room.nextStep!.lon,
+                address: s.room.nextStep!.address,
+              ),
+        planRadiusMeters: s.room.planRadiusMeters,
+        openParticipants: s.room.openParticipants
+            .map(OpenParticipantViewData.fromParticipant)
+            .toList(growable: false),
+        openOwnPoint: s.room.openOwnPoint,
+        event: s.room.event == null
+            ? null
+            : RoomEventViewData.fromSnapshot(s.room.event!),
       ),
     ),
   ),

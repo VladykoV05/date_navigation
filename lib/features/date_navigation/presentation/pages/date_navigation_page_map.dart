@@ -62,6 +62,12 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
     if (state.room.point2 != null) {
       points.add(GeoMapMapper.toLatLng(state.room.point2!));
     }
+    if (state.room.openOwnPoint != null) {
+      points.add(GeoMapMapper.toLatLng(state.room.openOwnPoint!));
+    }
+    for (final marker in state.room.openParticipantPoints) {
+      points.add(GeoMapMapper.toLatLng(marker.point));
+    }
     final hasLockedFinalChoice =
         state.meeting.finalChoiceName != null &&
         state.meeting.finalChoiceName!.isNotEmpty;

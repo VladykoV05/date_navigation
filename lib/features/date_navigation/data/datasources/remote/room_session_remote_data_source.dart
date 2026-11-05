@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
@@ -6,6 +8,18 @@ import '../../../../../core/error/failure_codes.dart';
 import '../../../../../core/error/result.dart';
 import '../../../domain/entities/room_status.dart';
 import 'firestore_error_guard.dart';
+
+/// Короткий код открытой сессии: 6 символов без похожих (0/O, 1/I).
+const String _openRoomCodeAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const int openRoomCodeLength = 6;
+
+String generateOpenRoomCode({Random? random}) {
+  final rnd = random ?? Random.secure();
+  return List.generate(
+    openRoomCodeLength,
+    (_) => _openRoomCodeAlphabet[rnd.nextInt(_openRoomCodeAlphabet.length)],
+  ).join();
+}
 
 class RoomSessionRemoteDataSource {
   const RoomSessionRemoteDataSource(this._firestore, this._mapFirestoreFailure);
@@ -330,6 +344,23 @@ class RoomSessionRemoteDataSource {
         await _firestore.runTransaction((tx) async {
           final snap = await tx.get(roomRef);
           final data = snap.data() ?? <String, dynamic>{};
+          if (data['type'] == 'open') {
+            final participants = List<String>.from(
+              data['participants'] ?? const <String>[],
+            );
+            if (!participants.contains(userId)) {
+              throw FirebaseException(
+                plugin: 'cloud_firestore',
+                code: 'permission-denied',
+                message: FailureCodes.notRoomMember,
+              );
+            }
+            tx.set(roomRef.collection('participants').doc(userId), {
+              'point': {'lat': coords.latitude, 'lng': coords.longitude},
+              'updatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
+            return;
+          }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
               .toString();
           final partnerUid = (data['partnerUid'] ?? '').toString();
@@ -400,6 +431,122 @@ class RoomSessionRemoteDataSource {
     );
   }
 
+  /// Member leaves an open room: one transaction updates the room, writes a
+  /// system message while still a member, and deletes the member document.
+  Future<Result<void>> leaveOpenRoom({
+    required String roomsCollection,
+    required String roomId,
+    required String userId,
+  }) async {
+    return FirestoreErrorGuard.runVoidWithFallback(
+      () async {
+        final roomRef = _firestore.collection(roomsCollection).doc(roomId);
+        final memberRef = roomRef.collection('participants').doc(userId);
+        final messageRef = roomRef.collection('messages').doc();
+        await _firestore.runTransaction((tx) async {
+          final snap = await tx.get(roomRef);
+          if (!snap.exists) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'not-found',
+              message: FailureCodes.roomNotFound,
+            );
+          }
+          final data = snap.data() ?? <String, dynamic>{};
+          if ((data['type'] ?? '').toString() != 'open') {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.notRoomMember,
+            );
+          }
+          final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
+              .toString();
+          final sessionClosed = SessionStatus.fromWireValue(
+            data['sessionStatus'],
+          ).isClosed;
+          final participants = List<String>.from(
+            data['participants'] ?? const <String>[],
+          );
+          if (!participants.contains(userId)) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.notRoomMember,
+            );
+          }
+          final remaining = participants
+              .where((uid) => uid != userId)
+              .toList(growable: false);
+          final storedCount =
+              (data['participantCount'] as num?)?.toInt() ??
+              participants.length;
+          final isActiveHost = creatorUid == userId && !sessionClosed;
+          if (isActiveHost && remaining.isEmpty) {
+            throw FirebaseException(
+              plugin: 'cloud_firestore',
+              code: 'permission-denied',
+              message: FailureCodes.hostAlone,
+            );
+          }
+          // Active host leaves: ownership passes to participants[1] (earliest member).
+          final newHost = isActiveHost ? participants[1] : null;
+          tx.update(roomRef, {
+            'participants': remaining,
+            'participantCount': storedCount - 1,
+            'updatedAt': FieldValue.serverTimestamp(),
+            'creatorUid': ?newHost,
+            'createdBy': ?newHost,
+            'hostUid': ?newHost,
+          });
+          if (newHost != null) {
+            final transferRef = roomRef.collection('messages').doc();
+            tx.set(transferRef, {
+              'senderUid': userId,
+              'text': 'system.host_transferred',
+              'kind': 'system',
+              'clientId': transferRef.id,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          }
+          tx.set(messageRef, {
+            'senderUid': userId,
+            'text': 'system.participant_left',
+            'kind': 'system',
+            'clientId': messageRef.id,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+          tx.delete(memberRef);
+        });
+      },
+      mapper: _mapFirestoreFailure,
+      fallbackFor: (e) => switch (e.code) {
+        'not-found' => FailureCodes.roomNotFound,
+        'permission-denied' => e.message ?? FailureCodes.leaveRoomFailed,
+        _ => FailureCodes.leaveRoomFailed,
+      },
+      unknownFallback: FailureCodes.leaveRoomFailed,
+    );
+  }
+
+  /// Persists expiry of an open room once its time is up (rules check expiresAt).
+  Future<Result<void>> markOpenRoomExpired({
+    required String roomsCollection,
+    required String roomId,
+  }) async {
+    return FirestoreErrorGuard.runVoidWithFallback(
+      () async {
+        await _firestore.collection(roomsCollection).doc(roomId).update({
+          'sessionStatus': SessionStatus.expired.wireValue,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      },
+      mapper: _mapFirestoreFailure,
+      fallbackFor: (_) => FailureCodes.roomStreamFailed,
+      unknownFallback: FailureCodes.roomStreamFailed,
+    );
+  }
+
   static const int openRoomCapacityMax = 20;
 
   Future<Result<String>> createOpenRoom({
@@ -429,6 +576,7 @@ class RoomSessionRemoteDataSource {
       final batch = _firestore.batch();
       batch.set(roomRef, {
         'schemaVersion': 2,
+        'inviteCode': generateOpenRoomCode(),
         'type': 'open',
         'visibility': 'public',
         'capacity': capacity,

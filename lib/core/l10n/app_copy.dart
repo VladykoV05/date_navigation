@@ -105,6 +105,8 @@ extension AppCopy on AppLocalizations {
       FailureCodes.updateLocationFailed => failureUpdateLocation,
       FailureCodes.onlyCreatorCanEnd => failureOnlyCreatorCanEnd,
       FailureCodes.completeSessionFailed => failureCompleteSession,
+      FailureCodes.leaveRoomFailed => failureLeaveRoom,
+      FailureCodes.hostAlone => failureHostAlone,
       FailureCodes.meetingPointCalcFailed => failureMeetingPointCalc,
       FailureCodes.formatMustBeCommon => failureFormatMustBeCommon,
       FailureCodes.formatNotSelected => failureFormatNotSelected,

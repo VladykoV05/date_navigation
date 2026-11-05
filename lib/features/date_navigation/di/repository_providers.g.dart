@@ -98,6 +98,54 @@ final class RoomSessionRepositoryProvider
 String _$roomSessionRepositoryHash() =>
     r'9e0524410fd8b47e3ffd9b7a6a1131e159dfa5f7';
 
+@ProviderFor(openPlanRepository)
+final openPlanRepositoryProvider = OpenPlanRepositoryProvider._();
+
+final class OpenPlanRepositoryProvider
+    extends
+        $FunctionalProvider<
+          OpenPlanRepository,
+          OpenPlanRepository,
+          OpenPlanRepository
+        >
+    with $Provider<OpenPlanRepository> {
+  OpenPlanRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'openPlanRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$openPlanRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<OpenPlanRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  OpenPlanRepository create(Ref ref) {
+    return openPlanRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(OpenPlanRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<OpenPlanRepository>(value),
+    );
+  }
+}
+
+String _$openPlanRepositoryHash() =>
+    r'f3bf8ad327e55739923eec9b102befeb4cbe6d7c';
+
 @ProviderFor(roomVotingRepository)
 final roomVotingRepositoryProvider = RoomVotingRepositoryProvider._();
 

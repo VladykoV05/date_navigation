@@ -1039,15 +1039,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Код приглашения недействителен или истёк. Запросите новый код.';
 
   @override
-  String get searchCityLabel => 'Город поиска';
-
-  @override
-  String get searchCityMinsk => 'Минск';
-
-  @override
-  String get searchCityOther => 'Другой / свободно';
-
-  @override
   String get searchRegionLabel => 'Регион поиска';
 
   @override
@@ -1172,4 +1163,232 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get systemPlaceSelected => 'Место выбрано';
+
+  @override
+  String get openSessionTabParticipants => 'Участники';
+
+  @override
+  String get openSessionTabPlan => 'План';
+
+  @override
+  String get openSessionTabChat => 'Чат';
+
+  @override
+  String get openSessionEnterAddress => 'Ввести адрес';
+
+  @override
+  String get openSessionAddressSheetTitle => 'Ваш адрес';
+
+  @override
+  String get openSessionAddressSheetHint =>
+      'Адрес нужен, чтобы участники увидели вашу точку';
+
+  @override
+  String get openSessionParticipantSelf => 'Вы';
+
+  @override
+  String get openSessionParticipantHost => 'Хост';
+
+  @override
+  String openSessionParticipantNumber(Object number) {
+    return 'Участник $number';
+  }
+
+  @override
+  String get openSessionAddressSet => 'адрес указан';
+
+  @override
+  String get openSessionAddressNotSet => 'адрес не указан';
+
+  @override
+  String get openSessionLeave => 'Выйти';
+
+  @override
+  String get openSessionPlanFromEvent => 'Событие';
+
+  @override
+  String get openSessionEmptyParticipants => 'Пока никого нет';
+
+  @override
+  String get openSessionParticipantMember => 'Участник';
+
+  @override
+  String get failureLeaveRoom =>
+      'Не удалось выйти из сессии. Попробуйте ещё раз.';
+
+  @override
+  String get systemParticipantLeft => 'Участник вышел';
+
+  @override
+  String get openSessionComplete => 'Завершить сессию';
+
+  @override
+  String get openSessionCompleteTitle => 'Завершить сессию?';
+
+  @override
+  String get openSessionCompleteBody =>
+      'Чат станет только для чтения, вход в сессию закроется.';
+
+  @override
+  String get openSessionCompleteAction => 'Завершить';
+
+  @override
+  String get openSessionCancel => 'Отмена';
+
+  @override
+  String get chatReadOnlyHint => 'Сессия завершена: только чтение';
+
+  @override
+  String get openSessionClosedHint =>
+      'Сессия завершена. Чат только для чтения, вход закрыт.';
+
+  @override
+  String get failureHostAlone =>
+      'Вы единственный участник. Завершите сессию, чтобы выйти.';
+
+  @override
+  String get openSessionHostAlone =>
+      'Чтобы выйти, завершите сессию: вы единственный участник';
+
+  @override
+  String get systemHostTransferred => 'Хост передан участнику';
+
+  @override
+  String get openSessionExpiredHint =>
+      'Сессия истекла. Чат только для чтения, вход закрыт.';
+
+  @override
+  String get profileEditName => 'Изменить имя';
+
+  @override
+  String get profileNameLabel => 'Имя';
+
+  @override
+  String get profileNameHint => 'Как вас видят другие';
+
+  @override
+  String get profilePhotoGallery => 'Фото из галереи';
+
+  @override
+  String get profilePhotoPreset => 'Встроенный аватар';
+
+  @override
+  String get profilePhotoGoogle => 'Фото из Google';
+
+  @override
+  String get profileAvatarTooLarge =>
+      'Не удалось подготовить фото. Выберите другое.';
+
+  @override
+  String get profileSaveError => 'Не удалось сохранить профиль';
+
+  @override
+  String get profileCancel => 'Отмена';
+
+  @override
+  String get profileSave => 'Сохранить';
+
+  @override
+  String get profileChooseAvatar => 'Выберите аватар';
+
+  @override
+  String get planNextStepTitle => 'Следующее место';
+
+  @override
+  String get planNotChosen => 'Место пока не выбрано';
+
+  @override
+  String get planSuggestButton => 'Предложить место';
+
+  @override
+  String get planSuggestionsTitle => 'Предложения';
+
+  @override
+  String get planChooseButton => 'Выбрать';
+
+  @override
+  String get planChosenLabel => 'Выбрано';
+
+  @override
+  String get planEmptySuggestions => 'Предложений пока нет';
+
+  @override
+  String get planRadiusLabel => 'Радиус от события';
+
+  @override
+  String planRadiusOption(Object meters) {
+    return '$meters м';
+  }
+
+  @override
+  String get planSuggestNameLabel => 'Название места';
+
+  @override
+  String get planSuggestAddressLabel => 'Адрес';
+
+  @override
+  String get planSuggestSubmit => 'Предложить';
+
+  @override
+  String get planAddressNotFound => 'Адрес не найден';
+
+  @override
+  String planTooFar(Object meters) {
+    return 'Место дальше $meters м от площадки события';
+  }
+
+  @override
+  String get planSuggestLimit => 'Можно предложить не больше 5 мест в час';
+
+  @override
+  String get planSaveFailed => 'Не удалось сохранить план. Попробуйте ещё раз.';
+
+  @override
+  String planProposedBy(Object name) {
+    return 'от $name';
+  }
+
+  @override
+  String get openSessionsEventsLoading => 'Загружаем события…';
+
+  @override
+  String get planSearchTitle => 'Найти место рядом';
+
+  @override
+  String get planSearchButton => 'Найти';
+
+  @override
+  String get planSearchEmpty => 'Ничего не найдено в этом радиусе';
+
+  @override
+  String get planSearchNoCoords => 'У события нет координат, поиск недоступен';
+
+  @override
+  String get planSearchFailed => 'Поиск мест сейчас недоступен';
+
+  @override
+  String get planCategoryFood => 'Еда';
+
+  @override
+  String get planCategoryCulture => 'Культура';
+
+  @override
+  String get planCategoryWalk => 'Прогулка';
+
+  @override
+  String get planCategoryActive => 'Активный отдых';
+
+  @override
+  String get planChooseNow => 'Выбрать сразу';
+
+  @override
+  String get planSuggestFromSearch => 'Предложить';
+
+  @override
+  String planWalkTime(Object meters, Object minutes) {
+    return '≈ $minutes мин пешком · $meters м';
+  }
+
+  @override
+  String get planOpenInMaps => 'Открыть маршрут в картах';
 }

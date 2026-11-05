@@ -5,6 +5,10 @@ import '../data/repositories/meeting_repository_impl.dart';
 import '../data/repositories/meeting_snapshot_repository_impl.dart';
 import '../data/repositories/chat_repository_impl.dart';
 import '../data/repositories/room_session_repository_impl.dart';
+import '../data/repositories/open_plan_repository_impl.dart';
+import '../data/datasources/remote/open_plan_remote_data_source.dart';
+import '../domain/repositories/open_plan_repository.dart';
+import '../../../core/di/firestore_di.dart';
 import '../data/repositories/room_voting_repository_impl.dart';
 import '../domain/repositories/geocoding_repository.dart';
 import '../domain/repositories/meeting_repository.dart';
@@ -27,6 +31,14 @@ ChatRepository chatRepository(Ref ref) {
 @Riverpod(keepAlive: true)
 RoomSessionRepository roomSessionRepository(Ref ref) {
   return RoomSessionRepositoryImpl(ref.watch(roomRemoteDataSourceProvider));
+}
+
+@Riverpod(keepAlive: true)
+OpenPlanRepository openPlanRepository(Ref ref) {
+  return OpenPlanRepositoryImpl(
+    OpenPlanRemoteDataSource(ref.watch(firestoreProvider)),
+    ref.watch(placesRemoteDataSourceProvider),
+  );
 }
 
 @Riverpod(keepAlive: true)

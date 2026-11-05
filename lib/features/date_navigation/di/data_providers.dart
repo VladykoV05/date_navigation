@@ -8,22 +8,31 @@ import '../../../core/search/search_region.dart';
 import '../../../core/search/search_region_preferences.dart';
 import '../data/datasources/local/cache_service.dart';
 import '../data/datasources/remote/chat_remote_data_source.dart';
-import '../data/datasources/remote/events_proxy_data_source.dart';
+import '../data/datasources/remote/ors_walking_route_data_source.dart';
+import '../data/datasources/remote/ticketpro_events_data_source.dart';
+import '../domain/ports/walking_route_source.dart';
+import '../config/date_navigation_config.dart';
+import '../domain/ports/event_source.dart';
 import '../data/datasources/remote/geocoding_remote_data_source.dart';
 import '../data/datasources/remote/osrm_remote_data_source.dart';
 import '../data/datasources/remote/places_remote_data_source.dart';
 import '../data/datasources/remote/room_remote_data_source.dart';
-import '../config/date_navigation_config.dart';
 import 'infra_providers.dart';
 
 part 'data_providers.g.dart';
 
 @Riverpod(keepAlive: true)
-EventsProxyDataSource eventsProxyDataSource(Ref ref) {
-  return EventsProxyDataSource(
+WalkingRouteSource walkingRouteSource(Ref ref) {
+  return OrsWalkingRouteDataSource(
     client: ref.watch(httpClientProvider),
-    baseUrl: DateNavigationConfig.eventsProxyUrl,
+    apiKey: DateNavigationConfig.orsApiKey,
   );
+}
+
+/// Источник событий TicketPro (на устройстве, без прокси).
+@Riverpod(keepAlive: true)
+EventSource eventsProxyDataSource(Ref ref) {
+  return TicketProEventsDataSource(client: ref.watch(httpClientProvider));
 }
 
 @Riverpod(keepAlive: true)

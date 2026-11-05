@@ -7,9 +7,9 @@
 | Блок | Код | Теория | ADR | Тесты | Текст |
 |---|---|---|---|---|---|
 | R1 GPS + глобальный поиск | done (MVP) | `theory/geolocation.md`, `theory/global-geocoding.md` | ADR-0008 | unit/widget/region | TODO |
-| R2 Открытые сессии + события + схема v2 | in progress | `theory/open-sessions.md`, `theory/events.md`, `theory/realtime-sync.md` | `adr/0002-room-schema-v2.md`, `adr/0005-event-source.md` | прототип TicketPro | TODO |
+| R2 Открытые сессии + события + схема v2 | done | `theory/open-sessions.md`, `theory/events.md`, `theory/realtime-sync.md` | `adr/0002-room-schema-v2.md`, `adr/0005-event-source.md` | прототип TicketPro | TODO |
 | R2.5 Live-геолокация (stretch) | planned | `theory/geolocation.md` | `adr/0006-live-location.md` | TODO | TODO |
-| R3 Чат + уведомления | planned | `theory/chat.md`, `theory/notifications.md` | TODO | TODO | TODO |
+| R3 Чат + уведомления | done (push на iOS — не реализуется) | `theory/chat.md`, `theory/notifications.md` | `adr/0007-no-ios-push.md` | chat/rules/widget/notifications | TODO |
 | R4 Форматы + кастомные | planned | `theory/formats.md` | TODO | TODO | TODO |
 | R5 «Куда дальше» + маршрут | planned | `theory/next-step-and-routing.md` | TODO | TODO | TODO |
 | R6 AI-консьерж | planned | `theory/ai-concierge.md` | `adr/0003-ai-proxy.md` | TODO | TODO |

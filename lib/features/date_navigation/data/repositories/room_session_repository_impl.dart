@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/error/result.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/repositories/room_session_repository.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
@@ -91,22 +92,39 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
   }
 
   @override
+  Future<Result<void>> markOpenRoomExpired({required String roomId}) {
+    return _remote.markOpenRoomExpired(roomId: roomId);
+  }
+
+  @override
+  Future<Result<void>> leaveOpenRoom({
+    required String roomId,
+    required String userId,
+  }) {
+    return _remote.leaveOpenRoom(roomId: roomId, userId: userId);
+  }
+
+  @override
   Stream<RoomSnapshot> watchRoom(String roomId) {
     final controller = StreamController<RoomSnapshot>();
     StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? roomSub;
     StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? participantsSub;
     DocumentSnapshot<Map<String, dynamic>>? lastRoom;
     QuerySnapshot<Map<String, dynamic>>? lastParticipants;
+    var participantsFailed = false;
 
     void emit() {
       final room = lastRoom;
       final participants = lastParticipants;
-      if (room == null || participants == null) return;
+      if (room == null) return;
+      if (participants == null && !participantsFailed) return;
       final data = room.data();
       if (!room.exists || data == null) return;
-      final participantDocs = <String, Map<String, dynamic>>{
-        for (final doc in participants.docs) doc.id: doc.data(),
-      };
+      final participantDocs = participants == null
+          ? const <String, Map<String, dynamic>>{}
+          : <String, Map<String, dynamic>>{
+              for (final doc in participants.docs) doc.id: doc.data(),
+            };
       final snapshot = _roomSnapshotMapper.fromMap(
         room.id,
         data,
@@ -120,10 +138,20 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
         lastRoom = doc;
         emit();
       }, onError: controller.addError);
-      participantsSub = _remote.watchParticipants(roomId).listen((snapshot) {
-        lastParticipants = snapshot;
-        emit();
-      }, onError: controller.addError);
+      participantsSub = _remote
+          .watchParticipants(roomId)
+          .listen(
+            (snapshot) {
+              participantsFailed = false;
+              lastParticipants = snapshot;
+              emit();
+            },
+            onError: (Object error, StackTrace stack) {
+              AppLogger.e('Participants stream failed', error, stack);
+              participantsFailed = true;
+              emit();
+            },
+          );
     };
     controller.onCancel = () async {
       await roomSub?.cancel();

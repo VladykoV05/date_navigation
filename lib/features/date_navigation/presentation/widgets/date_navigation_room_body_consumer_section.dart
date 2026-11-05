@@ -20,6 +20,7 @@ import './welcome_view.dart';
 import '../pages/chat_page.dart';
 import '../providers/chat_provider.dart';
 import '../pages/open_sessions_page.dart';
+import 'open_session/open_session_panel.dart';
 
 class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
   const DateNavigationRoomBodyConsumerSection({
@@ -58,6 +59,45 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
     final displayCode = (view.inviteCode?.isNotEmpty ?? false)
         ? view.inviteCode!
         : roomId;
+    if (view.isOpen) {
+      final unread = ref.watch(chatUnreadCountProvider(roomId));
+      return OpenSessionPanel(
+        roomId: roomId,
+        isCreator: view.isCreator,
+        nextStep: view.nextStep,
+        planRadiusMeters: view.planRadiusMeters,
+        displayCode: displayCode,
+        participants: view.openParticipants,
+        selfUid: view.selfUid,
+        hasOwnPoint: view.openOwnPoint != null,
+        canSubmitAddress:
+            !view.isSessionClosed &&
+            !view.isGeocoding &&
+            !view.isLoadingRoomAction,
+        addressController: addressController,
+        onAddressSubmit: onSubmitAddress,
+        onOpenChat: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) =>
+                ChatPage(roomId: roomId, readOnly: view.isSessionClosed),
+          ),
+        ),
+        onLeaveRoom: () {
+          controller.leaveRoom();
+          addressController.clear();
+        },
+        unreadCount: unread,
+        event: view.event,
+        canLeave:
+            !view.isCreator ||
+            view.isSessionClosed ||
+            view.openParticipants.length >= 2,
+        isClosed: view.isSessionClosed,
+        isExpired: view.sessionStatus.isExpired,
+        canComplete: view.isCreator && !view.isSessionClosed,
+        onCompleteSession: () => unawaited(controller.completeSession()),
+      );
+    }
     final venueLocked = view.venueLocked;
     final isSessionClosed = view.isSessionClosed;
     final isSessionCompleted = view.sessionStatus.isCompleted;

@@ -5,10 +5,19 @@ import '../../domain/entities/date_scenario.dart';
 import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/room_snapshot.dart';
+import '../../domain/entities/open_plan.dart';
 import '../../domain/entities/room_status.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 
 part 'date_navigation_state.freezed.dart';
+
+/// Точка другого участника открытой сессии: uid нужен, чтобы показать его фото на карте.
+class OpenParticipantPoint {
+  const OpenParticipantPoint({required this.uid, required this.point});
+
+  final String uid;
+  final GeoCoordinate point;
+}
 
 @freezed
 abstract class RoomSessionState with _$RoomSessionState {
@@ -21,6 +30,26 @@ abstract class RoomSessionState with _$RoomSessionState {
     GeoCoordinate? point1,
     GeoCoordinate? point2,
 
+    @Default(false) bool isOpen,
+
+    /// Следующее место плана (открытая сессия).
+    NextStep? nextStep,
+
+    /// Радиус поиска от площадки события, метры.
+    @Default(planRadiusDefaultMeters) int planRadiusMeters,
+
+    /// Uid of the current user (set by the reducer for the open-session screen).
+    String? selfUid,
+
+    /// All participants of an open session, including self.
+    @Default([]) List<RoomParticipant> openParticipants,
+
+    /// Own point of an open session (from participants/{uid}).
+    GeoCoordinate? openOwnPoint,
+
+    /// Points of other participants of an open session (point1/point2 are unused there).
+    @Default([]) List<OpenParticipantPoint> openParticipantPoints,
+
     /// True when partnerUid is set on the room document (joined, address optional).
     @Default(false) bool partnerJoined,
     @Default(SessionStatus.active) SessionStatus sessionStatus,
@@ -31,7 +60,8 @@ abstract class RoomSessionState with _$RoomSessionState {
   bool get isExpired => sessionStatus.isExpired;
   bool get isClosed => sessionStatus.isClosed;
 
-  GeoCoordinate? myPoint() => isCreator ? point1 : point2;
+  GeoCoordinate? myPoint() =>
+      isOpen ? openOwnPoint : (isCreator ? point1 : point2);
   GeoCoordinate? partnerPoint() => isCreator ? point2 : point1;
 }
 

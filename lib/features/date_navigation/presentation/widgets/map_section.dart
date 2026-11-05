@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
 import '../../../../core/l10n/l10n_extensions.dart';
+import '../../../../core_ui/core_ui.dart';
+import '../../application/state/date_navigation_state.dart';
 import '../../domain/value_objects/geo_coordinate.dart';
 import '../mappers/geo_map_mapper.dart';
 import '../mappers/place_visual_mapper.dart';
@@ -15,6 +17,11 @@ class MapSection extends StatefulWidget {
   final GeoCoordinate? centerPoint;
   final GeoCoordinate? point1;
   final GeoCoordinate? point2;
+  final bool isOpenRoom;
+  final GeoCoordinate? openOwnPoint;
+  final List<OpenParticipantPoint> openParticipantPoints;
+  final String? openSelfUid;
+  final List<latlong.LatLng> openRoute;
   final List<PlaceViewData> foundPlaces;
   final void Function(PlaceViewData) onPlaceTap;
   final bool isSearching;
@@ -31,6 +38,11 @@ class MapSection extends StatefulWidget {
     required this.centerPoint,
     required this.point1,
     required this.point2,
+    this.isOpenRoom = false,
+    this.openOwnPoint,
+    this.openParticipantPoints = const [],
+    this.openSelfUid,
+    this.openRoute = const [],
     required this.foundPlaces,
     required this.onPlaceTap,
     required this.isSearching,
@@ -95,6 +107,16 @@ class _MapSectionState extends State<MapSection> {
                   ),
                 ],
               ),
+            if (widget.openRoute.length >= 2)
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: widget.openRoute,
+                    strokeWidth: 4.0,
+                    color: colorScheme.tertiary.withValues(alpha: 0.9),
+                  ),
+                ],
+              ),
             MarkerLayer(markers: _buildMarkers(context, centerPoint)),
           ],
         ),
@@ -109,17 +131,36 @@ class _MapSectionState extends State<MapSection> {
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final markers = <Marker>[];
-    final myPoint = GeoMapMapper.toLatLngOrNull(
-      widget.isCreator ? widget.point1 : widget.point2,
-    );
-    final partnerPoint = GeoMapMapper.toLatLngOrNull(
-      widget.isCreator ? widget.point2 : widget.point1,
-    );
-    if (myPoint != null) {
-      markers.add(_marker(myPoint, Icons.my_location, colorScheme.primary));
-    }
-    if (partnerPoint != null) {
-      markers.add(_marker(partnerPoint, Icons.location_on, colorScheme.error));
+    if (widget.isOpenRoom) {
+      final ownPoint = GeoMapMapper.toLatLngOrNull(widget.openOwnPoint);
+      final selfUid = widget.openSelfUid;
+      if (ownPoint != null && selfUid != null) {
+        markers.add(_avatarMarker(ownPoint, selfUid, colorScheme.primary));
+      }
+      for (final marker in widget.openParticipantPoints) {
+        markers.add(
+          _avatarMarker(
+            GeoMapMapper.toLatLng(marker.point),
+            marker.uid,
+            colorScheme.tertiary,
+          ),
+        );
+      }
+    } else {
+      final myPoint = GeoMapMapper.toLatLngOrNull(
+        widget.isCreator ? widget.point1 : widget.point2,
+      );
+      final partnerPoint = GeoMapMapper.toLatLngOrNull(
+        widget.isCreator ? widget.point2 : widget.point1,
+      );
+      if (myPoint != null) {
+        markers.add(_marker(myPoint, Icons.my_location, colorScheme.primary));
+      }
+      if (partnerPoint != null) {
+        markers.add(
+          _marker(partnerPoint, Icons.location_on, colorScheme.error),
+        );
+      }
     }
     if (widget.showMeetingRouteAndRadius && centerPoint != null) {
       markers.add(_buildCenterMarker(context, centerPoint));
@@ -128,6 +169,20 @@ class _MapSectionState extends State<MapSection> {
       markers.add(_buildPlaceMarker(place));
     }
     return markers;
+  }
+
+  /// Маркер участника открытой сессии: фото из профиля в цветной рамке.
+  Marker _avatarMarker(latlong.LatLng point, String uid, Color borderColor) {
+    return Marker(
+      point: point,
+      width: 44,
+      height: 44,
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(shape: BoxShape.circle, color: borderColor),
+        child: PublicAvatar(uid: uid, radius: 19),
+      ),
+    );
   }
 
   Marker _marker(latlong.LatLng point, IconData icon, Color color) {

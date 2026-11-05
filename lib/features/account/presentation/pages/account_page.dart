@@ -9,6 +9,7 @@ import '../../../../core/l10n/app_copy.dart';
 import '../../../../core/l10n/l10n_extensions.dart';
 import '../../../../core_ui/core_ui.dart';
 import '../../../user_profile/user_profile.dart';
+import '../widgets/profile_header.dart';
 import '../../di/account_di.dart';
 import '../widgets/account_empty_state.dart';
 
@@ -42,11 +43,13 @@ class AccountPage extends ConsumerWidget {
         ),
         body: Column(
           children: [
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: Text(user?.displayName ?? l10n.accountUserFallback),
-              subtitle: Text(user?.email ?? user?.uid ?? ''),
-            ),
+            if (user != null)
+              ProfileHeader(uid: user.uid, emailOrId: user.email ?? user.uid)
+            else
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(l10n.accountUserFallback),
+              ),
             ListTile(
               leading: const Icon(Icons.privacy_tip_outlined),
               title: Text(l10n.privacyTitle),

@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/l10n/locale_provider.dart';
 import '../domain/usecases/usecases.dart';
+import 'data_providers.dart';
 import '../application/l10n/app_scenario_copy_catalog.dart';
 import 'repository_providers.dart';
 
@@ -20,8 +21,53 @@ JoinRoom joinRoom(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+WatchPlaceSuggestions watchPlaceSuggestions(Ref ref) {
+  return WatchPlaceSuggestions(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+SuggestPlace suggestPlace(Ref ref) {
+  return SuggestPlace(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+ChooseSuggestion chooseSuggestion(Ref ref) {
+  return ChooseSuggestion(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+SearchNearbyPlaces searchNearbyPlaces(Ref ref) {
+  return SearchNearbyPlaces(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+SetNextStep setNextStep(Ref ref) {
+  return SetNextStep(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+FetchWalkingRoute fetchWalkingRoute(Ref ref) {
+  return FetchWalkingRoute(ref.watch(walkingRouteSourceProvider));
+}
+
+@Riverpod(keepAlive: true)
+SetPlanRadius setPlanRadius(Ref ref) {
+  return SetPlanRadius(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
 CompleteSession completeSession(Ref ref) {
   return CompleteSession(ref.watch(roomSessionRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+LeaveOpenRoom leaveOpenRoom(Ref ref) {
+  return LeaveOpenRoom(ref.watch(roomSessionRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+MarkOpenRoomExpired markOpenRoomExpired(Ref ref) {
+  return MarkOpenRoomExpired(ref.watch(roomSessionRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)

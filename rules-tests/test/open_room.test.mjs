@@ -118,3 +118,17 @@ test('legacy private join cannot overwrite an open room participants', async () 
     partnerUid: 'guest', participants: ['host', 'guest'], updatedAt: serverTimestamp(),
   }));
 });
+
+test('participant can update own point only', async () => {
+  await seedOpenRoom(3, ['host', 'guest']);
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'rooms/open1/participants/host'), { role: 'host' });
+    await setDoc(doc(ctx.firestore(), 'rooms/open1/participants/guest'), { role: 'member' });
+  });
+  await assertSucceeds(updateDoc(doc(as('guest'), 'rooms/open1/participants/guest'), {
+    point: { lat: 1, lng: 2 }, updatedAt: serverTimestamp(),
+  }));
+  await assertFails(updateDoc(doc(as('guest'), 'rooms/open1/participants/host'), {
+    point: { lat: 3, lng: 4 }, updatedAt: serverTimestamp(),
+  }));
+});

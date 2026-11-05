@@ -1892,24 +1892,6 @@ abstract class AppLocalizations {
   /// **'This invite code is invalid or expired. Ask for a new code.'**
   String get inviteInvalidMessage;
 
-  /// No description provided for @searchCityLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Search city'**
-  String get searchCityLabel;
-
-  /// No description provided for @searchCityMinsk.
-  ///
-  /// In en, this message translates to:
-  /// **'Minsk'**
-  String get searchCityMinsk;
-
-  /// No description provided for @searchCityOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Other / free-form'**
-  String get searchCityOther;
-
   /// No description provided for @searchRegionLabel.
   ///
   /// In en, this message translates to:
@@ -2143,6 +2125,426 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Place selected'**
   String get systemPlaceSelected;
+
+  /// No description provided for @openSessionTabParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get openSessionTabParticipants;
+
+  /// No description provided for @openSessionTabPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get openSessionTabPlan;
+
+  /// No description provided for @openSessionTabChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get openSessionTabChat;
+
+  /// No description provided for @openSessionEnterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter address'**
+  String get openSessionEnterAddress;
+
+  /// No description provided for @openSessionAddressSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your address'**
+  String get openSessionAddressSheetTitle;
+
+  /// No description provided for @openSessionAddressSheetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The address is needed so participants can see your point'**
+  String get openSessionAddressSheetHint;
+
+  /// No description provided for @openSessionParticipantSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get openSessionParticipantSelf;
+
+  /// No description provided for @openSessionParticipantHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Host'**
+  String get openSessionParticipantHost;
+
+  /// No description provided for @openSessionParticipantNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant {number}'**
+  String openSessionParticipantNumber(Object number);
+
+  /// No description provided for @openSessionAddressSet.
+  ///
+  /// In en, this message translates to:
+  /// **'address set'**
+  String get openSessionAddressSet;
+
+  /// No description provided for @openSessionAddressNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'address not set'**
+  String get openSessionAddressNotSet;
+
+  /// No description provided for @openSessionLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get openSessionLeave;
+
+  /// No description provided for @openSessionPlanFromEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get openSessionPlanFromEvent;
+
+  /// No description provided for @openSessionEmptyParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody here yet'**
+  String get openSessionEmptyParticipants;
+
+  /// No description provided for @openSessionParticipantMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant'**
+  String get openSessionParticipantMember;
+
+  /// No description provided for @failureLeaveRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not leave the session. Try again.'**
+  String get failureLeaveRoom;
+
+  /// No description provided for @systemParticipantLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant left'**
+  String get systemParticipantLeft;
+
+  /// No description provided for @openSessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'End session'**
+  String get openSessionComplete;
+
+  /// No description provided for @openSessionCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End the session?'**
+  String get openSessionCompleteTitle;
+
+  /// No description provided for @openSessionCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The chat becomes read-only and joining is closed.'**
+  String get openSessionCompleteBody;
+
+  /// No description provided for @openSessionCompleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get openSessionCompleteAction;
+
+  /// No description provided for @openSessionCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get openSessionCancel;
+
+  /// No description provided for @chatReadOnlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ended: read-only'**
+  String get chatReadOnlyHint;
+
+  /// No description provided for @openSessionClosedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ended. Chat is read-only, joining is closed.'**
+  String get openSessionClosedHint;
+
+  /// No description provided for @failureHostAlone.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the only participant. End the session to leave.'**
+  String get failureHostAlone;
+
+  /// No description provided for @openSessionHostAlone.
+  ///
+  /// In en, this message translates to:
+  /// **'To leave, end the session: you are the only participant'**
+  String get openSessionHostAlone;
+
+  /// No description provided for @systemHostTransferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Host transferred to a participant'**
+  String get systemHostTransferred;
+
+  /// No description provided for @openSessionExpiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Chat is read-only, joining is closed.'**
+  String get openSessionExpiredHint;
+
+  /// No description provided for @profileEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get profileEditName;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How others see you'**
+  String get profileNameHint;
+
+  /// No description provided for @profilePhotoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo from gallery'**
+  String get profilePhotoGallery;
+
+  /// No description provided for @profilePhotoPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in avatar'**
+  String get profilePhotoPreset;
+
+  /// No description provided for @profilePhotoGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google photo'**
+  String get profilePhotoGoogle;
+
+  /// No description provided for @profileAvatarTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not prepare the photo. Choose another one.'**
+  String get profileAvatarTooLarge;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the profile'**
+  String get profileSaveError;
+
+  /// No description provided for @profileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileCancel;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSave;
+
+  /// No description provided for @profileChooseAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an avatar'**
+  String get profileChooseAvatar;
+
+  /// No description provided for @planNextStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next place'**
+  String get planNextStepTitle;
+
+  /// No description provided for @planNotChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'No place chosen yet'**
+  String get planNotChosen;
+
+  /// No description provided for @planSuggestButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest a place'**
+  String get planSuggestButton;
+
+  /// No description provided for @planSuggestionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get planSuggestionsTitle;
+
+  /// No description provided for @planChooseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get planChooseButton;
+
+  /// No description provided for @planChosenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen'**
+  String get planChosenLabel;
+
+  /// No description provided for @planEmptySuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggestions yet'**
+  String get planEmptySuggestions;
+
+  /// No description provided for @planRadiusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Radius from the event'**
+  String get planRadiusLabel;
+
+  /// No description provided for @planRadiusOption.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String planRadiusOption(Object meters);
+
+  /// No description provided for @planSuggestNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Place name'**
+  String get planSuggestNameLabel;
+
+  /// No description provided for @planSuggestAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get planSuggestAddressLabel;
+
+  /// No description provided for @planSuggestSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest'**
+  String get planSuggestSubmit;
+
+  /// No description provided for @planAddressNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Address not found'**
+  String get planAddressNotFound;
+
+  /// No description provided for @planTooFar.
+  ///
+  /// In en, this message translates to:
+  /// **'The place is farther than {meters} m from the event venue'**
+  String planTooFar(Object meters);
+
+  /// No description provided for @planSuggestLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can suggest at most 5 places per hour'**
+  String get planSuggestLimit;
+
+  /// No description provided for @planSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the plan. Try again.'**
+  String get planSaveFailed;
+
+  /// No description provided for @planProposedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'from {name}'**
+  String planProposedBy(Object name);
+
+  /// No description provided for @openSessionsEventsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading events…'**
+  String get openSessionsEventsLoading;
+
+  /// No description provided for @planSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a place nearby'**
+  String get planSearchTitle;
+
+  /// No description provided for @planSearchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get planSearchButton;
+
+  /// No description provided for @planSearchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found in this radius'**
+  String get planSearchEmpty;
+
+  /// No description provided for @planSearchNoCoords.
+  ///
+  /// In en, this message translates to:
+  /// **'The event has no coordinates, search is unavailable'**
+  String get planSearchNoCoords;
+
+  /// No description provided for @planSearchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Place search is unavailable now'**
+  String get planSearchFailed;
+
+  /// No description provided for @planCategoryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get planCategoryFood;
+
+  /// No description provided for @planCategoryCulture.
+  ///
+  /// In en, this message translates to:
+  /// **'Culture'**
+  String get planCategoryCulture;
+
+  /// No description provided for @planCategoryWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get planCategoryWalk;
+
+  /// No description provided for @planCategoryActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get planCategoryActive;
+
+  /// No description provided for @planChooseNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose now'**
+  String get planChooseNow;
+
+  /// No description provided for @planSuggestFromSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest'**
+  String get planSuggestFromSearch;
+
+  /// No description provided for @planWalkTime.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {minutes} min on foot · {meters} m'**
+  String planWalkTime(Object meters, Object minutes);
+
+  /// No description provided for @planOpenInMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open route in maps'**
+  String get planOpenInMaps;
 }
 
 class _AppLocalizationsDelegate

@@ -59,6 +59,7 @@ class _PresenceStatusBanner extends ConsumerWidget {
         (s) => (
           roomId: s.room.roomId,
           isClosed: s.room.isClosed,
+          isOpen: s.room.isOpen,
           isCreator: s.room.isCreator,
           partnerJoined: s.room.partnerJoined,
           myPoint: s.room.myPoint(),
@@ -77,7 +78,9 @@ class _PresenceStatusBanner extends ConsumerWidget {
         ),
       ),
     );
-    if (view.roomId == null || view.isClosed) return const SizedBox.shrink();
+    if (view.roomId == null || view.isClosed || view.isOpen) {
+      return const SizedBox.shrink();
+    }
 
     final l10n = context.l10n;
     String? text;
@@ -163,12 +166,15 @@ class _SessionStatusBanner extends ConsumerWidget {
       dateNavigationControllerProvider.select(
         (s) => (
           sessionStatus: s.room.sessionStatus,
+          isOpen: s.room.isOpen,
           isLoadingRoomAction: s.ui.isLoadingRoomAction,
         ),
       ),
     );
     final sessionStatus = view.sessionStatus;
     if (sessionStatus.isActive) return const SizedBox.shrink();
+    // Open sessions show their own status in OpenSessionPanel.
+    if (view.isOpen) return const SizedBox.shrink();
     final controller = ref.read(dateNavigationControllerProvider.notifier);
     final l10n = context.l10n;
     final text = sessionStatus.isCompleted

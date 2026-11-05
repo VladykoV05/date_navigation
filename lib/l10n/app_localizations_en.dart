@@ -1028,15 +1028,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'This invite code is invalid or expired. Ask for a new code.';
 
   @override
-  String get searchCityLabel => 'Search city';
-
-  @override
-  String get searchCityMinsk => 'Minsk';
-
-  @override
-  String get searchCityOther => 'Other / free-form';
-
-  @override
   String get searchRegionLabel => 'Search region';
 
   @override
@@ -1161,4 +1152,232 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemPlaceSelected => 'Place selected';
+
+  @override
+  String get openSessionTabParticipants => 'Participants';
+
+  @override
+  String get openSessionTabPlan => 'Plan';
+
+  @override
+  String get openSessionTabChat => 'Chat';
+
+  @override
+  String get openSessionEnterAddress => 'Enter address';
+
+  @override
+  String get openSessionAddressSheetTitle => 'Your address';
+
+  @override
+  String get openSessionAddressSheetHint =>
+      'The address is needed so participants can see your point';
+
+  @override
+  String get openSessionParticipantSelf => 'You';
+
+  @override
+  String get openSessionParticipantHost => 'Host';
+
+  @override
+  String openSessionParticipantNumber(Object number) {
+    return 'Participant $number';
+  }
+
+  @override
+  String get openSessionAddressSet => 'address set';
+
+  @override
+  String get openSessionAddressNotSet => 'address not set';
+
+  @override
+  String get openSessionLeave => 'Leave';
+
+  @override
+  String get openSessionPlanFromEvent => 'Event';
+
+  @override
+  String get openSessionEmptyParticipants => 'Nobody here yet';
+
+  @override
+  String get openSessionParticipantMember => 'Participant';
+
+  @override
+  String get failureLeaveRoom => 'Could not leave the session. Try again.';
+
+  @override
+  String get systemParticipantLeft => 'Participant left';
+
+  @override
+  String get openSessionComplete => 'End session';
+
+  @override
+  String get openSessionCompleteTitle => 'End the session?';
+
+  @override
+  String get openSessionCompleteBody =>
+      'The chat becomes read-only and joining is closed.';
+
+  @override
+  String get openSessionCompleteAction => 'End';
+
+  @override
+  String get openSessionCancel => 'Cancel';
+
+  @override
+  String get chatReadOnlyHint => 'Session ended: read-only';
+
+  @override
+  String get openSessionClosedHint =>
+      'Session ended. Chat is read-only, joining is closed.';
+
+  @override
+  String get failureHostAlone =>
+      'You are the only participant. End the session to leave.';
+
+  @override
+  String get openSessionHostAlone =>
+      'To leave, end the session: you are the only participant';
+
+  @override
+  String get systemHostTransferred => 'Host transferred to a participant';
+
+  @override
+  String get openSessionExpiredHint =>
+      'Session expired. Chat is read-only, joining is closed.';
+
+  @override
+  String get profileEditName => 'Edit name';
+
+  @override
+  String get profileNameLabel => 'Name';
+
+  @override
+  String get profileNameHint => 'How others see you';
+
+  @override
+  String get profilePhotoGallery => 'Photo from gallery';
+
+  @override
+  String get profilePhotoPreset => 'Built-in avatar';
+
+  @override
+  String get profilePhotoGoogle => 'Google photo';
+
+  @override
+  String get profileAvatarTooLarge =>
+      'Could not prepare the photo. Choose another one.';
+
+  @override
+  String get profileSaveError => 'Could not save the profile';
+
+  @override
+  String get profileCancel => 'Cancel';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileChooseAvatar => 'Choose an avatar';
+
+  @override
+  String get planNextStepTitle => 'Next place';
+
+  @override
+  String get planNotChosen => 'No place chosen yet';
+
+  @override
+  String get planSuggestButton => 'Suggest a place';
+
+  @override
+  String get planSuggestionsTitle => 'Suggestions';
+
+  @override
+  String get planChooseButton => 'Choose';
+
+  @override
+  String get planChosenLabel => 'Chosen';
+
+  @override
+  String get planEmptySuggestions => 'No suggestions yet';
+
+  @override
+  String get planRadiusLabel => 'Radius from the event';
+
+  @override
+  String planRadiusOption(Object meters) {
+    return '$meters m';
+  }
+
+  @override
+  String get planSuggestNameLabel => 'Place name';
+
+  @override
+  String get planSuggestAddressLabel => 'Address';
+
+  @override
+  String get planSuggestSubmit => 'Suggest';
+
+  @override
+  String get planAddressNotFound => 'Address not found';
+
+  @override
+  String planTooFar(Object meters) {
+    return 'The place is farther than $meters m from the event venue';
+  }
+
+  @override
+  String get planSuggestLimit => 'You can suggest at most 5 places per hour';
+
+  @override
+  String get planSaveFailed => 'Could not save the plan. Try again.';
+
+  @override
+  String planProposedBy(Object name) {
+    return 'from $name';
+  }
+
+  @override
+  String get openSessionsEventsLoading => 'Loading events…';
+
+  @override
+  String get planSearchTitle => 'Find a place nearby';
+
+  @override
+  String get planSearchButton => 'Search';
+
+  @override
+  String get planSearchEmpty => 'Nothing found in this radius';
+
+  @override
+  String get planSearchNoCoords =>
+      'The event has no coordinates, search is unavailable';
+
+  @override
+  String get planSearchFailed => 'Place search is unavailable now';
+
+  @override
+  String get planCategoryFood => 'Food';
+
+  @override
+  String get planCategoryCulture => 'Culture';
+
+  @override
+  String get planCategoryWalk => 'Walk';
+
+  @override
+  String get planCategoryActive => 'Active';
+
+  @override
+  String get planChooseNow => 'Choose now';
+
+  @override
+  String get planSuggestFromSearch => 'Suggest';
+
+  @override
+  String planWalkTime(Object meters, Object minutes) {
+    return '≈ $minutes min on foot · $meters m';
+  }
+
+  @override
+  String get planOpenInMaps => 'Open route in maps';
 }

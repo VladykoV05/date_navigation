@@ -12,6 +12,8 @@ class OpenSessionsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    // Prefetch events while the screen is open, so the create dialog opens instantly.
+    ref.watch(eventsProvider);
     final sessions = ref.watch(openSessionsProvider);
     return Scaffold(
       appBar: AppBar(
@@ -54,13 +56,6 @@ class OpenSessionsPage extends ConsumerWidget {
     final l10n = context.l10n;
     var capacity = 4;
     RoomEventSnapshot? selectedEvent;
-    List<RoomEventSnapshot> events;
-    try {
-      events = await ref.read(eventsProvider.future);
-    } catch (_) {
-      events = const [];
-    }
-    if (!context.mounted) return;
     final created =
         await showDialog<({int capacity, RoomEventSnapshot? event})>(
           context: context,
@@ -74,33 +69,53 @@ class OpenSessionsPage extends ConsumerWidget {
                   children: [
                     Text(l10n.openSessionsEvent),
                     const SizedBox(height: 8),
-                    DropdownButtonFormField<RoomEventSnapshot?>(
-                      initialValue: selectedEvent,
-                      isExpanded: true,
-                      items: [
-                        DropdownMenuItem(
-                          value: null,
-                          child: Text(l10n.openSessionsEventNone),
-                        ),
-                        for (final event in events)
-                          DropdownMenuItem(
-                            value: event,
-                            child: Text(
-                              event.title,
-                              overflow: TextOverflow.ellipsis,
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final eventsAsync = ref.watch(eventsProvider);
+                        final events =
+                            eventsAsync.value ?? const <RoomEventSnapshot>[];
+                        final loading = eventsAsync.isLoading && events.isEmpty;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            DropdownButtonFormField<RoomEventSnapshot?>(
+                              initialValue: selectedEvent,
+                              isExpanded: true,
+                              items: [
+                                DropdownMenuItem(
+                                  value: null,
+                                  child: Text(l10n.openSessionsEventNone),
+                                ),
+                                for (final event in events)
+                                  DropdownMenuItem(
+                                    value: event,
+                                    child: Text(
+                                      event.title,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                              ],
+                              onChanged: (value) =>
+                                  setState(() => selectedEvent = value),
                             ),
-                          ),
-                      ],
-                      onChanged: (value) =>
-                          setState(() => selectedEvent = value),
+                            if (loading) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.openSessionsEventsLoading,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ] else if (events.isEmpty) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.openSessionsEventsUnavailable,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ],
+                        );
+                      },
                     ),
-                    if (events.isEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.openSessionsEventsUnavailable,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
                     const SizedBox(height: 16),
                     Row(
                       mainAxisSize: MainAxisSize.min,

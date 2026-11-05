@@ -46,6 +46,8 @@ final roomLifecycleServiceProvider = Provider<RoomLifecycleService>(
   (ref) => RoomLifecycleService(
     createRoom: ref.watch(createRoomProvider),
     completeSession: ref.watch(completeSessionProvider),
+    leaveOpenRoom: ref.watch(leaveOpenRoomProvider),
+    markOpenRoomExpired: ref.watch(markOpenRoomExpiredProvider),
     joinRoom: ref.watch(joinRoomProvider),
     createOpenRoom: CreateOpenRoom(ref.watch(roomSessionRepositoryProvider)),
     joinOpenRoom: JoinOpenRoom(ref.watch(roomSessionRepositoryProvider)),

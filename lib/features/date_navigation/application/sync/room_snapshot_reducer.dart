@@ -34,6 +34,13 @@ class RoomSyncOutcome {
 class RoomSnapshotReducer {
   const RoomSnapshotReducer();
 
+  static GeoCoordinate? _openPointOf(RoomSnapshot roomSnapshot, String userId) {
+    for (final participant in roomSnapshot.participants) {
+      if (participant.uid == userId) return participant.point;
+    }
+    return null;
+  }
+
   RoomSyncOutcome buildOutcome({
     required DateNavigationState currentState,
     required RoomSnapshot roomSnapshot,
@@ -208,9 +215,46 @@ class RoomSnapshotReducer {
 
     final nextState = currentState.copyWith(
       room: currentState.room.copyWith(
+        inviteCode: roomSnapshot.inviteCode ?? currentState.room.inviteCode,
         isCreator: isCreator,
         point1: nextPoint1,
         point2: nextPoint2,
+        isOpen: roomSnapshot.isOpen,
+        nextStep: roomSnapshot.isOpen ? roomSnapshot.nextStep : null,
+        planRadiusMeters: roomSnapshot.planRadiusMeters,
+        selfUid: userId,
+        openParticipants: roomSnapshot.isOpen
+            ? roomSnapshot.participants
+                  .map(
+                    (p) => RoomParticipant(
+                      uid: p.uid,
+                      role: p.uid == roomSnapshot.creatorUid
+                          ? RoomParticipantRole.host
+                          : RoomParticipantRole.member,
+                      point: p.point,
+                      searchRadius: p.searchRadius,
+                      meetingFormats: p.meetingFormats,
+                      selectedMeetingFormat: p.selectedMeetingFormat,
+                      lastReadAt: p.lastReadAt,
+                    ),
+                  )
+                  .toList(growable: false)
+            : const [],
+        openOwnPoint: roomSnapshot.isOpen
+            ? _openPointOf(roomSnapshot, userId)
+            : null,
+        openParticipantPoints: roomSnapshot.isOpen
+            ? roomSnapshot.participants
+                  .where((participant) => participant.uid != userId)
+                  .where((participant) => participant.point != null)
+                  .map(
+                    (participant) => OpenParticipantPoint(
+                      uid: participant.uid,
+                      point: participant.point!,
+                    ),
+                  )
+                  .toList(growable: false)
+            : const [],
         partnerJoined: partnerJoined,
         sessionStatus: sessionStatus,
         event: roomSnapshot.event,

@@ -1,15 +1,17 @@
-# Date Navigation
+# Sbor (Date Navigation)
 
-Plan dates together, vote for places, and find a meeting point that works for both users.
+Plan meetings together, find a company for an event, and agree on a place that works for everyone.
 
 ---
 
 ## About
 
-**Date Navigation** is a Flutter app for collaborative meeting planning:
-- share room/session
-- sync preferences between two users
+**Sbor** is a Flutter app for collaborative meeting planning:
+- private rooms for two and open sessions with capacity
+- GPS "my point" and global address search
 - select meeting format
+- discover TicketPro events and join a session
+- realtime chat with unread badge and notifications
 - find nearby places around a shared center
 - vote or propose alternatives
 
@@ -17,7 +19,11 @@ The app is built with clean, feature-oriented architecture and real-time sync th
 
 ## Features
 
-- Real-time room collaboration for two users
+- Private rooms and open sessions with capacity
+- GPS location and global geocoding
+- TicketPro event catalog/import
+- Realtime chat, system messages, unread badge
+- Local notifications for new messages
 - Meeting format selection and coordination flow
 - Place discovery with filtering and quality checks
 - Voting / proposing places with synchronized state

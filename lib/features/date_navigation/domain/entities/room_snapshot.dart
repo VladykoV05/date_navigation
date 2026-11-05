@@ -1,3 +1,4 @@
+import 'open_plan.dart';
 import 'date_scenario.dart';
 import 'date_vibe.dart';
 import 'place.dart';
@@ -205,6 +206,9 @@ class RoomSnapshot {
     this.meetingRevoteRequest = const RoomRevoteRequestSnapshot(),
     this.finalChoice = const RoomFinalChoiceSnapshot(),
     this.schemaVersion = 1,
+    this.inviteCode,
+    this.nextStep,
+    this.planRadiusMeters = planRadiusDefaultMeters,
     this.type = RoomType.private,
     this.visibility = RoomVisibility.invite,
     this.capacity = 2,
@@ -214,6 +218,9 @@ class RoomSnapshot {
   });
 
   final String id;
+  final String? inviteCode;
+  final NextStep? nextStep;
+  final int planRadiusMeters;
   final String creatorUid;
   final String? partnerUid;
   final GeoCoordinate? point1;

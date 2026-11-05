@@ -2,6 +2,10 @@ class DateNavigationConfig {
   static const String appUserAgent =
       'DateNavigationApp/1.0 (student@university.by)';
 
+  /// Ключ OpenRouteService для пеших маршрутов (`--dart-define=ORS_API_KEY=...`).
+  /// Пустой — приложение рисует прямую линию.
+  static const String orsApiKey = String.fromEnvironment('ORS_API_KEY');
+
   static const String eventsProxyUrl = String.fromEnvironment(
     'EVENTS_PROXY_URL',
   );

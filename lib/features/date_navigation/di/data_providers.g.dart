@@ -9,17 +9,65 @@ part of 'data_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(walkingRouteSource)
+final walkingRouteSourceProvider = WalkingRouteSourceProvider._();
+
+final class WalkingRouteSourceProvider
+    extends
+        $FunctionalProvider<
+          WalkingRouteSource,
+          WalkingRouteSource,
+          WalkingRouteSource
+        >
+    with $Provider<WalkingRouteSource> {
+  WalkingRouteSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'walkingRouteSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$walkingRouteSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<WalkingRouteSource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  WalkingRouteSource create(Ref ref) {
+    return walkingRouteSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(WalkingRouteSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<WalkingRouteSource>(value),
+    );
+  }
+}
+
+String _$walkingRouteSourceHash() =>
+    r'30b2f2a4b5e177645ca90c2bcfd77147b2b29ea9';
+
+/// Источник событий TicketPro (на устройстве, без прокси).
+
 @ProviderFor(eventsProxyDataSource)
 final eventsProxyDataSourceProvider = EventsProxyDataSourceProvider._();
 
+/// Источник событий TicketPro (на устройстве, без прокси).
+
 final class EventsProxyDataSourceProvider
-    extends
-        $FunctionalProvider<
-          EventsProxyDataSource,
-          EventsProxyDataSource,
-          EventsProxyDataSource
-        >
-    with $Provider<EventsProxyDataSource> {
+    extends $FunctionalProvider<EventSource, EventSource, EventSource>
+    with $Provider<EventSource> {
+  /// Источник событий TicketPro (на устройстве, без прокси).
   EventsProxyDataSourceProvider._()
     : super(
         from: null,
@@ -36,26 +84,25 @@ final class EventsProxyDataSourceProvider
 
   @$internal
   @override
-  $ProviderElement<EventsProxyDataSource> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<EventSource> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  EventsProxyDataSource create(Ref ref) {
+  EventSource create(Ref ref) {
     return eventsProxyDataSource(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(EventsProxyDataSource value) {
+  Override overrideWithValue(EventSource value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<EventsProxyDataSource>(value),
+      providerOverride: $SyncValueProvider<EventSource>(value),
     );
   }
 }
 
 String _$eventsProxyDataSourceHash() =>
-    r'e9d31df0179d8fd52108645b61990a21aca8105a';
+    r'e1eeec9f4b8a30006e1ab5479808c39df5fea064';
 
 @ProviderFor(cacheService)
 final cacheServiceProvider = CacheServiceProvider._();

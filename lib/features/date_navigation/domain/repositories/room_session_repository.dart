@@ -33,5 +33,12 @@ abstract interface class RoomSessionRepository {
     required String userId,
   });
 
+  Future<Result<void>> leaveOpenRoom({
+    required String roomId,
+    required String userId,
+  });
+
+  Future<Result<void>> markOpenRoomExpired({required String roomId});
+
   Stream<RoomSnapshot> watchRoom(String roomId);
 }
