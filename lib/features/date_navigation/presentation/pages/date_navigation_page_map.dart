@@ -70,6 +70,10 @@ extension _DateNavigationPageMap on _DateNavigationPageState {
       points.add(latlong.LatLng(selectedPlace.lat, selectedPlace.lon));
       return points;
     }
+    final event = state.room.event;
+    if (event?.lat != null && event?.lon != null) {
+      points.add(latlong.LatLng(event!.lat!, event.lon!));
+    }
     if (state.meeting.centerPoint != null) {
       points.add(GeoMapMapper.toLatLng(state.meeting.centerPoint!));
     }

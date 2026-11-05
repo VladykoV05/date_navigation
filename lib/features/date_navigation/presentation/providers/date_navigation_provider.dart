@@ -33,6 +33,9 @@ final dateNavigationMapViewProvider = Provider.autoDispose(
         searchRadius: s.meeting.searchRadius,
         routePoints: s.meeting.routePoints,
         sessionStatus: s.room.sessionStatus,
+        event: s.room.event == null
+            ? null
+            : RoomEventViewData.fromSnapshot(s.room.event!),
       ),
     ),
   ),

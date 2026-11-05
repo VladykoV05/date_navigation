@@ -7,6 +7,7 @@ import '../../domain/value_objects/geo_coordinate.dart';
 import '../mappers/geo_map_mapper.dart';
 import '../mappers/place_visual_mapper.dart';
 import '../view_data/place_view_data.dart';
+import '../view_data/room_event_view_data.dart';
 
 class MapSection extends StatefulWidget {
   final MapController mapController;
@@ -21,6 +22,7 @@ class MapSection extends StatefulWidget {
   final double searchRadius;
   final List<GeoCoordinate> routePoints;
   final bool showMeetingRouteAndRadius;
+  final RoomEventViewData? event;
 
   const MapSection({
     super.key,
@@ -36,6 +38,7 @@ class MapSection extends StatefulWidget {
     required this.searchRadius,
     required this.routePoints,
     this.showMeetingRouteAndRadius = true,
+    this.event,
   });
 
   @override
