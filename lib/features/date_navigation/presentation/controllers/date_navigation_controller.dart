@@ -19,6 +19,7 @@ import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../domain/usecases/save_search_radius.dart';
 import '../../domain/usecases/watch_room.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../../../core/utils/observability.dart';
 import '../../application/policies/failure_retry_policy.dart';
 import '../../application/policies/meeting_guard_policy.dart';
@@ -191,6 +192,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
   }
 
   void _setFailure(Failure failure, String operation) {
+    AppLogger.w('Failure[$operation]: ${failure.message}');
     _writeState(
       state.copyWith(
         ui: state.ui.copyWith(
@@ -449,6 +451,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
       snapshotFreshFor: _snapshotFreshFor,
       onApplication: _applyRoomStreamApplication,
       onError: (error, stack) {
+        AppLogger.e('Room stream failed', error, stack);
         _setFailure(
           const NetworkFailure(FailureCodes.roomStreamFailed),
           'room_stream',
