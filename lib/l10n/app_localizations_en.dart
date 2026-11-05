@@ -1338,4 +1338,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSessionsEventsLoading => 'Loading events…';
+
+  @override
+  String get planSearchTitle => 'Find a place nearby';
+
+  @override
+  String get planSearchButton => 'Search';
+
+  @override
+  String get planSearchEmpty => 'Nothing found in this radius';
+
+  @override
+  String get planSearchNoCoords =>
+      'The event has no coordinates, search is unavailable';
+
+  @override
+  String get planSearchFailed => 'Place search is unavailable now';
+
+  @override
+  String get planCategoryFood => 'Food';
+
+  @override
+  String get planCategoryCulture => 'Culture';
+
+  @override
+  String get planCategoryWalk => 'Walk';
+
+  @override
+  String get planCategoryActive => 'Active';
+
+  @override
+  String get planChooseNow => 'Choose now';
+
+  @override
+  String get planSuggestFromSearch => 'Suggest';
+
+  @override
+  String planWalkTime(Object meters, Object minutes) {
+    return '≈ $minutes min on foot · $meters m';
+  }
+
+  @override
+  String get planOpenInMaps => 'Open route in maps';
 }

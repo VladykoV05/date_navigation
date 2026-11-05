@@ -226,6 +226,95 @@ final class ChooseSuggestionProvider
 
 String _$chooseSuggestionHash() => r'61267ed0feaa61661f3de903fec43a5afd6062f9';
 
+@ProviderFor(searchNearbyPlaces)
+final searchNearbyPlacesProvider = SearchNearbyPlacesProvider._();
+
+final class SearchNearbyPlacesProvider
+    extends
+        $FunctionalProvider<
+          SearchNearbyPlaces,
+          SearchNearbyPlaces,
+          SearchNearbyPlaces
+        >
+    with $Provider<SearchNearbyPlaces> {
+  SearchNearbyPlacesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'searchNearbyPlacesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$searchNearbyPlacesHash();
+
+  @$internal
+  @override
+  $ProviderElement<SearchNearbyPlaces> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SearchNearbyPlaces create(Ref ref) {
+    return searchNearbyPlaces(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SearchNearbyPlaces value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SearchNearbyPlaces>(value),
+    );
+  }
+}
+
+String _$searchNearbyPlacesHash() =>
+    r'5388195164ea195edc012c97bcb64a8e690e02b4';
+
+@ProviderFor(setNextStep)
+final setNextStepProvider = SetNextStepProvider._();
+
+final class SetNextStepProvider
+    extends $FunctionalProvider<SetNextStep, SetNextStep, SetNextStep>
+    with $Provider<SetNextStep> {
+  SetNextStepProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'setNextStepProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$setNextStepHash();
+
+  @$internal
+  @override
+  $ProviderElement<SetNextStep> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SetNextStep create(Ref ref) {
+    return setNextStep(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SetNextStep value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SetNextStep>(value),
+    );
+  }
+}
+
+String _$setNextStepHash() => r'e2dc8785cc89d49532fc7a395a24db9e8c74b515';
+
 @ProviderFor(setPlanRadius)
 final setPlanRadiusProvider = SetPlanRadiusProvider._();
 

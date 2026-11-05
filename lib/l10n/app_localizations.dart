@@ -2467,6 +2467,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading events…'**
   String get openSessionsEventsLoading;
+
+  /// No description provided for @planSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a place nearby'**
+  String get planSearchTitle;
+
+  /// No description provided for @planSearchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get planSearchButton;
+
+  /// No description provided for @planSearchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found in this radius'**
+  String get planSearchEmpty;
+
+  /// No description provided for @planSearchNoCoords.
+  ///
+  /// In en, this message translates to:
+  /// **'The event has no coordinates, search is unavailable'**
+  String get planSearchNoCoords;
+
+  /// No description provided for @planSearchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Place search is unavailable now'**
+  String get planSearchFailed;
+
+  /// No description provided for @planCategoryFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get planCategoryFood;
+
+  /// No description provided for @planCategoryCulture.
+  ///
+  /// In en, this message translates to:
+  /// **'Culture'**
+  String get planCategoryCulture;
+
+  /// No description provided for @planCategoryWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get planCategoryWalk;
+
+  /// No description provided for @planCategoryActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get planCategoryActive;
+
+  /// No description provided for @planChooseNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose now'**
+  String get planChooseNow;
+
+  /// No description provided for @planSuggestFromSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest'**
+  String get planSuggestFromSearch;
+
+  /// No description provided for @planWalkTime.
+  ///
+  /// In en, this message translates to:
+  /// **'≈ {minutes} min on foot · {meters} m'**
+  String planWalkTime(Object meters, Object minutes);
+
+  /// No description provided for @planOpenInMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open route in maps'**
+  String get planOpenInMaps;
 }
 
 class _AppLocalizationsDelegate

@@ -640,5 +640,18 @@
   "planSuggestLimit": "You can suggest at most 5 places per hour",
   "planSaveFailed": "Could not save the plan. Try again.",
   "planProposedBy": "from {name}",
-  "openSessionsEventsLoading": "Loading events…"
+  "openSessionsEventsLoading": "Loading events…",
+  "planSearchTitle": "Find a place nearby",
+  "planSearchButton": "Search",
+  "planSearchEmpty": "Nothing found in this radius",
+  "planSearchNoCoords": "The event has no coordinates, search is unavailable",
+  "planSearchFailed": "Place search is unavailable now",
+  "planCategoryFood": "Food",
+  "planCategoryCulture": "Culture",
+  "planCategoryWalk": "Walk",
+  "planCategoryActive": "Active",
+  "planChooseNow": "Choose now",
+  "planSuggestFromSearch": "Suggest",
+  "planWalkTime": "≈ {minutes} min on foot · {meters} m",
+  "planOpenInMaps": "Open route in maps"
 }

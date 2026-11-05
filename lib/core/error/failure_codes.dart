@@ -32,6 +32,7 @@ abstract final class FailureCodes {
   static const leaveRoomFailed = 'leave_room_failed';
   static const suggestionLimit = 'suggestion_limit';
   static const planSaveFailed = 'plan_save_failed';
+  static const placesSearchFailed = 'places_search_failed';
   static const profileSaveFailed = 'profile_save_failed';
   static const hostAlone = 'host_alone';
 

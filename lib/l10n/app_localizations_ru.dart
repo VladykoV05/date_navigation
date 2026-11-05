@@ -1350,4 +1350,45 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openSessionsEventsLoading => 'Загружаем события…';
+
+  @override
+  String get planSearchTitle => 'Найти место рядом';
+
+  @override
+  String get planSearchButton => 'Найти';
+
+  @override
+  String get planSearchEmpty => 'Ничего не найдено в этом радиусе';
+
+  @override
+  String get planSearchNoCoords => 'У события нет координат, поиск недоступен';
+
+  @override
+  String get planSearchFailed => 'Поиск мест сейчас недоступен';
+
+  @override
+  String get planCategoryFood => 'Еда';
+
+  @override
+  String get planCategoryCulture => 'Культура';
+
+  @override
+  String get planCategoryWalk => 'Прогулка';
+
+  @override
+  String get planCategoryActive => 'Активный отдых';
+
+  @override
+  String get planChooseNow => 'Выбрать сразу';
+
+  @override
+  String get planSuggestFromSearch => 'Предложить';
+
+  @override
+  String planWalkTime(Object meters, Object minutes) {
+    return '≈ $minutes мин пешком · $meters м';
+  }
+
+  @override
+  String get planOpenInMaps => 'Открыть маршрут в картах';
 }

@@ -37,6 +37,7 @@ RoomSessionRepository roomSessionRepository(Ref ref) {
 OpenPlanRepository openPlanRepository(Ref ref) {
   return OpenPlanRepositoryImpl(
     OpenPlanRemoteDataSource(ref.watch(firestoreProvider)),
+    ref.watch(placesRemoteDataSourceProvider),
   );
 }
 

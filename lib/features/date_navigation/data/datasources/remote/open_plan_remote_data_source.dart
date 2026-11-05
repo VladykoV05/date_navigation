@@ -144,6 +144,31 @@ class OpenPlanRemoteDataSource {
     }
   }
 
+  Future<Result<void>> setNextStep({
+    required String roomId,
+    required String name,
+    String? address,
+    required double lat,
+    required double lon,
+    required String hostUid,
+  }) async {
+    try {
+      await _firestore.collection(roomsCollection).doc(roomId).update({
+        'nextStep': {
+          'name': name,
+          'address': address,
+          'lat': lat,
+          'lon': lon,
+          'chosenBy': hostUid,
+        },
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      return const Ok(null);
+    } on FirebaseException {
+      return const Err(UnknownFailure(FailureCodes.planSaveFailed));
+    }
+  }
+
   Future<Result<void>> setPlanRadius({
     required String roomId,
     required int meters,

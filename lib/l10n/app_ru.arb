@@ -414,5 +414,18 @@
   "planSuggestLimit": "Можно предложить не больше 5 мест в час",
   "planSaveFailed": "Не удалось сохранить план. Попробуйте ещё раз.",
   "planProposedBy": "от {name}",
-  "openSessionsEventsLoading": "Загружаем события…"
+  "openSessionsEventsLoading": "Загружаем события…",
+  "planSearchTitle": "Найти место рядом",
+  "planSearchButton": "Найти",
+  "planSearchEmpty": "Ничего не найдено в этом радиусе",
+  "planSearchNoCoords": "У события нет координат, поиск недоступен",
+  "planSearchFailed": "Поиск мест сейчас недоступен",
+  "planCategoryFood": "Еда",
+  "planCategoryCulture": "Культура",
+  "planCategoryWalk": "Прогулка",
+  "planCategoryActive": "Активный отдых",
+  "planChooseNow": "Выбрать сразу",
+  "planSuggestFromSearch": "Предложить",
+  "planWalkTime": "≈ {minutes} мин пешком · {meters} м",
+  "planOpenInMaps": "Открыть маршрут в картах"
 }

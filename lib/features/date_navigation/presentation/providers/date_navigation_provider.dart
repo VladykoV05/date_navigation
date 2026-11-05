@@ -88,6 +88,8 @@ final dateNavigationRoomBodyViewProvider = Provider.autoDispose(
             ? null
             : NextStepViewData(
                 name: s.room.nextStep!.name,
+                lat: s.room.nextStep!.lat,
+                lon: s.room.nextStep!.lon,
                 address: s.room.nextStep!.address,
               ),
         planRadiusMeters: s.room.planRadiusMeters,

@@ -35,6 +35,16 @@ ChooseSuggestion chooseSuggestion(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+SearchNearbyPlaces searchNearbyPlaces(Ref ref) {
+  return SearchNearbyPlaces(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+SetNextStep setNextStep(Ref ref) {
+  return SetNextStep(ref.watch(openPlanRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
 SetPlanRadius setPlanRadius(Ref ref) {
   return SetPlanRadius(ref.watch(openPlanRepositoryProvider));
 }
