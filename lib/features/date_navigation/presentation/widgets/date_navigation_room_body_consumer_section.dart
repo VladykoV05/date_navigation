@@ -16,6 +16,7 @@ import './place_card.dart';
 import './room_control_panel.dart';
 import './scenario_summary_sheet.dart';
 import './welcome_view.dart';
+import '../pages/open_sessions_page.dart';
 
 class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
   const DateNavigationRoomBodyConsumerSection({
@@ -46,6 +47,9 @@ class DateNavigationRoomBodyConsumerSection extends ConsumerWidget {
       return WelcomeView(
         onCreateRoom: controller.createRoom,
         onJoinRoom: onShowJoinDialog,
+        onOpenSessions: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const OpenSessionsPage()),
+        ),
       );
     }
     final displayCode = (view.inviteCode?.isNotEmpty ?? false)
