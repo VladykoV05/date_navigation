@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../../core/error/result.dart';
 import '../../domain/entities/room_snapshot.dart';
 import '../../domain/repositories/room_session_repository.dart';
@@ -88,10 +92,43 @@ class RoomSessionRepositoryImpl implements RoomSessionRepository {
 
   @override
   Stream<RoomSnapshot> watchRoom(String roomId) {
-    return _remote
-        .watchRoom(roomId)
-        .map(_roomSnapshotMapper.fromDocument)
-        .where((snapshot) => snapshot != null)
-        .cast<RoomSnapshot>();
+    final controller = StreamController<RoomSnapshot>();
+    StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? roomSub;
+    StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? participantsSub;
+    DocumentSnapshot<Map<String, dynamic>>? lastRoom;
+    QuerySnapshot<Map<String, dynamic>>? lastParticipants;
+
+    void emit() {
+      final room = lastRoom;
+      final participants = lastParticipants;
+      if (room == null || participants == null) return;
+      final data = room.data();
+      if (!room.exists || data == null) return;
+      final participantDocs = <String, Map<String, dynamic>>{
+        for (final doc in participants.docs) doc.id: doc.data(),
+      };
+      final snapshot = _roomSnapshotMapper.fromMap(
+        room.id,
+        data,
+        participantDocs: participantDocs,
+      );
+      if (!controller.isClosed) controller.add(snapshot);
+    }
+
+    controller.onListen = () {
+      roomSub = _remote.watchRoom(roomId).listen((doc) {
+        lastRoom = doc;
+        emit();
+      }, onError: controller.addError);
+      participantsSub = _remote.watchParticipants(roomId).listen((snapshot) {
+        lastParticipants = snapshot;
+        emit();
+      }, onError: controller.addError);
+    };
+    controller.onCancel = () async {
+      await roomSub?.cancel();
+      await participantsSub?.cancel();
+    };
+    return controller.stream;
   }
 }

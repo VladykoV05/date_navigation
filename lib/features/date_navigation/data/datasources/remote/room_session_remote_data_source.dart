@@ -568,6 +568,17 @@ class RoomSessionRemoteDataSource {
     }
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> watchParticipants({
+    required String roomsCollection,
+    required String roomId,
+  }) {
+    return _firestore
+        .collection(roomsCollection)
+        .doc(roomId)
+        .collection('participants')
+        .snapshots();
+  }
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> watchRoom({
     required String roomsCollection,
     required String roomId,
