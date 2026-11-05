@@ -158,10 +158,7 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
           segments: [
             ButtonSegment(
               value: OpenSessionTab.participants,
-              label: Text(
-                '${l10n.openSessionTabParticipants} '
-                '(${widget.participants.length})',
-              ),
+              label: Text(l10n.openSessionTabParticipants),
             ),
             ButtonSegment(
               value: OpenSessionTab.plan,
@@ -192,6 +189,14 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  '${l10n.openSessionTabParticipants}: '
+                  '${widget.participants.length}',
+                  style: textTheme.labelLarge?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 4),
                 for (var i = 0; i < widget.participants.length; i++)
                   _ParticipantRow(
                     name: _participantName(context, i, widget.participants[i]),
@@ -227,30 +232,66 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
     final l10n = context.l10n;
     showModalBottomSheet<void>(
       context: context,
+      showDragHandle: true,
       builder: (sheetContext) {
+        final scheme = Theme.of(sheetContext).colorScheme;
         final textTheme = Theme.of(sheetContext).textTheme;
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(name, style: textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Text(
-                participant.isHost
-                    ? l10n.openSessionParticipantHost
-                    : l10n.openSessionParticipantMember,
-                style: textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                participant.hasAddress
-                    ? l10n.openSessionAddressSet
-                    : l10n.openSessionAddressNotSet,
-                style: textTheme.bodyMedium,
-              ),
-            ],
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: scheme.primaryContainer,
+                      child: Text(_initialOf(name)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(name, style: textTheme.titleMedium),
+                          Text(
+                            participant.isHost
+                                ? l10n.openSessionParticipantHost
+                                : l10n.openSessionParticipantMember,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Icon(
+                      participant.hasAddress
+                          ? Icons.place
+                          : Icons.place_outlined,
+                      size: 18,
+                      color: participant.hasAddress
+                          ? scheme.primary
+                          : scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      participant.hasAddress
+                          ? l10n.openSessionAddressSet
+                          : l10n.openSessionAddressNotSet,
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
