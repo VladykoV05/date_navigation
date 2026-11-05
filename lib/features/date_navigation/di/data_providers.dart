@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/error/result.dart';
 import '../../../core/l10n/locale_headers.dart';
 import '../../../core/l10n/locale_provider.dart';
 import '../../../core/search/search_region.dart';
@@ -12,6 +13,7 @@ import '../data/datasources/remote/ors_walking_route_data_source.dart';
 import '../data/datasources/remote/ticketpro_events_data_source.dart';
 import '../domain/ports/walking_route_source.dart';
 import '../config/date_navigation_config.dart';
+import 'repository_providers.dart';
 import '../domain/ports/event_source.dart';
 import '../data/datasources/remote/geocoding_remote_data_source.dart';
 import '../data/datasources/remote/osrm_remote_data_source.dart';
@@ -32,7 +34,17 @@ WalkingRouteSource walkingRouteSource(Ref ref) {
 /// Источник событий TicketPro (на устройстве, без прокси).
 @Riverpod(keepAlive: true)
 EventSource eventsProxyDataSource(Ref ref) {
-  return TicketProEventsDataSource(client: ref.watch(httpClientProvider));
+  final geocoding = ref.watch(geocodingRepositoryProvider);
+  return TicketProEventsDataSource(
+    client: ref.watch(httpClientProvider),
+    geocodeAddress: (query) async {
+      final result = await geocoding.geocodeAddress(query);
+      return switch (result) {
+        Ok(:final value) => value,
+        Err() => null,
+      };
+    },
+  );
 }
 
 @Riverpod(keepAlive: true)
