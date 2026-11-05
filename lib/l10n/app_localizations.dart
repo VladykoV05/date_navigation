@@ -2077,6 +2077,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Route to event'**
   String get openEventRoute;
+
+  /// No description provided for @chatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chatTitle;
+
+  /// No description provided for @chatInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get chatInputHint;
+
+  /// No description provided for @chatSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get chatSend;
+
+  /// No description provided for @chatEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get chatEmpty;
+
+  /// No description provided for @chatLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load messages'**
+  String get chatLoadFailed;
+
+  /// No description provided for @chatSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send message'**
+  String get chatSendFailed;
+
+  /// No description provided for @chatOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chatOpen;
 }
 
 class _AppLocalizationsDelegate

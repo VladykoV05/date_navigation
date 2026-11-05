@@ -14,7 +14,7 @@ done
 if [ "$UP" -ne 1 ]; then
   echo "Firestore emulator did not start"; cat /tmp/rules-emulator.log; kill "$EMU" 2>/dev/null; exit 1
 fi
-node --test rules-tests/test/open_room.test.mjs
+node --test --test-concurrency=1 rules-tests/test/*.test.mjs
 STATUS=$?
 kill "$EMU" 2>/dev/null
 pkill -f "cloud-firestore-emulator" 2>/dev/null || true

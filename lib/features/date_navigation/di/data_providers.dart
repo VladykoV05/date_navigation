@@ -7,6 +7,7 @@ import '../../../core/l10n/locale_provider.dart';
 import '../../../core/search/search_region.dart';
 import '../../../core/search/search_region_preferences.dart';
 import '../data/datasources/local/cache_service.dart';
+import '../data/datasources/remote/chat_remote_data_source.dart';
 import '../data/datasources/remote/events_proxy_data_source.dart';
 import '../data/datasources/remote/geocoding_remote_data_source.dart';
 import '../data/datasources/remote/osrm_remote_data_source.dart';
@@ -27,6 +28,11 @@ EventsProxyDataSource eventsProxyDataSource(Ref ref) {
 
 @Riverpod(keepAlive: true)
 CacheService cacheService(Ref ref) => CacheService();
+
+@Riverpod(keepAlive: true)
+ChatRemoteDataSource chatRemoteDataSource(Ref ref) {
+  return ChatRemoteDataSource(ref.watch(firestoreProvider));
+}
 
 @Riverpod(keepAlive: true)
 RoomRemoteDataSource roomRemoteDataSource(Ref ref) {

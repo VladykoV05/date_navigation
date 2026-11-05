@@ -114,6 +114,7 @@ class RoomControlPanel extends StatelessWidget {
   final bool isCreator;
   final RoomEventViewData? event;
   final VoidCallback? onOpenEventRoute;
+  final VoidCallback? onOpenChat;
   final VoidCallback onLeaveRoom;
 
   const RoomControlPanel({
@@ -163,6 +164,7 @@ class RoomControlPanel extends StatelessWidget {
     required this.isCreator,
     required this.event,
     this.onOpenEventRoute,
+    this.onOpenChat,
     required this.onLeaveRoom,
   });
 
@@ -188,6 +190,7 @@ class RoomControlPanel extends StatelessWidget {
               ? l10n.sessionClosedActionsDisabled
               : l10n.sessionExpiredActionsDisabled,
           onLeaveRoom: onLeaveRoom,
+          onOpenChat: onOpenChat,
         ),
         if (event != null) ...[
           _EventBanner(event: event!, onOpenRoute: onOpenEventRoute),

@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/repositories/geocoding_repository_impl.dart';
 import '../data/repositories/meeting_repository_impl.dart';
 import '../data/repositories/meeting_snapshot_repository_impl.dart';
+import '../data/repositories/chat_repository_impl.dart';
 import '../data/repositories/room_session_repository_impl.dart';
 import '../data/repositories/room_voting_repository_impl.dart';
 import '../domain/repositories/geocoding_repository.dart';
@@ -11,11 +12,17 @@ import '../domain/repositories/meeting_snapshot_repository.dart';
 import '../domain/repositories/room_meeting_format_repository.dart';
 import '../domain/repositories/room_place_voting_repository.dart';
 import '../domain/repositories/room_scenario_repository.dart';
+import '../domain/repositories/chat_repository.dart';
 import '../domain/repositories/room_session_repository.dart';
 import '../domain/repositories/room_voting_repository.dart';
 import 'data_providers.dart';
 
 part 'repository_providers.g.dart';
+
+@Riverpod(keepAlive: true)
+ChatRepository chatRepository(Ref ref) {
+  return ChatRepositoryImpl(ref.watch(chatRemoteDataSourceProvider));
+}
 
 @Riverpod(keepAlive: true)
 RoomSessionRepository roomSessionRepository(Ref ref) {

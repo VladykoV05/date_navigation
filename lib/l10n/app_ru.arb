@@ -349,5 +349,12 @@
   "openSessionsEvent": "Событие",
   "openSessionsEventNone": "Без события",
   "openSessionsEventsUnavailable": "Каталог событий недоступен. Можно создать сессию без события.",
-  "openEventRoute": "Маршрут к событию"
+  "openEventRoute": "Маршрут к событию",
+  "chatTitle": "Чат",
+  "chatInputHint": "Сообщение",
+  "chatSend": "Отправить",
+  "chatEmpty": "Сообщений пока нет",
+  "chatLoadFailed": "Не удалось загрузить сообщения",
+  "chatSendFailed": "Не удалось отправить сообщение",
+  "chatOpen": "Чат"
 }

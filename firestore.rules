@@ -209,6 +209,28 @@ service cloud.firestore {
 
       allow delete: if false;
 
+      match /messages/{messageId} {
+        allow read: if isSignedIn()
+                    && request.auth.uid in roomDoc(roomId).data.participants;
+        allow create: if isSignedIn()
+                      && request.auth.uid in roomDoc(roomId).data.participants
+                      && request.resource.data.senderUid == request.auth.uid
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() >= 1
+                      && request.resource.data.text.size() <= 2000
+                      && request.resource.data.kind in ['text', 'system']
+                      && request.resource.data.clientId is string
+                      && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+
+      match /reads/{uid} {
+        allow read: if isSignedIn()
+                    && request.auth.uid in roomDoc(roomId).data.participants;
+        allow write: if isSelf(uid)
+                      && request.auth.uid in roomDoc(roomId).data.participants;
+      }
+
       // Participant docs: each user writes only their own doc.
       // Host doc is created with the room; members join an open room only.
       match /participants/{uid} {
