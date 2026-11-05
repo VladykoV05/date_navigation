@@ -46,29 +46,29 @@ import '../providers/date_navigation_service_providers.dart';
 class DateNavigationController extends Notifier<DateNavigationState> {
   static const Duration _snapshotFreshFor = Duration(seconds: 20);
 
-  late final AddressSubmissionService _addressSubmission;
-  late final DateAssistantService _dateAssistant;
-  late final MeetingExecutionService _meetingExecution;
-  late final RoomInteractionService _roomInteraction;
-  late final RoomLifecycleService _roomLifecycle;
-  late final WatchRoom _watchRoom;
-  late final WatchRememberedAddresses _watchFrequentAddresses;
-  late final RemoveRememberedUserAddress _removeRememberedAddress;
-  late final SaveSearchRadius _saveSearchRadius;
-  late final LocationSubmissionService _locationSubmission;
-  late final AuthSession _authSession;
-  late final AnalyticsService _analytics;
-  late final MeetingGuardPolicy _meetingGuard;
-  late final ProposalActions _proposalActions;
-  late final VoteScenarioActions _voteScenarioActions;
-  late final RoomSessionStateTransitions _roomActions;
-  late final MeetingInteractionTransitions _meetingInteraction;
-  late final MeetingPlanningController _meetingPlanningController;
-  late final RoomStreamSubscription _roomStreamSubscription;
-  late final FrequentAddressesSubscription _frequentAddressesSubscription;
-  late final RoomSessionController _roomSessionController;
-  late final AddressMemoryController _addressMemoryController;
-  late final VotingController _votingController;
+  late AddressSubmissionService _addressSubmission;
+  late DateAssistantService _dateAssistant;
+  late MeetingExecutionService _meetingExecution;
+  late RoomInteractionService _roomInteraction;
+  late RoomLifecycleService _roomLifecycle;
+  late WatchRoom _watchRoom;
+  late WatchRememberedAddresses _watchFrequentAddresses;
+  late RemoveRememberedUserAddress _removeRememberedAddress;
+  late SaveSearchRadius _saveSearchRadius;
+  late LocationSubmissionService _locationSubmission;
+  late AuthSession _authSession;
+  late AnalyticsService _analytics;
+  late MeetingGuardPolicy _meetingGuard;
+  late ProposalActions _proposalActions;
+  late VoteScenarioActions _voteScenarioActions;
+  late RoomSessionStateTransitions _roomActions;
+  late MeetingInteractionTransitions _meetingInteraction;
+  late MeetingPlanningController _meetingPlanningController;
+  late RoomStreamSubscription _roomStreamSubscription;
+  late FrequentAddressesSubscription _frequentAddressesSubscription;
+  late RoomSessionController _roomSessionController;
+  late AddressMemoryController _addressMemoryController;
+  late VotingController _votingController;
 
   int _geocodeRequestSeq = 0;
   bool _disposed = false;
@@ -77,6 +77,7 @@ class DateNavigationController extends Notifier<DateNavigationState> {
 
   @override
   DateNavigationState build() {
+    _disposed = false;
     // Use read (not watch): rebuilding this Notifier would wipe the room session.
     _addressSubmission = ref.read(addressSubmissionServiceProvider);
     _dateAssistant = ref.read(dateAssistantServiceProvider);
