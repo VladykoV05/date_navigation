@@ -4,7 +4,8 @@
 ```bash
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
-dart format lib test
+# Use the Dart SDK bundled with Flutter (CI uses it):
+/opt/homebrew/share/flutter/bin/cache/dart-sdk/bin/dart format lib test
 flutter analyze
 flutter test
 flutter run
