@@ -1117,7 +1117,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get openSessionNoEvent => 'Открытая сессия';
 
   @override
-  String openSessionMembers(Object capacity, Object count) {
+  String openSessionMembers(int count, int capacity) {
     return '$count из $capacity';
   }
 

@@ -1106,7 +1106,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSessionNoEvent => 'Open session';
 
   @override
-  String openSessionMembers(Object capacity, Object count) {
+  String openSessionMembers(int count, int capacity) {
     return '$count of $capacity';
   }
 

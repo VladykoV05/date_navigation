@@ -2040,7 +2040,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count} of {capacity}'**
-  String openSessionMembers(Object capacity, Object count);
+  String openSessionMembers(int count, int capacity);
 
   /// No description provided for @openSessionJoin.
   ///
