@@ -111,3 +111,10 @@ test('private room: creator cannot change partner-owned fields', async () => {
   });
   await assertFails(updateDoc(doc(as('host'), 'rooms/priv2'), { point2: { lat: 2, lng: 2 } }));
 });
+
+test('legacy private join cannot overwrite an open room participants', async () => {
+  await seedOpenRoom(4, ['host', 'a', 'b']);
+  await assertFails(updateDoc(doc(as('guest'), 'rooms/open1'), {
+    partnerUid: 'guest', participants: ['host', 'guest'], updatedAt: serverTimestamp(),
+  }));
+});

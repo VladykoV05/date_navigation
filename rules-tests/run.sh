@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -u
+pkill -f "cloud-firestore-emulator" 2>/dev/null || true
+sleep 1
 cd "$(dirname "$0")/.."
 firebase emulators:start --only firestore --project date-navigation-test >/tmp/rules-emulator.log 2>&1 &
 EMU=$!
@@ -15,5 +17,6 @@ fi
 node --test rules-tests/test/open_room.test.mjs
 STATUS=$?
 kill "$EMU" 2>/dev/null
+pkill -f "cloud-firestore-emulator" 2>/dev/null || true
 wait "$EMU" 2>/dev/null
 exit "$STATUS"

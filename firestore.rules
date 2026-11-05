@@ -170,7 +170,8 @@ service cloud.firestore {
     }
 
     function isJoinUpdate() {
-      return resource.data.partnerUid == null
+      return (!('type' in resource.data) || resource.data.type != 'open')
+             && resource.data.partnerUid == null
              && request.resource.data.partnerUid == request.auth.uid
              && request.resource.data.creatorUid == resource.data.creatorUid
              && request.resource.data.participants.size() == 2
@@ -221,7 +222,7 @@ service cloud.firestore {
                         || (
                           request.resource.data.role == 'member'
                           && roomExists(roomId)
-                          && roomDoc(roomId).data.type == 'open'
+                          && ('type' in roomDoc(roomId).data) && roomDoc(roomId).data.type == 'open'
                         )
                       );
         allow update, delete: if false;
