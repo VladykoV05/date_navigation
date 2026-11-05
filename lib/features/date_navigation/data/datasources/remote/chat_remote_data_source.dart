@@ -84,6 +84,27 @@ class ChatRemoteDataSource {
     }
   }
 
+  Future<Result<void>> sendSystemMessage({
+    required String roomId,
+    required String senderUid,
+    required String code,
+  }) async {
+    try {
+      await _messages(roomId).add({
+        'senderUid': senderUid,
+        'kind': ChatMessageKind.system.wireValue,
+        'text': code,
+        'clientId': DateTime.now().microsecondsSinceEpoch.toString(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      return const Ok(null);
+    } on FirebaseException catch (e) {
+      return Err(_mapFailure(e, FailureCodes.chatSendFailed));
+    } catch (_) {
+      return const Err(UnknownFailure(FailureCodes.chatSendFailed));
+    }
+  }
+
   Future<Result<void>> markRead({
     required String roomId,
     required String userId,

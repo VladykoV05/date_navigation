@@ -1,7 +1,10 @@
 import '../../../../core/error/failure.dart';
 import '../../../../core/error/result.dart';
 import '../../domain/entities/date_scenario.dart';
+import 'dart:async';
+
 import '../../domain/entities/place.dart';
+import '../../domain/repositories/chat_repository.dart';
 import '../../domain/entities/voting_decisions.dart';
 import '../../application/actions/proposal_actions.dart';
 import '../../application/actions/vote_scenario_actions.dart';
@@ -19,6 +22,7 @@ typedef VotingFailureWriter = void Function(Failure failure, String operation);
 class VotingController {
   const VotingController({
     required RoomInteractionService roomInteraction,
+    required ChatRepository chatRepository,
     required DateAssistantService dateAssistant,
     required ProposalActions proposalActions,
     required VoteScenarioActions voteScenarioActions,
@@ -32,6 +36,7 @@ class VotingController {
     required void Function() clearFailure,
     required void Function(bool value) setRoomActionLoading,
   }) : _roomInteraction = roomInteraction,
+       _chatRepository = chatRepository,
        _dateAssistant = dateAssistant,
        _proposalActions = proposalActions,
        _voteScenarioActions = voteScenarioActions,
@@ -46,6 +51,7 @@ class VotingController {
        _setRoomActionLoading = setRoomActionLoading;
 
   final RoomInteractionService _roomInteraction;
+  final ChatRepository _chatRepository;
   final DateAssistantService _dateAssistant;
   final ProposalActions _proposalActions;
   final VoteScenarioActions _voteScenarioActions;
@@ -113,6 +119,15 @@ class VotingController {
       actedByUserId: command.actedByUserId,
       meetingFormat: command.meetingFormatWireValue,
     );
+    if (decision.isAccepted && res is Ok) {
+      unawaited(
+        _chatRepository.sendSystemMessage(
+          roomId: command.roomId,
+          senderUid: uid,
+          code: 'system.place_selected',
+        ),
+      );
+    }
     _applyInteractionResult(res, 'proposal');
   }
 

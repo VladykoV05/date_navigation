@@ -12,6 +12,7 @@ import '../../domain/entities/date_vibe.dart';
 import '../../domain/entities/meeting_point.dart';
 import '../../domain/entities/place.dart';
 import '../../domain/entities/voting_decisions.dart';
+import '../../domain/repositories/chat_repository.dart';
 import '../../domain/usecases/save_search_radius.dart';
 import '../../application/services/date_assistant_service.dart';
 import '../../application/services/meeting_execution_service.dart';
@@ -36,6 +37,7 @@ class MeetingPlanningController {
   MeetingPlanningController({
     required DateAssistantService dateAssistant,
     required MeetingExecutionService meetingExecution,
+    required ChatRepository chatRepository,
     required SaveSearchRadius saveSearchRadius,
     required AnalyticsService analytics,
     required MeetingStateReader readState,
@@ -48,6 +50,7 @@ class MeetingPlanningController {
     required void Function(bool value) setRoomActionLoading,
     required void Function(bool value) setMeetingLoading,
   }) : _dateAssistant = dateAssistant,
+       _chatRepository = chatRepository,
        _meetingExecution = meetingExecution,
        _saveSearchRadius = saveSearchRadius,
        _analytics = analytics,
@@ -62,6 +65,7 @@ class MeetingPlanningController {
        _setMeetingLoading = setMeetingLoading;
 
   final DateAssistantService _dateAssistant;
+  final ChatRepository _chatRepository;
   final MeetingExecutionService _meetingExecution;
   final SaveSearchRadius _saveSearchRadius;
   final AnalyticsService _analytics;
@@ -79,6 +83,7 @@ class MeetingPlanningController {
   late final MeetingFormatController _meetingFormatController =
       MeetingFormatController(
         dateAssistant: _dateAssistant,
+        chatRepository: _chatRepository,
         meetingPlanner: meetingPlanner,
         readState: _readState,
         writeState: _writeState,

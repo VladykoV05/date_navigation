@@ -2125,6 +2125,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Load older'**
   String get chatLoadOlder;
+
+  /// No description provided for @systemParticipantJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant joined'**
+  String get systemParticipantJoined;
+
+  /// No description provided for @systemFormatConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting format confirmed'**
+  String get systemFormatConfirmed;
+
+  /// No description provided for @systemPlaceSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Place selected'**
+  String get systemPlaceSelected;
 }
 
 class _AppLocalizationsDelegate

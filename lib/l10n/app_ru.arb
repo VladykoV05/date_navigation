@@ -357,5 +357,8 @@
   "chatLoadFailed": "Не удалось загрузить сообщения",
   "chatSendFailed": "Не удалось отправить сообщение",
   "chatOpen": "Чат",
-  "chatLoadOlder": "Загрузить старые"
+  "chatLoadOlder": "Загрузить старые",
+  "systemParticipantJoined": "Участник присоединился",
+  "systemFormatConfirmed": "Формат встречи подтверждён",
+  "systemPlaceSelected": "Место выбрано"
 }

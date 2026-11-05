@@ -22,6 +22,12 @@ abstract interface class ChatRepository {
     required String clientId,
   });
 
+  Future<Result<void>> sendSystemMessage({
+    required String roomId,
+    required String senderUid,
+    required String code,
+  });
+
   Future<Result<void>> markRead({
     required String roomId,
     required String userId,

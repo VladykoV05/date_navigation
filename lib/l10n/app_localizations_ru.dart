@@ -1163,4 +1163,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get chatLoadOlder => 'Загрузить старые';
+
+  @override
+  String get systemParticipantJoined => 'Участник присоединился';
+
+  @override
+  String get systemFormatConfirmed => 'Формат встречи подтверждён';
+
+  @override
+  String get systemPlaceSelected => 'Место выбрано';
 }

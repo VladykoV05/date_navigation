@@ -7,6 +7,7 @@ import '../../application/state_transitions/room_session_state_transitions.dart'
 import '../../application/services/room_lifecycle_service.dart';
 import '../../application/state/date_navigation_state.dart';
 import '../../domain/entities/room_snapshot.dart';
+import '../../domain/repositories/chat_repository.dart';
 
 typedef DateNavigationStateReader = DateNavigationState Function();
 typedef DateNavigationStateWriter = void Function(DateNavigationState state);
@@ -17,6 +18,7 @@ typedef RoomSubscriptionStarter = void Function(String roomId);
 class RoomSessionController {
   RoomSessionController({
     required RoomLifecycleService roomLifecycle,
+    required ChatRepository chatRepository,
     required RoomSessionStateTransitions roomActions,
     required MeetingPlannerRuntime meetingPlanner,
     required DateNavigationStateReader readState,
@@ -28,6 +30,7 @@ class RoomSessionController {
     required Future<void> Function() cancelRoomSubscription,
     required RoomSubscriptionStarter subscribeToRoom,
   }) : _roomLifecycle = roomLifecycle,
+       _chatRepository = chatRepository,
        _roomActions = roomActions,
        _meetingPlanner = meetingPlanner,
        _readState = readState,
@@ -40,6 +43,7 @@ class RoomSessionController {
        _subscribeToRoom = subscribeToRoom;
 
   final RoomLifecycleService _roomLifecycle;
+  final ChatRepository _chatRepository;
   final RoomSessionStateTransitions _roomActions;
   final MeetingPlannerRuntime _meetingPlanner;
   final DateNavigationStateReader _readState;
@@ -70,6 +74,13 @@ class RoomSessionController {
           ),
         );
         _subscribeToRoom(access.roomId);
+        unawaited(
+          _chatRepository.sendSystemMessage(
+            roomId: access.roomId,
+            senderUid: uid,
+            code: 'system.participant_joined',
+          ),
+        );
     }
   }
 
@@ -149,6 +160,13 @@ class RoomSessionController {
           ),
         );
         _subscribeToRoom(access.roomId);
+        unawaited(
+          _chatRepository.sendSystemMessage(
+            roomId: access.roomId,
+            senderUid: uid,
+            code: 'system.participant_joined',
+          ),
+        );
     }
   }
 

@@ -583,5 +583,8 @@
   "chatLoadFailed": "Could not load messages",
   "chatSendFailed": "Could not send message",
   "chatOpen": "Chat",
-  "chatLoadOlder": "Load older"
+  "chatLoadOlder": "Load older",
+  "systemParticipantJoined": "Participant joined",
+  "systemFormatConfirmed": "Meeting format confirmed",
+  "systemPlaceSelected": "Place selected"
 }
