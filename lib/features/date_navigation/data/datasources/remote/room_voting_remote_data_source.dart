@@ -309,17 +309,13 @@ class RoomVotingRemoteDataSource {
                 message: FailureCodes.notRoomMember,
               );
             }
-            tx.set(
-              roomRef.collection('participants').doc(userId),
-              {
-                'meetingFormats': uniqueFormats,
-                'meetingFormat': uniqueFormats.isEmpty
-                    ? null
-                    : uniqueFormats.first,
-                'updatedAt': FieldValue.serverTimestamp(),
-              },
-              SetOptions(merge: true),
-            );
+            tx.set(roomRef.collection('participants').doc(userId), {
+              'meetingFormats': uniqueFormats,
+              'meetingFormat': uniqueFormats.isEmpty
+                  ? null
+                  : uniqueFormats.first,
+              'updatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
             return;
           }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
@@ -531,14 +527,10 @@ class RoomVotingRemoteDataSource {
                 message: FailureCodes.notRoomMember,
               );
             }
-            tx.set(
-              roomRef.collection('participants').doc(userId),
-              {
-                'selectedMeetingFormat': normalized,
-                'updatedAt': FieldValue.serverTimestamp(),
-              },
-              SetOptions(merge: true),
-            );
+            tx.set(roomRef.collection('participants').doc(userId), {
+              'selectedMeetingFormat': normalized,
+              'updatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
             return;
           }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
@@ -588,14 +580,10 @@ class RoomVotingRemoteDataSource {
                 message: FailureCodes.notRoomMember,
               );
             }
-            tx.set(
-              roomRef.collection('participants').doc(userId),
-              {
-                'searchRadius': radius,
-                'updatedAt': FieldValue.serverTimestamp(),
-              },
-              SetOptions(merge: true),
-            );
+            tx.set(roomRef.collection('participants').doc(userId), {
+              'searchRadius': radius,
+              'updatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
             return;
           }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')

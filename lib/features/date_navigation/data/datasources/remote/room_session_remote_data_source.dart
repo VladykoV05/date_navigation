@@ -341,14 +341,10 @@ class RoomSessionRemoteDataSource {
                 message: FailureCodes.notRoomMember,
               );
             }
-            tx.set(
-              roomRef.collection('participants').doc(userId),
-              {
-                'point': {'lat': coords.latitude, 'lng': coords.longitude},
-                'updatedAt': FieldValue.serverTimestamp(),
-              },
-              SetOptions(merge: true),
-            );
+            tx.set(roomRef.collection('participants').doc(userId), {
+              'point': {'lat': coords.latitude, 'lng': coords.longitude},
+              'updatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
             return;
           }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
