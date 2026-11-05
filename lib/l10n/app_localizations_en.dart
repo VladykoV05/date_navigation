@@ -1028,15 +1028,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'This invite code is invalid or expired. Ask for a new code.';
 
   @override
-  String get searchCityLabel => 'Search city';
-
-  @override
-  String get searchCityMinsk => 'Minsk';
-
-  @override
-  String get searchCityOther => 'Other / free-form';
-
-  @override
   String get searchRegionLabel => 'Search region';
 
   @override

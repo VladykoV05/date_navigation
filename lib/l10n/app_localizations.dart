@@ -1892,24 +1892,6 @@ abstract class AppLocalizations {
   /// **'This invite code is invalid or expired. Ask for a new code.'**
   String get inviteInvalidMessage;
 
-  /// No description provided for @searchCityLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Search city'**
-  String get searchCityLabel;
-
-  /// No description provided for @searchCityMinsk.
-  ///
-  /// In en, this message translates to:
-  /// **'Minsk'**
-  String get searchCityMinsk;
-
-  /// No description provided for @searchCityOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Other / free-form'**
-  String get searchCityOther;
-
   /// No description provided for @searchRegionLabel.
   ///
   /// In en, this message translates to:

@@ -330,6 +330,27 @@ class RoomSessionRemoteDataSource {
         await _firestore.runTransaction((tx) async {
           final snap = await tx.get(roomRef);
           final data = snap.data() ?? <String, dynamic>{};
+          if (data['type'] == 'open') {
+            final participants = List<String>.from(
+              data['participants'] ?? const <String>[],
+            );
+            if (!participants.contains(userId)) {
+              throw FirebaseException(
+                plugin: 'cloud_firestore',
+                code: 'permission-denied',
+                message: FailureCodes.notRoomMember,
+              );
+            }
+            tx.set(
+              roomRef.collection('participants').doc(userId),
+              {
+                'point': {'lat': coords.latitude, 'lng': coords.longitude},
+                'updatedAt': FieldValue.serverTimestamp(),
+              },
+              SetOptions(merge: true),
+            );
+            return;
+          }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
               .toString();
           final partnerUid = (data['partnerUid'] ?? '').toString();

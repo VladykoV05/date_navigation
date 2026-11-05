@@ -294,6 +294,34 @@ class RoomVotingRemoteDataSource {
         await _firestore.runTransaction((tx) async {
           final snap = await tx.get(roomRef);
           final data = snap.data() ?? <String, dynamic>{};
+          final uniqueFormats = <String>{
+            for (final value in formats)
+              value.trim().toLowerCase().replaceAll(' ', '_'),
+          }.where((value) => value.isNotEmpty).toList(growable: false)..sort();
+          if (data['type'] == 'open') {
+            final participants = List<String>.from(
+              data['participants'] ?? const <String>[],
+            );
+            if (!participants.contains(userId)) {
+              throw FirebaseException(
+                plugin: 'cloud_firestore',
+                code: 'permission-denied',
+                message: FailureCodes.notRoomMember,
+              );
+            }
+            tx.set(
+              roomRef.collection('participants').doc(userId),
+              {
+                'meetingFormats': uniqueFormats,
+                'meetingFormat': uniqueFormats.isEmpty
+                    ? null
+                    : uniqueFormats.first,
+                'updatedAt': FieldValue.serverTimestamp(),
+              },
+              SetOptions(merge: true),
+            );
+            return;
+          }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
               .toString();
           final partnerUid = (data['partnerUid'] ?? '').toString();
@@ -313,10 +341,6 @@ class RoomVotingRemoteDataSource {
           final selectedField = userId == creatorUid
               ? 'creatorSelectedMeetingFormat'
               : 'partnerSelectedMeetingFormat';
-          final uniqueFormats = <String>{
-            for (final value in formats)
-              value.trim().toLowerCase().replaceAll(' ', '_'),
-          }.where((value) => value.isNotEmpty).toList(growable: false)..sort();
           final currentSelected = (data[selectedField] ?? '')
               .toString()
               .trim()
@@ -496,6 +520,27 @@ class RoomVotingRemoteDataSource {
         await _firestore.runTransaction((tx) async {
           final snap = await tx.get(roomRef);
           final data = snap.data() ?? <String, dynamic>{};
+          if (data['type'] == 'open') {
+            final participants = List<String>.from(
+              data['participants'] ?? const <String>[],
+            );
+            if (!participants.contains(userId)) {
+              throw FirebaseException(
+                plugin: 'cloud_firestore',
+                code: 'permission-denied',
+                message: FailureCodes.notRoomMember,
+              );
+            }
+            tx.set(
+              roomRef.collection('participants').doc(userId),
+              {
+                'selectedMeetingFormat': normalized,
+                'updatedAt': FieldValue.serverTimestamp(),
+              },
+              SetOptions(merge: true),
+            );
+            return;
+          }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
               .toString();
           final partnerUid = (data['partnerUid'] ?? '').toString();
@@ -532,6 +577,27 @@ class RoomVotingRemoteDataSource {
         await _firestore.runTransaction((tx) async {
           final snap = await tx.get(roomRef);
           final data = snap.data() ?? <String, dynamic>{};
+          if (data['type'] == 'open') {
+            final participants = List<String>.from(
+              data['participants'] ?? const <String>[],
+            );
+            if (!participants.contains(userId)) {
+              throw FirebaseException(
+                plugin: 'cloud_firestore',
+                code: 'permission-denied',
+                message: FailureCodes.notRoomMember,
+              );
+            }
+            tx.set(
+              roomRef.collection('participants').doc(userId),
+              {
+                'searchRadius': radius,
+                'updatedAt': FieldValue.serverTimestamp(),
+              },
+              SetOptions(merge: true),
+            );
+            return;
+          }
           final creatorUid = ((data['creatorUid'] ?? data['createdBy']) ?? '')
               .toString();
           final partnerUid = (data['partnerUid'] ?? '').toString();

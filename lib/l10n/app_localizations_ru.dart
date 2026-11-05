@@ -1039,15 +1039,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Код приглашения недействителен или истёк. Запросите новый код.';
 
   @override
-  String get searchCityLabel => 'Город поиска';
-
-  @override
-  String get searchCityMinsk => 'Минск';
-
-  @override
-  String get searchCityOther => 'Другой / свободно';
-
-  @override
   String get searchRegionLabel => 'Регион поиска';
 
   @override

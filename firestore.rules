@@ -29,11 +29,6 @@ service cloud.firestore {
       return request.auth.uid == resource.data.creatorUid;
     }
 
-    function isPartner() {
-      return resource.data.partnerUid != null
-             && request.auth.uid == resource.data.partnerUid;
-    }
-
     function isValidSessionStatus(value) {
       return value == 'active' || value == 'completed' || value == 'expired';
     }
@@ -247,7 +242,19 @@ service cloud.firestore {
                           && ('type' in roomDoc(roomId).data) && roomDoc(roomId).data.type == 'open'
                         )
                       );
-        allow update, delete: if false;
+        allow update: if isSelf(uid)
+                      && roomExists(roomId)
+                      && request.auth.uid in roomDoc(roomId).data.participants
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                        'point',
+                        'searchRadius',
+                        'meetingFormats',
+                        'meetingFormat',
+                        'selectedMeetingFormat',
+                        'lastReadAt',
+                        'updatedAt'
+                      ]);
+        allow delete: if false;
       }
     }
 

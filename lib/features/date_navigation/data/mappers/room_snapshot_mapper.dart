@@ -154,22 +154,7 @@ class RoomSnapshotMapper {
         final map = Map<String, dynamic>.from(item);
         final uid = _nonEmptyTrimmed(map['uid']);
         if (uid == null) continue;
-        parsed.add(
-          RoomParticipant(
-            uid: uid,
-            role: RoomParticipantRole.fromWireValue(map['role']),
-            point: _parseLatLng(map['point']),
-            searchRadius: (map['searchRadius'] as num?)?.toInt(),
-            meetingFormats: _parseMeetingFormats(
-              formatsRaw: map['meetingFormats'],
-              legacyRaw: map['meetingFormat'],
-            ),
-            selectedMeetingFormat: _parseMeetingFormat(
-              map['selectedMeetingFormat'],
-            ),
-            lastReadAt: _parseTimestamp(map['lastReadAt']),
-          ),
-        );
+        parsed.add(_participantFromDoc(uid, map));
       }
       if (parsed.isNotEmpty) return parsed;
     }
