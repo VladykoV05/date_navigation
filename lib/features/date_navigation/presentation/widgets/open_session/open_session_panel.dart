@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/l10n/l10n_extensions.dart';
+import '../../../../../core/profile/profile_providers.dart';
+import '../../../../../core_ui/core_ui.dart';
 import '../../view_data/open_participant_view_data.dart';
 import '../../view_data/room_event_view_data.dart';
 
@@ -259,15 +262,17 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
                 const SizedBox(height: 4),
                 for (var i = 0; i < widget.participants.length; i++)
                   _ParticipantRow(
-                    name: _participantName(context, i, widget.participants[i]),
-                    initial: _initialOf(
-                      _participantName(context, i, widget.participants[i]),
+                    uid: widget.participants[i].uid,
+                    fallbackName: _participantName(
+                      context,
+                      i,
+                      widget.participants[i],
                     ),
                     hasAddress: widget.participants[i].hasAddress,
                     isHost: widget.participants[i].isHost,
-                    onTap: () => _openParticipantCard(
+                    onTap: (resolvedName) => _openParticipantCard(
                       context,
-                      _participantName(context, i, widget.participants[i]),
+                      resolvedName,
                       widget.participants[i],
                     ),
                   ),
@@ -276,12 +281,6 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
         if (_tab == OpenSessionTab.plan) _PlanTab(event: widget.event),
       ],
     );
-  }
-
-  String _initialOf(String name) {
-    final trimmed = name.trim();
-    if (trimmed.isEmpty) return '?';
-    return trimmed.substring(0, 1).toUpperCase();
   }
 
   void _openParticipantCard(
@@ -305,11 +304,7 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: scheme.primaryContainer,
-                      child: Text(_initialOf(name)),
-                    ),
+                    PublicAvatar(uid: participant.uid, radius: 24),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -359,36 +354,37 @@ class _OpenSessionPanelState extends State<OpenSessionPanel> {
   }
 }
 
-class _ParticipantRow extends StatelessWidget {
+class _ParticipantRow extends ConsumerWidget {
   const _ParticipantRow({
-    required this.name,
-    required this.initial,
+    required this.uid,
+    required this.fallbackName,
     required this.hasAddress,
     required this.isHost,
     required this.onTap,
   });
 
-  final String name;
-  final String initial;
+  final String uid;
+  final String fallbackName;
   final bool hasAddress;
   final bool isHost;
-  final VoidCallback onTap;
+  final ValueChanged<String> onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final scheme = Theme.of(context).colorScheme;
+    final profileName = ref
+        .watch(publicProfileViewProvider(uid))
+        .value
+        ?.shownName;
+    final name = profileName ?? fallbackName;
     return InkWell(
-      onTap: onTap,
+      onTap: () => onTap(name),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: scheme.primaryContainer,
-              child: Text(initial),
-            ),
+            PublicAvatar(uid: uid),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

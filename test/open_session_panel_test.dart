@@ -1,7 +1,12 @@
 import 'package:date_navigation/features/date_navigation/presentation/view_data/open_participant_view_data.dart';
 import 'package:date_navigation/features/date_navigation/presentation/widgets/open_session/open_session_panel.dart';
 import 'package:date_navigation/l10n/app_localizations.dart';
+import 'package:date_navigation/core/error/result.dart';
+import 'package:date_navigation/core/profile/public_profile.dart';
+import 'package:date_navigation/core/profile/public_profile_repository.dart';
+import 'package:date_navigation/core/profile/profile_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,6 +26,40 @@ const _other = OpenParticipantViewData(
   hasAddress: true,
 );
 
+class _NoProfileRepository implements PublicProfileRepository {
+  @override
+  Stream<PublicProfile?> watch(String uid) => Stream.value(null);
+
+  @override
+  Future<Result<void>> syncFromAuth({
+    required String uid,
+    String? googleName,
+    String? photoUrl,
+  }) async => const Ok(null);
+
+  @override
+  Future<Result<void>> rename({
+    required String uid,
+    required String name,
+  }) async => const Ok(null);
+
+  @override
+  Future<Result<void>> setAvatarBase64({
+    required String uid,
+    required String avatarBase64,
+  }) async => const Ok(null);
+
+  @override
+  Future<Result<void>> setPreset({
+    required String uid,
+    required int preset,
+  }) async => const Ok(null);
+
+  @override
+  Future<Result<void>> resetAvatar({required String uid}) async =>
+      const Ok(null);
+}
+
 Widget _host0({
   required List<OpenParticipantViewData> participants,
   required bool hasOwnPoint,
@@ -31,34 +70,39 @@ Widget _host0({
   bool canComplete = false,
   VoidCallback? onComplete,
 }) {
-  return MaterialApp(
-    locale: const Locale('ru'),
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
+  return ProviderScope(
+    overrides: [
+      publicProfileRepositoryProvider.overrideWithValue(_NoProfileRepository()),
     ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: Scaffold(
-      body: SingleChildScrollView(
-        child: OpenSessionPanel(
-          displayCode: 'ABC123',
-          participants: participants,
-          selfUid: 'me',
-          hasOwnPoint: hasOwnPoint,
-          canSubmitAddress: true,
-          addressController: TextEditingController(),
-          onAddressSubmit: () {},
-          onOpenChat: () {},
-          onLeaveRoom: onLeave ?? () {},
-          unreadCount: 0,
-          event: null,
-          canLeave: canLeave,
-          isClosed: isClosed,
-          isExpired: isExpired,
-          canComplete: canComplete,
-          onCompleteSession: onComplete ?? () {},
+    child: MaterialApp(
+      locale: const Locale('ru'),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: OpenSessionPanel(
+            displayCode: 'ABC123',
+            participants: participants,
+            selfUid: 'me',
+            hasOwnPoint: hasOwnPoint,
+            canSubmitAddress: true,
+            addressController: TextEditingController(),
+            onAddressSubmit: () {},
+            onOpenChat: () {},
+            onLeaveRoom: onLeave ?? () {},
+            unreadCount: 0,
+            event: null,
+            canLeave: canLeave,
+            isClosed: isClosed,
+            isExpired: isExpired,
+            canComplete: canComplete,
+            onCompleteSession: onComplete ?? () {},
+          ),
         ),
       ),
     ),

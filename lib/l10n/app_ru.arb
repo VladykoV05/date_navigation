@@ -385,5 +385,16 @@
   "failureHostAlone": "Вы единственный участник. Завершите сессию, чтобы выйти.",
   "openSessionHostAlone": "Чтобы выйти, завершите сессию: вы единственный участник",
   "systemHostTransferred": "Хост передан участнику",
-  "openSessionExpiredHint": "Сессия истекла. Чат только для чтения, вход закрыт."
+  "openSessionExpiredHint": "Сессия истекла. Чат только для чтения, вход закрыт.",
+  "profileEditName": "Изменить имя",
+  "profileNameLabel": "Имя",
+  "profileNameHint": "Как вас видят другие",
+  "profilePhotoGallery": "Фото из галереи",
+  "profilePhotoPreset": "Встроенный аватар",
+  "profilePhotoGoogle": "Фото из Google",
+  "profileAvatarTooLarge": "Не удалось подготовить фото. Выберите другое.",
+  "profileSaveError": "Не удалось сохранить профиль",
+  "profileCancel": "Отмена",
+  "profileSave": "Сохранить",
+  "profileChooseAvatar": "Выберите аватар"
 }

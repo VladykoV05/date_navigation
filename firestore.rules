@@ -354,6 +354,16 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Public profile (design 10.2): read by any signed-in user, write by owner only.
+    match /publicProfiles/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isSelf(uid)
+                   && request.resource.data.keys().hasOnly(['displayName', 'googleName', 'photoUrl', 'avatarBase64', 'avatarPreset', 'updatedAt'])
+                   && (!('displayName' in request.resource.data) || request.resource.data.displayName == null || (request.resource.data.displayName is string && request.resource.data.displayName.size() <= 40))
+                   && (!('avatarBase64' in request.resource.data) || request.resource.data.avatarBase64 == null || (request.resource.data.avatarBase64 is string && request.resource.data.avatarBase64.size() <= 45000))
+                   && (!('avatarPreset' in request.resource.data) || request.resource.data.avatarPreset == null || (request.resource.data.avatarPreset is int && request.resource.data.avatarPreset >= 0 && request.resource.data.avatarPreset <= 11));
+    }
+
     match /users/{uid} {
       allow read, write: if isSelf(uid);
 

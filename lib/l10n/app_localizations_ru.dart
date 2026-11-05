@@ -1256,4 +1256,38 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get openSessionExpiredHint =>
       'Сессия истекла. Чат только для чтения, вход закрыт.';
+
+  @override
+  String get profileEditName => 'Изменить имя';
+
+  @override
+  String get profileNameLabel => 'Имя';
+
+  @override
+  String get profileNameHint => 'Как вас видят другие';
+
+  @override
+  String get profilePhotoGallery => 'Фото из галереи';
+
+  @override
+  String get profilePhotoPreset => 'Встроенный аватар';
+
+  @override
+  String get profilePhotoGoogle => 'Фото из Google';
+
+  @override
+  String get profileAvatarTooLarge =>
+      'Не удалось подготовить фото. Выберите другое.';
+
+  @override
+  String get profileSaveError => 'Не удалось сохранить профиль';
+
+  @override
+  String get profileCancel => 'Отмена';
+
+  @override
+  String get profileSave => 'Сохранить';
+
+  @override
+  String get profileChooseAvatar => 'Выберите аватар';
 }

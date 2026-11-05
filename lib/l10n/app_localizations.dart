@@ -2293,6 +2293,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session expired. Chat is read-only, joining is closed.'**
   String get openSessionExpiredHint;
+
+  /// No description provided for @profileEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get profileEditName;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How others see you'**
+  String get profileNameHint;
+
+  /// No description provided for @profilePhotoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo from gallery'**
+  String get profilePhotoGallery;
+
+  /// No description provided for @profilePhotoPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in avatar'**
+  String get profilePhotoPreset;
+
+  /// No description provided for @profilePhotoGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google photo'**
+  String get profilePhotoGoogle;
+
+  /// No description provided for @profileAvatarTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not prepare the photo. Choose another one.'**
+  String get profileAvatarTooLarge;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the profile'**
+  String get profileSaveError;
+
+  /// No description provided for @profileCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileCancel;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSave;
+
+  /// No description provided for @profileChooseAvatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an avatar'**
+  String get profileChooseAvatar;
 }
 
 class _AppLocalizationsDelegate

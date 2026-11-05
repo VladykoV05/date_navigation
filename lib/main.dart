@@ -19,6 +19,7 @@ import 'core/theme/app_theme.dart';
 import 'core/utils/app_logger.dart';
 import 'firebase_options.dart';
 import 'features/auth/auth.dart';
+import 'core/profile/profile_providers.dart';
 import 'features/date_navigation/date_navigation.dart';
 import 'features/date_navigation/presentation/providers/date_navigation_provider.dart';
 import 'features/date_navigation/presentation/widgets/chat_notifications_host.dart';
@@ -108,6 +109,18 @@ class AuthGate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(currentUserProvider, (previous, next) {
+      final user = next.asData?.value;
+      if (user != null && previous?.value?.uid != user.uid) {
+        unawaited(
+          ref
+              .read(publicProfileRepositoryProvider)
+              .syncFromAuth(
+                uid: user.uid,
+                googleName: user.displayName,
+                photoUrl: user.photoURL,
+              ),
+        );
+      }
       final wasSignedIn = previous?.value != null;
       final isSignedOut = next.asData?.value == null;
       if (wasSignedIn && isSignedOut) {

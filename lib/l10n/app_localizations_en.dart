@@ -1244,4 +1244,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get openSessionExpiredHint =>
       'Session expired. Chat is read-only, joining is closed.';
+
+  @override
+  String get profileEditName => 'Edit name';
+
+  @override
+  String get profileNameLabel => 'Name';
+
+  @override
+  String get profileNameHint => 'How others see you';
+
+  @override
+  String get profilePhotoGallery => 'Photo from gallery';
+
+  @override
+  String get profilePhotoPreset => 'Built-in avatar';
+
+  @override
+  String get profilePhotoGoogle => 'Google photo';
+
+  @override
+  String get profileAvatarTooLarge =>
+      'Could not prepare the photo. Choose another one.';
+
+  @override
+  String get profileSaveError => 'Could not save the profile';
+
+  @override
+  String get profileCancel => 'Cancel';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileChooseAvatar => 'Choose an avatar';
 }

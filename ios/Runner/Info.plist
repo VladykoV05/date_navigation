@@ -8,6 +8,8 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Sbor</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Выберите фото для профиля</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Sbor uses your location to set your meeting point.</string>
 	<key>CFBundleExecutable</key>
